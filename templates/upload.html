@@ -16,7 +16,47 @@
 
     <!--Eine Seite-->
     <div id="allPages">
-        {% block newCourse %}{% endblock %}
+        <div name="singlePage">
+            <br>
+            <div>
+                Titel der Seite:
+                <input type="text" name="pageTitle">
+            </div>
+            <div>
+                Style der Seite:
+                <!-- DropDown für 1 und 2, je nach Auswahl wird
+                    mit Javascript Möglichkeit fürs hochladen eines Videos ein und ausgeblendet-->
+                <select name="pageStyle" value="1">
+                    <option>1</option>
+                    <option>2</option>
+                </select>
+                <div>
+                    <img src="" alt="Das Beispiel Bild, wie Tutorium mit dem ausgewählten Style aussieht">
+                </div>
+            </div>
+        
+            <div name="uploadVideo">
+                Upload Video:
+                <input id="video_file" name="videoFile" accept="video/*" type="file">
+            </div>
+        
+            <br> Große Textbox für Texte..
+            <div>
+                <textarea rows="6" cols="50" name="docText"></textarea>
+            </div>
+        
+            <div>
+                Beschreibendes Bild für Seite des Tutoriums
+                <input type="file" name="courseImg" accept="image/*">
+            </div>
+        
+            Große Textbox für Bildbeschreibung..
+            <div>
+                <textarea rows="6" cols="50" name="docText2"></textarea>
+            </div>
+            ----------------------------------------
+            <br>
+        </div>
     </div>
 
     <div>

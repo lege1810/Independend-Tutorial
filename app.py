@@ -293,6 +293,7 @@ def getAllUsersWrapperObject():
     fullDB = studCorp.find()
     return fullDB[0]
 
+
 def getAllCoursesWrapperObject():
     db = client.myTestBase
     studCorp = db.studCorp
@@ -689,10 +690,6 @@ def getTutorialWithDocumentID():
 
     return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
 
-def newFuc():
-    #tu nix
-    return
-
 #show register form or save register informations in mongo
 @app.route('/register', methods = ['POST', 'GET'])
 def register():
@@ -704,9 +701,6 @@ def register():
         password = request.form.get('password')
         isTutor = request.form.get('isTutor')
 
-        #generate salted hash
-        passphrase = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
         #checking if inputs are valide
         if len(mail) > 0 and len(firstName) and len(lastName) > 0 and len(password) > 0:
             
@@ -715,6 +709,9 @@ def register():
                 #get all users
                 allUsers = getAllUsersWrapperObject()
                 
+                #generate salted hash
+                passphrase = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
                 #create new user
                 singleExampleUser = newEmptyUser()
                 singleExampleUser['mail'] = mail
@@ -823,5 +820,5 @@ if __name__ == "__main__":
     initDB()
     # fillDB()
 
-    app.secret_key = 'oiwfhwinehi' 
+    app.secret_key = 'oiwfhwinehi' #add rnd chars here
     app.run(debug=True, host='localhost')
