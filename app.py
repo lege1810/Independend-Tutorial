@@ -7,9 +7,6 @@ import base64
 import gridfs
 import bcrypt #pip install flask-bcrypt
 
-def isUgly(user):
-    return user == 'Moritz'
-
 client = MongoClient()
 app = Flask(__name__, template_folder='templates')
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
