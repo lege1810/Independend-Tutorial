@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory, request, make_response
+from flask import Flask, render_template, send_from_directory, request, make_response, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from random import randint
@@ -6,6 +6,9 @@ import os
 import base64
 import gridfs
 import bcrypt #pip install flask-bcrypt
+
+def isUgly(user):
+    return user == 'Leon'
 
 client = MongoClient()
 app = Flask(__name__, template_folder='templates')
@@ -285,6 +288,11 @@ def getAllUsers():
     fullDB = studCorp.find()
     return fullDB[0]['users']
 
+def getAllUsersWrapperObject():
+    db = client.myTestBase
+    studCorp = db.studCorp
+    fullDB = studCorp.find()
+    return fullDB[0]
 
 def getAllCoursesWrapperObject():
     db = client.myTestBase
