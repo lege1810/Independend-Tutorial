@@ -8,7 +8,7 @@ import gridfs
 import bcrypt #pip install flask-bcrypt
 
 def isUgly(user):
-    return user == 'Leon'
+    return user == 'Kristopf'
 
 client = MongoClient()
 app = Flask(__name__, template_folder='templates')
