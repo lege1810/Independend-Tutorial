@@ -5,12 +5,11 @@ from random import randint
 import os
 import base64
 import gridfs
-import bcrypt #pip install flask-bcrypt
+import bcrypt
 
 client = MongoClient()
 app = Flask(__name__, template_folder='templates')
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-
 
 def newAllUsers():
     return{
