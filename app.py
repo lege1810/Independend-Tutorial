@@ -357,8 +357,6 @@ def updateDataBase(whatToUpdate, document):
         print("Fehler in UpdateDataBase, Dokument zum updaten nicht gefunden.")
 
 
-def getRand():
-    return randint(0, 1000)
 
 
 def getDocumentIndex(documentID, course):
@@ -684,6 +682,9 @@ def getTutorialWithDocumentID():
 
     return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
 
+def newFuc():
+    #tu nix
+    return
 
 #show register form or save register informations in mongo
 @app.route('/register', methods = ['POST', 'GET'])
