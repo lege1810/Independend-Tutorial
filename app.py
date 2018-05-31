@@ -100,7 +100,6 @@ def newAnswer():
         'answerIsCorrect': None
     }
 
-
 def fillDB():
     # DB-Connection
     db = client.myTestBase
@@ -824,4 +823,5 @@ if __name__ == "__main__":
     initDB()
     # fillDB()
 
+    app.secret_key = 'oiwfhwinehi' 
     app.run(debug=True, host='localhost')
