@@ -1,0 +1,169 @@
+<html>
+<div style="color:red">{{info}}</div>
+<form action="/uploadTutorial" method="POST" enctype="multipart/form-data">
+    <div>
+        Kurs Name
+        <input type="text" name="courseName" value="{{course.name}}">
+    </div>
+    <br>
+    {% if course.courseBannerID is not none %}
+    <img src="/img/{{course.courseBannerID}}"> 
+    <br>
+    Kurs Bild ändern:
+    <input type="file" name="courseBanner" accept="image/*"> 
+    {% else %} 
+    Kurs Bild hinzufügen:
+    <input type="file" name="courseBanner" accept="image/*"> 
+    {%endif %}
+
+
+    <div>
+        Kurs Beschreibung
+        {% if course.description is not none %}
+        <input type="text" name="courseDescription" value ="{{course.description}}">
+        {% else %} 
+        <input type="text" name="courseDescription">
+        {%endif %}
+    </div>
+
+    <!--Eine Seite-->
+    <div id="allPages">
+        {% for doc in course.categorys.documents %}
+        <div name="singlePage" style="background-color: bisque">
+            <br>
+            <div>
+                Titel der Seite:
+                {% if doc.title is not none %}
+                <input type="text" name="pageTitle" value="{{doc.title}}">
+                {% else %}
+                <input type="text" name="pageTitle">
+                {%endif %}
+            </div>
+            <div>
+                Style der Seite:
+                <!-- DropDown für 1 und 2, je nach Auswahl wird
+                mit Javascript Möglichkeit fürs hochladen eines Videos ein und ausgeblendet-->
+                <select name="pageStyle" value="{{doc.styleTyp}}">
+                    <option>1</option>
+                    <option>2</option>
+                </select>
+                <div>
+                    <img src="" alt="Das Beispiel Bild, wie Tutorium mit dem ausgewählten Style aussieht">
+                </div>
+            </div>
+
+            <div name="uploadVideo">
+                {% if doc.content.courseVideoID is not none %}
+                <video width="320" height="240" controls>
+					<source src="/video/{{doc.content.courseVideoID}}" type="video/mp4">
+                </video>
+                <br>
+                Kursvideo ändern:
+                <input id="video_file" name="videoFile" accept="video/*" type="file">
+                {% else %}
+                Upload Video:
+                <input id="video_file" name="videoFile" accept="video/*" type="file">
+                {%endif %}
+            </div>
+
+            <br> Große Textbox für Texte..
+            <div>
+                {% if doc.content.p[0] is not none %}
+                Text ändern:
+                <br>
+                <textarea rows="6" cols="50" name="docText">{{doc.content.p[0]}}</textarea>
+                {% else %}
+                Text hinzufügen:
+                <br>
+                <textarea rows="6" cols="50" name="docText"></textarea>
+                {%endif %}
+            </div>
+
+            <div>
+                {% if doc.content.courseImgID is not none %}
+                Beschreibendes Bild für Seite des Tutoriums:
+                <br>
+                <img src="/img/{{doc.content.courseImgID}}">
+                <br>
+                Bild ändern:
+                <input type="file" name="courseImg" accept="image/*">
+                {% else %}
+                Beschreibendes Bild für Seite des Tutoriums hinzufügen:
+                <br>
+                <input type="file" name="courseImg" accept="image/*">
+                {%endif %}
+            </div>
+
+           
+            <div>
+                <br>
+                Große Textbox für Bildbeschreibung:
+                <br>
+                {% if doc.content.p[1] is not none %}
+                Text ändern:
+                <br>
+                <textarea rows="6" cols="50" name="docText2">{{doc.content.p[1]}}</textarea>
+                {% else %}
+                Text hinzufügen:
+                <br>
+                <textarea rows="6" cols="50" name="docText2"></textarea>
+                {%endif %}
+            </div>
+            ----------------------------------------
+            <br>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div>
+        Weitere Seite zum Tutorium hinzufügen:
+        <button type="button" id="addPage">
+            Seite hinzufügen
+        </button>
+    </div>
+
+
+    <div style="visibility: hidden">
+        {% block newCourse %}{% endblock %}
+    </div>
+
+    <br>
+
+    <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
+
+    <input type="hidden" id="pageCount" name="countPages" value="1">
+    <input type="submit">
+</form>
+<script>
+    pageCount = document.getElementById("pageCount")
+    addPageButton = document.getElementById("addPage");
+    allPages = document.getElementById("allPages")
+    singlePage = allPages.firstChild.nextSibling
+    newPage = singlePage.cloneNode(true)
+    addPageButton.addEventListener("click", function () {
+        newPage = newPage.cloneNode(true)
+        allPages.appendChild(newPage)
+        pageCount.value++;
+        initDD()
+    });
+
+    function initDD() {
+        styleDD = document.getElementsByName("pageStyle");
+        videoDiv = document.getElementsByName("uploadVideo");
+        for (var i = 0; i < styleDD.length; i++) {
+            (function (index) {
+                styleDD[index].addEventListener("change", function () {
+                    if (styleDD[index].selectedIndex == 0) {
+                        videoDiv[index].style.visibility = "visible";
+                    } else {
+                        videoDiv[index].style.visibility = "hidden";
+                    }
+                });
+            })(i);
+        }
+    }
+    initDD()
+
+</script>
+
+</html>

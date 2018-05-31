@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+
+</head>
+
+<body>
+	<nav>
+		<div>
+			<ul>
+				<li>
+					<a href="">Kurse</a>
+				</li>
+				<li>
+					<a href="">Neuigkeiten</a>
+				</li>
+				<li>
+					<a href="">{{ user.nickname }}</a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="">Dashboard</a>
+						</li>
+						<li>
+							<a href="">Profil</a>
+						</li>
+						<li>
+							<a href="">Einstellungen ?</a>
+						</li>
+						<li>
+							<a>Abmelden</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		</div>
+	</nav>
+	<div>
+		<div>
+			<div>{{ course.name }}</div>
+			<div>{{ course.description }}</div>
+		</div>
+	</div>
+	<div>
+		<div>
+			<noscript>
+				<div>
+					<a target="_blank" href="http://www.enable-javascript.com/">Bitte aktivieren Sie Javascript in ihrem Browser!!</a>
+				</div>
+			</noscript>
+		</div>
+		<div>
+			<div>
+				<div>{{ course.id }}</div>
+				<div>
+					<div>
+						<ul>
+							<li>
+								<a href="">Lernmaterial</a>
+							</li>
+							<li>
+								<a href="">Diskussionen ?</a>
+							</li>
+							<li>
+								<a href="">Fortschritt</a>
+							</li>
+							<li>
+								<a href="">Lernräume ?</a>
+							</li>
+							<li>
+								<a href="">Kursdetails</a>
+							</li>
+							<li>
+								<a href="">Neuigkeiten ?</a>
+							</li>
+							<li>
+								<a href="">Recap</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div>
+				<a>Zurück</a>
+				<a>Weiter</a>
+			</div>
+			<div>
+				<ul>
+					{% for document in course.categorys.documents %}
+					<li>
+						<a href="/Tutorial/?courseID={{ course.id }}&documentID={{document.id}}">{{ document.title }}</a>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+
+
+		<div>
+			<h1>
+				{{course.categorys.documents[documentIndex].title}}
+			</h1>
+		</div>
+
+
+		<div>
+			Content
+			<!--Video linkssoben-->
+			<div>
+				<video width="320" height="240" controls>
+					<source src="/video/{{documentVideoID}}" type="video/mp4">
+				</video>
+			</div>
+			<!--Text1 rechtsoben-->
+			<div>
+				<p>
+					{{course.categorys.documents[documentIndex].content.p[0]}}
+				</p>
+			</div>
+			<!--Text2 linksunten-->
+			<div>
+				<p>
+					{{course.categorys.documents[documentIndex].content.p[1]}}
+				</p>
+			</div>
+			<!--Bild rechtsunten-->
+			<div>
+				<img src="/img/{{documentImgID}}" alt="TutPic">
+			</div>
+
+
+
+			<br> Template 1
+			
+		</div>
+	</div>
+</body>
+
+</html>
