@@ -277,17 +277,24 @@ def initDB():
     studCorp.insert(allCourses)
 
 
-def getAllUsers():
-    db = client.myTestBase
-    studCorp = db.studCorp
-    fullDB = studCorp.find()
-    return fullDB[0]['users']
 
 def getAllUsersWrapperObject():
     db = client.myTestBase
     studCorp = db.studCorp
     fullDB = studCorp.find()
     return fullDB[0]
+
+
+def getAllUsers():
+    db = client.myTestBase
+    studCorp = db.studCorp
+    fullDB = studCorp.find()
+    return fullDB[0]['users']
+
+def getUserByMail(mail):
+    users = getAllUsers()
+    user = next((x for x in users if x['mail'] == mail), None)
+    return user
 
 
 def getAllCoursesWrapperObject():
@@ -695,10 +702,11 @@ def register():
         lastName = request.form.get('lastName')
         nickname = request.form.get('nickname')
         password = request.form.get('password')
+        password2 = request.form.get('password2')
         isTutor = request.form.get('isTutor')
 
         #checking if inputs are valide
-        if len(mail) > 0 and len(firstName) and len(lastName) > 0 and len(password) > 0:
+        if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 and len(password) > 0 and password == password2:
             
             #check if the user already exists
             if userExists(mail) == False:
@@ -737,6 +745,19 @@ def register():
     else:
         return render_template('register.html')
 
+@app.route('/login', methods = ['POST'])
+def login():
+    mail = request.form.get('mail')
+    password = request.form.get('password')
+
+    user = getUserByMail(mail)
+
+    if user:
+        if bcrypt.hashpw(password.encode('utf-8'), user['passphrase']) == user['passphrase']:
+            session['mail'] = mail
+            return 'logged in'
+
+    return 'Invalid username/password combination'
 
 # --------Get BootStrap-Content-Routen-------
 @app.route('/assets/bootstrap/css/<filename>')
@@ -817,4 +838,4 @@ if __name__ == "__main__":
     # fillDB()
 
     app.secret_key = 'oiwfhwinehi' #add rnd chars here
-    app.run(debug=True, host='localhost')
+    app.run(debug=True, host='0.0.0.0')
