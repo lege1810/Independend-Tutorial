@@ -445,6 +445,9 @@ def getuserWithMail(mail):
     user = next((x for x in users if x['mail'] == mail), None)
     return user
 
+def getUserFromSession():
+    return getuserWithMail(session['mail'])
+
 # checking if user is logged in
 def isLoggedIn():
     return 'mail' in session
@@ -455,12 +458,19 @@ def editTutIndex():
     courseID = request.args.get('courseID')
     emptyCourse = {}
     foundCourse = getCourseWithString(courseID)
-    if foundCourse == emptyCourse:
-        print("Kurs nicht gefunden!")
-        return
-    else:
-        return render_template('editTutorial.html', course=foundCourse)
-
+    if isLoggedIn():
+        userFromSession = getUserFromSession()
+        for courseidSession in userFromSession['ownCourses']:
+            if str(courseidSession) == courseID:
+                if foundCourse == emptyCourse:
+                    print("Kurs nicht gefunden!")
+                    return getIndex()
+                else:
+                    return render_template('editTutorial.html', course=foundCourse)
+        
+    
+    print("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
+    return getIndex()
 
 # Wenn Tutorial schon existiert
 @app.route('/editTutorial', methods=['POST'])
@@ -499,8 +509,8 @@ def uploadTutorial():
         print("Nicht eingeloggt")
         return getIndex()
 
-    foundUser = getuserWithMail(session['mail'])
-    if request.method == 'POST' and foundUser['isTutor']:
+    userFromSession = getuserWithMail(session['mail'])
+    if request.method == 'POST' and userFromSession['isTutor']:
 
         courseBanner = request.files.getlist('courseBanner')
         courseName = request.form.get('courseName')
@@ -559,37 +569,47 @@ def uploadTutorial():
                     rawVideo, filename=pagesVideo[x].filename, _id=videoID)
             newTut['categorys']['documents'].append(newDoc)
 
+        print("Tutorial ID ")
+       
+       #hänge KursID an die OwnCourses vom Tutor aus der Session
+        allUser = getAllUsersWrapperObject()
+        for user in allUser['users']:
+            if user['id'] == userFromSession['id']:
+                user['ownCourses'].append(newTut['id'])
+                break
+        updateDataBase('allUsers', allUser)
+
         # hänge neuen Kurs an alle Kurse ran
         allCourses = getAllCoursesWrapperObject()
         allCourses['courses'].append(newTut)
         # update alle Kurse in DB
         updateDataBase('allCourses', allCourses)
-        # testweise auf Startseite
+        #öffne erstelltes Tutorium 
         return renderTutorialTemplate(newTut, 0, newTut['categorys']['documents'][0]['content']['courseImgID'],
                                       newTut['categorys']['documents'][0]['content']['courseVideoID'])
-    elif request.method == 'GET' and foundUser!= None:
-        if foundUser['isTutor']:
+    elif request.method == 'GET' and userFromSession!= None:
+        if userFromSession['isTutor']:
             return render_template('upload.html')
         else:
             print("User ist kein Tutor")
             return getIndex()
+    else:
+        return getIndex()        
    
 
-# Um auf Seite 1 zu kommen, wenn Tutorial geöffnet wird.
+# Wahrscheinlich nicht mehr notwendig, /Tutorial/ behandelt alles hieraus
+# @app.route('/Tutorial', methods=['GET'])
+# def getTutorialWithoutDocumentID():
+#     courseID = request.args.get('courseID')
+#     course = getCourseIfExists(courseID)
 
+#     # documentIndex immer 0, wenn Tutorial ohne Dokument geöffnet wird
+#     documentIndex = 0
 
-@app.route('/Tutorial', methods=['GET'])
-def getTutorialWithoutDocumentID():
-    courseID = request.args.get('courseID')
-    course = getCourseIfExists(courseID)
+#     documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
+#     documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
 
-    # documentIndex immer 0, wenn Tutorial ohne Dokument geöffnet wird
-    documentIndex = 0
-
-    documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
-    documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
-
-    return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
+#     return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
 
 # Um auf die anderen Seiten des Tutorials zu kommen
 
@@ -678,10 +698,11 @@ def login():
         if user:
             if bcrypt.hashpw(password.encode('utf-8'), user['passphrase']) == user['passphrase']:
                 session['mail'] = mail
-                return 'logged in'
+                print("logged in")
+                return getIndex()
 
         return 'Invalid username/password combination'
-    elif request.method == 'GET' and session == None:
+    elif request.method == 'GET' and not isLoggedIn():
         return render_template('loginTemplate.html')
     else:
         print("else in login, session: ", session)
@@ -763,9 +784,9 @@ def getImg(imgid):
 
 # startpunkt des py-programms
 if __name__ == "__main__":
-    deleteCollection()
+    #deleteCollection()
     
-    initDB()
+    #initDB()
     # fillDB()
 
     app.secret_key = 'oiwfhwinehi'  # add rnd chars here
