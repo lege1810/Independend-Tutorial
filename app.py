@@ -11,6 +11,7 @@ client = MongoClient()
 app = Flask(__name__, template_folder='templates')
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+
 def newAllUsers():
     return{
         'users': [],
@@ -32,8 +33,6 @@ def newEmptyUserCourse():
             'courseID': None
         }
     }
-
-# Tutor ist auch nur ein User!
 
 
 def newEmptyUser():
@@ -95,6 +94,7 @@ def newAnswer():
         'answerText': None,
         'answerIsCorrect': None
     }
+
 
 def fillDB():
     # DB-Connection
@@ -277,7 +277,6 @@ def initDB():
     studCorp.insert(allCourses)
 
 
-
 def getAllUsersWrapperObject():
     db = client.myTestBase
     studCorp = db.studCorp
@@ -290,6 +289,7 @@ def getAllUsers():
     studCorp = db.studCorp
     fullDB = studCorp.find()
     return fullDB[0]['users']
+
 
 def getUserByMail(mail):
     users = getAllUsers()
@@ -326,7 +326,7 @@ def getCourseWithString(courseID):
     allCourses = getAllCourses()
     foundcourse = {}
     for course in allCourses:
-        print("DB ",course['id'], " courseID ", courseID)
+        print("DB ", course['id'], " courseID ", courseID)
         if str(course['id']) == courseID:
             foundcourse = course
             break
@@ -358,6 +358,7 @@ def getUser(cookieID):
             break
     return foundUser
 
+
 def updateDataBase(whatToUpdate, document):
     db = client.myTestBase
     studCorp = db.studCorp
@@ -366,8 +367,6 @@ def updateDataBase(whatToUpdate, document):
         studCorp.update_one(docSelector, {"$set": document})
     except Exception:
         print("Fehler in UpdateDataBase, Dokument zum updaten nicht gefunden.")
-
-
 
 
 def getDocumentIndex(documentID, course):
@@ -386,13 +385,13 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
     templateToRender = None
     if int(course['categorys']['documents'][documentIndex]['styleTyp']) == 1:
         print("Template 1 ausgeführt")
-        templateToRender = render_template('tutorialStyle1.html', user=getUser(
-            1), course=course, documentIndex=documentIndex, 
+        templateToRender = render_template('tutorialStyle1.html', user=getuserWithMail(
+            session['mail']), course=course, documentIndex=documentIndex,
             documentImgID=documentImgID, documentVideoID=documentVideoID)
     else:
         print("Template 2 ausgeführt")
-        templateToRender = render_template('tutorialStyle2.html', user=getUser(
-            1), course=course, documentIndex=documentIndex, 
+        templateToRender = render_template('tutorialStyle2.html', user=getuserWithMail(
+            session['mail']), course=course, documentIndex=documentIndex,
             documentImgID=documentImgID)
     return templateToRender
 
@@ -434,22 +433,21 @@ def isCourseOwner(userID, courseID):
             break
     return userIsCourseOwner
 
-
-
-#checking if user already exits by comparing mail
+# checking if user already exits by comparing mail
 def userExists(mail):
     users = getAllUsers()
     user = next((x for x in users if x['mail'] == mail), None)
     return user is not None
 
-#checking if user is logged in
+def getuserWithMail(mail):
+    users = getAllUsers()
+    emptyUser = {}
+    user = next((x for x in users if x['mail'] == mail), None)
+    return user
+
+# checking if user is logged in
 def isLoggedIn():
     return 'mail' in session
-
-@app.route('/uploadIndex')
-def uploadIndex():
-    #return render_template('upload.html')
-    return render_template('upload.html')
 
 
 @app.route('/changeTutorial', methods=['GET'])
@@ -459,10 +457,9 @@ def editTutIndex():
     foundCourse = getCourseWithString(courseID)
     if foundCourse == emptyCourse:
         print("Kurs nicht gefunden!")
-        return 
+        return
     else:
-      
-        return render_template('editTutorial.html', course = foundCourse)
+        return render_template('editTutorial.html', course=foundCourse)
 
 
 # Wenn Tutorial schon existiert
@@ -470,13 +467,12 @@ def editTutIndex():
 def editTutorial():
     #userID = request.args.get('cookieID')
     courseID = request.args.get('courseID')
-    #if isCourseOwner(userID, courseID)
+    # if isCourseOwner(userID, courseID)
     courseIndex = getCourseIndex(courseID)
     allCourses = getAllCoursesWrapperObject()
-    #bearbeite KursInformationen
+    # bearbeite KursInformationen
 
-
-    #Wenn Feld leer, überschreibe nicht!!!!!!!!111
+    # Wenn Feld leer, überschreibe nicht!!!!!!!!111
 
     #allCourses['courses'][courseIndex]['courseImgID'] = imgID
 
@@ -496,78 +492,88 @@ def getIndex():
     return render_template('index.html', courses=requiredCourses)
 
 
-@app.route('/uploadTutorial', methods=['POST'])
+@app.route('/uploadTutorial', methods=['POST', 'GET'])
 def uploadTutorial():
-    #userID = request.args.get('cookieID')
-    # if userIsTutor(userID)
-    # ...
 
+    if not isLoggedIn():
+        print("Nicht eingeloggt")
+        return getIndex()
+
+    foundUser = getuserWithMail(session['mail'])
+    if request.method == 'POST' and foundUser['isTutor']:
+
+        courseBanner = request.files.getlist('courseBanner')
+        courseName = request.form.get('courseName')
+        courseDescription = request.form.get('courseDescription')
+
+        pagesTitle = request.form.getlist('pageTitle')
+        pagesStyle = request.form.getlist('pageStyle')
+        pagesVideo = request.files.getlist('videoFile')
+        pagesText = request.form.getlist('docText')
+        pagesText2 = request.form.getlist('docText2')
+        pagesImg = request.files.getlist('courseImg')
+        countPages = request.form.get('countPages')
+
+        newTut = newEmptyCourse()
+        if courseName:
+            newTut['name'] = courseName
+        else:
+            return render_template('upload.html', info='Geben Sie mindestens einen Namen für das Tutorial an.')
+        if courseDescription:
+            newTut['description'] = courseDescription
+
+        # öffne Grid-Fs-Collection
+        db = client.myTestBase
+        fsCollection = gridfs.GridFS(db)
+
+        # für Kurs-banner
+        bannerID = ObjectId()
+        if len(courseBanner) > 0:
+            newTut['courseBannerID'] = bannerID
+            fsCollection.put(
+                courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
+
+     # für jede Seite im erstellten Kurs:
+        for x in range(0, int(countPages)):
+            # für Kurs Img/video
+            imgID = ObjectId()
+            videoID = ObjectId()
+
+            # Neues Dokument
+            newDoc = newDocument()
+            if len(pagesTitle) > x:
+                newDoc['title'] = pagesTitle[x]
+            newDoc['styleTyp'] = pagesStyle[x]
+            if len(pagesText) > x:
+                newDoc['content']['p'].append(pagesText[x])
+            if len(pagesText2) > x:
+                newDoc['content']['p'].append(pagesText2[x])
+            if len(pagesImg) > x:
+                newDoc['content']['courseImgID'] = imgID
+                fsCollection.put(
+                    pagesImg[x], filename=pagesImg[x].filename, _id=imgID)
+            if len(pagesVideo) > x:
+                newDoc['content']['courseVideoID'] = videoID
+                rawVideo = pagesVideo[x].read()
+                fsCollection.put(
+                    rawVideo, filename=pagesVideo[x].filename, _id=videoID)
+            newTut['categorys']['documents'].append(newDoc)
+
+        # hänge neuen Kurs an alle Kurse ran
+        allCourses = getAllCoursesWrapperObject()
+        allCourses['courses'].append(newTut)
+        # update alle Kurse in DB
+        updateDataBase('allCourses', allCourses)
+        # testweise auf Startseite
+        return renderTutorialTemplate(newTut, 0, newTut['categorys']['documents'][0]['content']['courseImgID'],
+                                      newTut['categorys']['documents'][0]['content']['courseVideoID'])
+    elif request.method == 'GET' and foundUser!= None:
+        if foundUser['isTutor']:
+            return render_template('upload.html')
+        else:
+            print("User ist kein Tutor")
+            return getIndex()
    
-    courseBanner = request.files.getlist('courseBanner')
-    courseName = request.form.get('courseName')
-    courseDescription = request.form.get('courseDescription')
-
-    # für jede Seite im Tutorial
-    pagesTitle = request.form.getlist('pageTitle')
-    pagesStyle = request.form.getlist('pageStyle')
-    pagesVideo = request.files.getlist('videoFile')
-    pagesText = request.form.getlist('docText')
-    pagesText2 = request.form.getlist('docText2')
-    pagesImg = request.files.getlist('courseImg')
-    countPages = request.form.get('countPages')
-
-
-    newTut = newEmptyCourse()
-    if courseName:
-        newTut['name'] = courseName
-    else:
-        return render_template('upload.html', info = 'Geben Sie mindestens einen Namen für das Tutorial an.')
-    if courseDescription:
-        newTut['description'] = courseDescription
-
-    # öffne Grid-Fs-Collection
-    db = client.myTestBase
-    fsCollection = gridfs.GridFS(db)
-
-    # für Kurs-banner
-    bannerID = ObjectId()
-    if len(courseBanner) > 0:
-        newTut['courseBannerID'] = bannerID
-        fsCollection.put(courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
-
-    
-    # für jede Seite im erstellten Kurs:
-    for x in range(0, int(countPages)):
-        # für Kurs Img/video
-        imgID = ObjectId()
-        videoID = ObjectId()
-
-        # Neues Dokument
-        newDoc = newDocument()
-        if len(pagesTitle) > x:
-            newDoc['title'] = pagesTitle[x]
-        newDoc['styleTyp'] = pagesStyle[x]
-        if len(pagesText) > x:
-            newDoc['content']['p'].append(pagesText[x])
-        if len(pagesText2) > x:
-            newDoc['content']['p'].append(pagesText2[x])
-        if len(pagesImg) > x:
-            newDoc['content']['courseImgID'] = imgID
-            fsCollection.put(pagesImg[x], filename=pagesImg[x].filename, _id=imgID)
-        if len(pagesVideo) > x:
-            newDoc['content']['courseVideoID'] = videoID
-            rawVideo = pagesVideo[x].read()
-            fsCollection.put(rawVideo, filename=pagesVideo[x].filename, _id=videoID)
-        newTut['categorys']['documents'].append(newDoc)
-
-    # hänge neuen Kurs an alle Kurse ran
-    allCourses = getAllCoursesWrapperObject()
-    allCourses['courses'].append(newTut)
-    # update alle Kurse in DB
-    updateDataBase('allCourses', allCourses)
-
-    # testweise auf Startseite
-    return getIndex()
 
 # Um auf Seite 1 zu kommen, wenn Tutorial geöffnet wird.
 
@@ -600,14 +606,15 @@ def getTutorialWithDocumentID():
     else:
         documentIndex = 0
 
-    
     documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
     documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
 
     return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
 
-#show register form or save register informations in mongo
-@app.route('/register', methods = ['POST', 'GET'])
+# show register form or save register informations in mongo
+
+
+@app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
         mail = request.form.get('mail')
@@ -618,18 +625,19 @@ def register():
         password2 = request.form.get('password2')
         isTutor = request.form.get('isTutor')
 
-        #checking if inputs are valide
+        # checking if inputs are valide
         if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 and len(password) > 0 and password == password2:
-            
-            #check if the user already exists
-            if userExists(mail) == False:
-                #get all users
-                allUsers = getAllUsersWrapperObject()
-                
-                #generate salted hash
-                passphrase = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-                #create new user
+            # check if the user already exists
+            if userExists(mail) == False:
+                # get all users
+                allUsers = getAllUsersWrapperObject()
+
+                # generate salted hash
+                passphrase = bcrypt.hashpw(
+                    password.encode('utf-8'), bcrypt.gensalt())
+
+                # create new user
                 singleExampleUser = newEmptyUser()
                 singleExampleUser['mail'] = mail
                 singleExampleUser['first_name'] = firstName
@@ -640,11 +648,11 @@ def register():
                     singleExampleUser['isTutor'] = False
                 else:
                     singleExampleUser['isTutor'] = True
-                
-                #append user
+
+                # append user
                 allUsers['users'].append(singleExampleUser)
 
-                #update alle Kurse in DB
+                # update alle Kurse in DB
                 updateDataBase('allUsers', allUsers)
 
                 #logging in user
@@ -658,19 +666,26 @@ def register():
     else:
         return render_template('register.html')
 
-@app.route('/login', methods = ['POST'])
+
+@app.route('/login', methods=['POST', 'GET'])
 def login():
-    mail = request.form.get('mail')
-    password = request.form.get('password')
+    if request.method == 'POST':
+        mail = request.form.get('mail')
+        password = request.form.get('password')
 
-    user = getUserByMail(mail)
+        user = getUserByMail(mail)
 
-    if user:
-        if bcrypt.hashpw(password.encode('utf-8'), user['passphrase']) == user['passphrase']:
-            session['mail'] = mail
-            return 'logged in'
+        if user:
+            if bcrypt.hashpw(password.encode('utf-8'), user['passphrase']) == user['passphrase']:
+                session['mail'] = mail
+                return 'logged in'
 
-    return 'Invalid username/password combination'
+        return 'Invalid username/password combination'
+    elif request.method == 'GET' and session == None:
+        return render_template('loginTemplate.html')
+    else:
+        print("else in login, session: ", session)
+        return getIndex()
 
 # --------Get BootStrap-Content-Routen-------
 @app.route('/assets/bootstrap/css/<filename>')
@@ -704,6 +719,8 @@ def send_js(filename):
 # ------------------------------------------------
 
 # geht auch mit file, statt videos und imgs getrennt zu behandeln, später ändern!
+
+
 @app.route('/video/<videoid>')
 def getVideo(videoid):
     if videoid != 'None':
@@ -747,8 +764,9 @@ def getImg(imgid):
 # startpunkt des py-programms
 if __name__ == "__main__":
     deleteCollection()
+    
     initDB()
     # fillDB()
 
-    app.secret_key = 'oiwfhwinehi' #add rnd chars here
+    app.secret_key = 'oiwfhwinehi'  # add rnd chars here
     app.run(debug=True, host='0.0.0.0')
