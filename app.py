@@ -503,9 +503,9 @@ def getIndex():
     #userLoged entscheidet, von welchem der Templates geerbt werden soll, nice oder? :D
     return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
     #return render_template('index.html')
+
 @app.route('/uploadTutorial', methods=['POST', 'GET'])
 def uploadTutorial():
-
     if not isLoggedIn():
         print("Nicht eingeloggt")
         return getIndex()
@@ -545,6 +545,8 @@ def uploadTutorial():
                 courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
 
      # für jede Seite im erstellten Kurs:
+        pagesIndex = 0
+        vidIndex = 0
         for x in range(0, int(countPages)):
             # für Kurs Img/video
             imgID = ObjectId()
@@ -560,15 +562,20 @@ def uploadTutorial():
             if len(pagesText2) > x:
                 newDoc['content']['p'].append(pagesText2[x])
             #Wenn es nur ein BIld und ein Video gibt, werden die gerade beide an die erste Seite im Tutorial angehängt!!!! ÄNDERN
-            if len(pagesImg) > x:
+            print("styles ", pagesStyle)
+            if pagesStyle[x] == '2':
+                print("Style 2 und Pagesindex ", pagesIndex)
                 newDoc['content']['courseImgID'] = imgID
                 fsCollection.put(
-                    pagesImg[x], filename=pagesImg[x].filename, _id=imgID)
-            if len(pagesVideo) > x:
+                    pagesImg[pagesIndex], filename=pagesImg[pagesIndex].filename, _id=imgID)
+                pagesIndex = pagesIndex + 1
+            if  pagesStyle[x] == '1':
+                print("Style 1 und videoIndex = ", vidIndex)
                 newDoc['content']['courseVideoID'] = videoID
-                rawVideo = pagesVideo[x].read()
+                rawVideo = pagesVideo[vidIndex].read()
                 fsCollection.put(
-                    rawVideo, filename=pagesVideo[x].filename, _id=videoID)
+                    rawVideo, filename=pagesVideo[vidIndex].filename, _id=videoID)
+                vidIndex = vidIndex +1
             newTut['categorys']['documents'].append(newDoc)
 
         print("Tutorial ID ")
