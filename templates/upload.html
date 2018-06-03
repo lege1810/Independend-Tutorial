@@ -1,78 +1,124 @@
-<html>
-    <div style="color:red">{{info}}</div>
-<form action="/uploadTutorial" method="POST" enctype="multipart/form-data">
-    <div>
-        Kurs Name
-        <input type="text" name="courseName">
-    </div>
+{% extends "unloggedLayout.html" %} {% block content %}
+<div style="color:red">{{info}}</div>
 
-    Kurs Bild
-    <input type="file" name="courseBanner" accept="image/*">
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form action="/uploadTutorial" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
 
-    <div>
-        Kurs Beschreibung
-        <input type="text" name="courseDescription">
-    </div>
+                        <h3>Tutorium erstellen:</h3>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Kursname</label>
+                            </div>
+                            <div class="col">
+                                <input type="text" name="courseName">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Bild zum Kurs (anzeige auf der Overview)</label>
+                            </div>
+                            <div class="col">
+                                <input type="file" name="courseBanner" accept="image/*" style="width:700px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Kursbeschreibung</label>
+                            </div>
+                            <div class="col">
+                                <textarea name="courseDescription"></textarea>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div id="allPages">
+                            <div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="col-form-label">Titel der Seite</label>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" name="pageTitle">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="col-form-label">Template für die aktuelle Seite</label>
+                                    </div>
+                                    <div class="col">
+                                        <select name="pageStyle" >
+                                            <option>1</option>
+                                            <option>2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Beispiel Bild, wie Tutorial mit ausgewähltem Style aussieht
+                                <div class="row">
+                                    <div class="col">
+                                        <img style="width:700px;height:350px;">
+                                    </div>
+                                </div>
+                                -->
+                                <div class="row" id="uploadVideoOrImg">
+                                    <div style="display: block;" name="videoUpload">
+                                        <div class="col">
+                                            <label class="col-form-label">Video hinzufügen&nbsp;</label>
+                                        </div>
+                                        <div class="col">
+                                            <input id="video_file" name="videoFile" accept="video/*" type="file" style="width:700px;">
+                                        </div>
+                                    </div>
+                                    <div style="display: none;" name="ImgUpload">
+                                        <div class="col">
+                                            <label class="col-form-label">Bild hinzufügen&nbsp;</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="file" name="courseImg" accept="image/*" style="width:700px;">
+                                        </div>
+                                    </div>
+                                </div>
 
-    <!--Eine Seite-->
-    <div id="allPages">
-        <div name="singlePage">
-            <br>
-            <div>
-                Titel der Seite:
-                <input type="text" name="pageTitle">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="col-form-label">Texte auf dieser Seite:</label>
+                                    </div>
+                                    <div class="col">
+                                        <textarea name="docText"></textarea>
+                                    </div>
+                                </div>
+                                <br><br><br><br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Weitere Seite zum Tutorium hinzufügen</label>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-light" type="button" id="addPage">Seite hinzufügen</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="btn-group" role="group">
+                                    <input type="hidden" id="pageCount" name="countPages" value="1">
+                                    <input class="btn btn-light" type="submit" value="Speichern">
+
+                                    <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
+
+                                </div>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div>
-                Style der Seite:
-                <!-- DropDown für 1 und 2, je nach Auswahl wird
-                    mit Javascript Möglichkeit fürs hochladen eines Videos ein und ausgeblendet-->
-                <select name="pageStyle" value="1">
-                    <option>1</option>
-                    <option>2</option>
-                </select>
-                <div>
-                    <img src="" alt="Das Beispiel Bild, wie Tutorium mit dem ausgewählten Style aussieht">
-                </div>
-            </div>
-        
-            <div name="uploadVideo">
-                Upload Video:
-                <input id="video_file" name="videoFile" accept="video/*" type="file">
-            </div>
-        
-            <br> Große Textbox für Texte..
-            <div>
-                <textarea rows="6" cols="50" name="docText"></textarea>
-            </div>
-        
-            <div>
-                Beschreibendes Bild für Seite des Tutoriums
-                <input type="file" name="courseImg" accept="image/*">
-            </div>
-        
-            Große Textbox für Bildbeschreibung..
-            <div>
-                <textarea rows="6" cols="50" name="docText2"></textarea>
-            </div>
-            ----------------------------------------
-            <br>
         </div>
     </div>
+</div>
 
-    <div>
-        Weitere Seite zum Tutorium hinzufügen:
-        <button type="button" id="addPage">
-            Seite hinzufügen
-        </button>
-    </div>
-
-    <br>
-
-    <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
-
-    <input type="hidden" id="pageCount" name="countPages"value="1">
-    <input type="submit">
-</form>
 <script>
     pageCount = document.getElementById("pageCount")
     addPageButton = document.getElementById("addPage");
@@ -82,20 +128,23 @@
     addPageButton.addEventListener("click", function () {
         newPage = newPage.cloneNode(true)
         allPages.appendChild(newPage)
-        pageCount.value ++;
+        pageCount.value++;
         initDD()
     });
 
     function initDD() {
         styleDD = document.getElementsByName("pageStyle");
-        videoDiv = document.getElementsByName("uploadVideo");
+        videoDiv = document.getElementsByName("videoUpload");
+        imgDiv =  document.getElementsByName("ImgUpload");
         for (var i = 0; i < styleDD.length; i++) {
             (function (index) {
                 styleDD[index].addEventListener("change", function () {
                     if (styleDD[index].selectedIndex == 0) {
-                        videoDiv[index].style.visibility = "visible";
+                        videoDiv[index].style.display = "block";
+                        imgDiv[index].style.display = "none";
                     } else {
-                        videoDiv[index].style.visibility = "hidden";
+                        videoDiv[index].style.display = "none";
+                        imgDiv[index].style.display= "block";
                     }
                 });
             })(i);
@@ -103,6 +152,4 @@
     }
     initDD()
 
-</script>
-
-</html>
+</script> {% endblock %}

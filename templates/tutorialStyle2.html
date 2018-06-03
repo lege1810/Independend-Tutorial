@@ -1,130 +1,58 @@
-<!DOCTYPE html>
-<html lang="de">
-
-<head>
-
-</head>
-
-<body>
-	<nav>
-		<div>
-			<ul>
-				<li>
-					<a href="">Kurse</a>
-				</li>
-				<li>
-					<a href="">Neuigkeiten</a>
-				</li>
-				<li>
-					<a href="">{{ user.nickname }}</a>
-					<ul class="dropdown-menu">
-						<li>
-							<a href="">Dashboard</a>
+{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content
+	%}
+	<div style="margin-top:0px;padding-bottom:15px;">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
+						<li class="nav-item">
+							<a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
 						</li>
-						<li>
-							<a href="">Profil</a>
+						<li class="nav-item">
+							<a class="nav-link text-capitalize" href="#">Diskussionen</a>
 						</li>
-						<li>
-							<a href="">Einstellungen ?</a>
+						<li class="nav-item">
+							<a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
 						</li>
-						<li>
-							<a>Abmelden</a>
+						<li class="nav-item">
+							<a class="nav-link text-capitalize" href="overview_tut.html">Kursdetails</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-capitalize" href="overview_tut.html">Recap</a>
 						</li>
 					</ul>
-				</li>
-			</ul>
-		</div>
-		</div>
-	</nav>
-	<div>
-		<div>
-			<div>{{ course.name }}</div>
-			<div>{{ course.description }}</div>
-		</div>
-	</div>
-	<div>
-		<div>
-			<noscript>
-				<div>
-					<a target="_blank" href="http://www.enable-javascript.com/">Bitte aktivieren Sie Javascript in ihrem Browser!!</a>
 				</div>
-			</noscript>
-		</div>
-		<div>
-			<div>
-				<div>{{ course.id }}</div>
-				<div>
-					<div>
-						<ul>
-							<li>
-								<a href="">Lernmaterial</a>
+			</div>
+			<div class="row">
+				<div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
+					<aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">
+						<ul class="list-group nav nav-tabs card-header-tabs">
+							{% for document in course.categorys.documents %}
+							<li class="list-group-item nav-item" style="padding:0px;">
+								<a class="nav-link" href="/Tutorial/?courseID={{ course.id }}&documentID={{document.id}}">
+									<span style="margin:0px;padding:0px;">{{ document.title }}</span>
+								</a>
 							</li>
-							<li>
-								<a href="">Diskussionen ?</a>
-							</li>
-							<li>
-								<a href="">Fortschritt</a>
-							</li>
-							<li>
-								<a href="">Lernräume ?</a>
-							</li>
-							<li>
-								<a href="">Kursdetails</a>
-							</li>
-							<li>
-								<a href="">Neuigkeiten ?</a>
-							</li>
-							<li>
-								<a href="">Recap</a>
+							{% endfor %}
+	
+							<li class="list-group-item nav-item" style="padding:0px;">
+								<a href="/downloads/?courseID={{ course.id }}" class="nav-link">
+									<span style="margin:0px;padding:0px;">Downloads</span>
+								</a>
 							</li>
 						</ul>
+					</aside>
+				</div>
+				<div class="col-md-8">
+					<div class="card" style="margin-right:0px;margin-left:-15px;">
+						<div class="card-body">
+							<h4 class="card-title">{{course.categorys.documents[documentIndex].title}}</h4>
+							<img class="d-block" src="/img/{{documentImgID}}" width="560" height="315" style="margin:0 auto;width:700px;">
+							<p class="card-text">{{course.categorys.documents[documentIndex].content.p[0]}}</p>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div>
-				<a>Zurück</a>
-				<a>Weiter</a>
-			</div>
-			<div>
-				<ul>
-					{% for document in course.categorys.documents %}
-					<li>
-						<a href="/Tutorial/?courseID={{ course.id }}&documentID={{document.id}}">{{ document.title }}</a>
-					</li>
-					{% endfor %}
-				</ul>
-			</div>
-		</div>
-		<div>
-			<h1>
-				{{course.categorys.documents[documentIndex].title}}
-			</h1>
-		</div>
-		<div>
-			<br> Content
-			<br>
-			<!--Text1 oben-->
-			<div>
-				<p>
-					{{course.categorys.documents[documentIndex].content.p[0]}}
-				</p>
-			</div>
-			<!--Text2 linksunten-->
-			<div>
-				<p>
-					{{course.categorys.documents[documentIndex].content.p[1]}}
-				</p>
-			</div>
-			<!--Bild rechtsunten-->
-			<div>
-				<img src="/img/{{documentImgID}}" alt="TutPic">
-			</div>
-
-
-			Template 2
-			<br>
 		</div>
 	</div>
-</body>
-
-</html>
+	{% endblock %}

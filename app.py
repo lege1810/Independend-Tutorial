@@ -487,7 +487,7 @@ def editTutorial():
     #allCourses['courses'][courseIndex]['courseImgID'] = imgID
 
 
-@app.route('/index', methods=['GET'])
+@app.route('/', methods=['GET'])
 def getIndex():
     courses = getAllCourses()
     requiredCourses = getIndexTutorials(courses)
@@ -499,9 +499,10 @@ def getIndex():
         if course['id'] != None:
             course['courseImg'] = course['courseBannerID']
 
-    return render_template('index.html', courses=requiredCourses)
-
-
+    #langingPage.html erbt von unloggedLayout oder loggedLayout, 
+    #userLoged entscheidet, von welchem der Templates geerbt werden soll, nice oder? :D
+    return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
+    #return render_template('index.html')
 @app.route('/uploadTutorial', methods=['POST', 'GET'])
 def uploadTutorial():
 
@@ -558,6 +559,7 @@ def uploadTutorial():
                 newDoc['content']['p'].append(pagesText[x])
             if len(pagesText2) > x:
                 newDoc['content']['p'].append(pagesText2[x])
+            #Wenn es nur ein BIld und ein Video gibt, werden die gerade beide an die erste Seite im Tutorial angehängt!!!! ÄNDERN
             if len(pagesImg) > x:
                 newDoc['content']['courseImgID'] = imgID
                 fsCollection.put(
