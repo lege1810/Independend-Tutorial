@@ -501,8 +501,8 @@ def getIndex():
 
     #langingPage.html erbt von unloggedLayout oder loggedLayout, 
     #userLoged entscheidet, von welchem der Templates geerbt werden soll, nice oder? :D
-    return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
-    #return render_template('index.html')
+    #return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
+    return render_template('index.html')
 
 @app.route('/uploadTutorial', methods=['POST', 'GET'])
 def uploadTutorial():
