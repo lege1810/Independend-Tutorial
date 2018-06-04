@@ -39,6 +39,25 @@
         </div>
         </div>
     </nav>
+    <nav class="navbar navbar-light navbar-expand-md sticky-top navigation-clean-search" style="padding:15px;margin-left:40px;margin-right:40px;">
+        <div class="container-fluid"><a class="navbar-brand text-capitalize" href="index.html" style="margin:0px;padding:0px;">Independent Tutorials</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1" style="padding:0px;"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div
+                class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav ml-auto" style="margin:0px;">
+                    <li class="nav-item" role="presentation"><a class="nav-link text-capitalize" href="#">About Us</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link text-capitalize" href="#">News</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link text-capitalize" href="overview_tut.html">Tutorials</a></li>
+                    <li class="dropdown show"><a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">{userneme}</a>
+                        <div class="dropdown-menu show" role="menu" style="margin-right:0px;margin-top:0px;margin-left:-35px;padding-left:4px;">
+                            <a class="dropdown-item" role="presentation" href="#" style="margin-left:0px;padding-left:0px;padding-right:0px;padding-bottom:4px;">
+                                <div class="btn-group" role="group"><button class="btn btn-light" type="button">Profile</button><button class="btn btn-light" type="button">Logout</button></div>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+        </div>
+        </div>
+    </nav>
     <div style="margin-top:0px;padding-bottom:15px;">
         <div class="container">
             <div class="row">
@@ -520,6 +539,44 @@
     </div>
     <div style="margin-top:0px;padding-bottom:15px;">
         <div class="container">
+            <div class="row register-form">
+                <div class="col-md-8 offset-md-2">
+                    <form class="custom-form">
+                        <h1>Update Profile</h1>
+                        <div class="form-row form-group">
+                            <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Vorname </label></div>
+                            <div class="col-sm-6 input-column"><input class="form-control" type="text"></div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Name </label></div>
+                            <div class="col-sm-6 input-column"><input class="form-control" type="text"></div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-sm-4 label-column"><label class="col-form-label" for="name-input-field">Nickname </label></div>
+                            <div class="col-sm-6 input-column"><input class="form-control" type="text"></div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-sm-4 label-column"><label class="col-form-label" for="email-input-field">Email </label></div>
+                            <div class="col-sm-6 input-column"><input class="form-control" type="email"></div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-sm-4 label-column"><label class="col-form-label" for="pawssword-input-field">Password </label></div>
+                            <div class="col-sm-6 input-column"><input class="form-control" type="password"></div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-sm-4 label-column"><label class="col-form-label" for="repeat-pawssword-input-field">Password wiederholen</label></div>
+                            <div class="col-sm-6 input-column"><input class="form-control" type="password"></div>
+                        </div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Ich möchte mich als Tutor registrieren</label></div><button class="btn btn-light" type="button">speichern</button>
+                        <button
+                            class="btn btn-light" type="button">Änderungen Verwerfen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:0px;padding-bottom:15px;">
+        <div class="container">
             <div class="row">
                 <div class="col">
                     <div class="form-group">
@@ -529,7 +586,7 @@
                             <div class="col"><input type="text"></div>
                         </div>
                         <div class="row">
-                            <div class="col"><label class="col-form-label">Bild zum Kurs (anzeige auf der Overview</label></div>
+                            <div class="col"><label class="col-form-label">Bild zum Kurs (anzeige auf der Overview)</label></div>
                             <div class="col"><input type="file" style="width:700px;"></div>
                         </div>
                         <div class="row">
@@ -542,7 +599,7 @@
                         </div>
                         <div class="row">
                             <div class="col"><label class="col-form-label">Template für die aktuelle Seite</label></div>
-                            <div class="col"></div>
+                            <div class="col"><select><option value="13">Style1</option><option value="14">Style2</option></select></div>
                         </div>
                         <div class="row">
                             <div class="col"><img style="width:700px;height:350px;"></div>
@@ -552,20 +609,16 @@
                             <div class="col"><input type="file" style="width:700px;"></div>
                         </div>
                         <div class="row">
-                            <div class="col"><label class="col-form-label">Label</label></div>
-                            <div class="col"></div>
+                            <div class="col"><label class="col-form-label">Detaillierte Beschreibung</label></div>
+                            <div class="col"><textarea></textarea></div>
                         </div>
                         <div class="row">
-                            <div class="col"><label class="col-form-label">Label</label></div>
-                            <div class="col"></div>
+                            <div class="col"><label class="col-form-label">Bild/ PDF/ etc. hinzufügen</label></div>
+                            <div class="col"><input type="file" style="width:700px;"></div>
                         </div>
                         <div class="row">
-                            <div class="col"><label class="col-form-label">Label</label></div>
-                            <div class="col"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><label class="col-form-label">Label</label></div>
-                            <div class="col"></div>
+                            <div class="col"><label class="col-form-label">Beschreibung zur Datei</label></div>
+                            <div class="col"><textarea></textarea></div>
                         </div>
                         <div class="row">
                             <div class="col"><label class="col-form-label">Weitere Seite zum Tutorium hinzufügen</label></div>
@@ -575,9 +628,25 @@
                             <div class="col">
                                 <div class="btn-group" role="group"><button class="btn btn-light" type="button">Speichern</button><button class="btn btn-light" type="button">Verwerfen</button></div>
                             </div>
-                            <div class="col"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:0px;padding-bottom:15px;">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1 class="text-center">Willkommen bei Independent Tutorials</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p class="text-center">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Cras
+                        justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+                        Donec id elit non mi porta gravida at eget metus.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.&nbsp;Nullam
+                        id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
                 </div>
             </div>
         </div>

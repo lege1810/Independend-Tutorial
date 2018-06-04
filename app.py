@@ -55,12 +55,18 @@ def newEmptyCourse():
         'name': None,
         'description': None,
         'courseBannerID': None,
+        'courseDownloads' : [],
         'categorys': {
             'documents': [],
             'quiz': []},
     }
 
-
+def newCourseDownload():
+    return {
+        'fileID' : None,
+        'fileName' : None,
+        'description': None
+    }
 def newDocument():
     return {
         'title': None,
@@ -534,8 +540,8 @@ def getIndex():
 
     #langingPage.html erbt von unloggedLayout oder loggedLayout, 
     #userLoged entscheidet, von welchem der Templates geerbt werden soll, nice oder? :D
-    #return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
-    return render_template('index.html')
+    return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
+    #return render_template('indexKristof.html')
 
 @app.route('/uploadTutorial', methods=['POST', 'GET'])
 def uploadTutorial():
@@ -557,6 +563,8 @@ def uploadTutorial():
         pagesText2 = request.form.getlist('docText2')
         pagesImg = request.files.getlist('courseImg')
         countPages = request.form.get('countPages')
+        fileDownloads = request.files.getlist('fileDownloads')
+        fileDescription = request.form.getlist('fileDescription')
 
         newTut = newEmptyCourse()
         if courseName:
@@ -613,6 +621,17 @@ def uploadTutorial():
 
         print("Tutorial ID ")
        
+       #hänge fileDownloads ins Grid-fs und die ID dazu in das Tutorial unter courseDownloads an.
+        for x in range(0, len(fileDownloads)):
+            fileID = ObjectId()
+            fsCollection.put(fileDownloads[x], filename=fileDownloads[x].filename, _id=fileID)
+            courseDownload = newCourseDownload()
+            courseDownload['fileID'] = fileID
+            courseDownload['fileName'] = fileDownloads[x].filename
+            courseDownload['description'] = fileDescription[x]
+            newTut['courseDownloads'].append(courseDownload)
+       
+
        #hänge KursID an die OwnCourses vom Tutor aus der Session
         allUser = getAllUsersWrapperObject()
         for user in allUser['users']:
@@ -656,6 +675,13 @@ def uploadTutorial():
 # Um auf die anderen Seiten des Tutorials zu kommen
 
 
+@app.route('/TutorialDownloads/', methods=['GET'])
+def getCourseDownloads():
+    courseID = request.args.get('courseID')
+    course = getCourseIfExists(courseID)
+
+    return render_template('tutorialDownloads.html', course = course)
+
 @app.route('/Tutorial/', methods=['GET'])
 def getTutorialWithDocumentID():
     # cookieID =  #readCookie()
@@ -670,7 +696,7 @@ def getTutorialWithDocumentID():
 
     documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
     documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
-
+    
     return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
 
 # show register form or save register informations in mongo
@@ -820,6 +846,24 @@ def getImg(imgid):
     else:
         return ''
     return response
+
+@app.route('/download/<fileid>')
+def getDownloadFile(fileid):
+    if fileid != 'None':
+        db = client.myTestBase
+        fsCollection = gridfs.GridFS(db)
+        downloadFile = fsCollection.get_last_version(_id=ObjectId(fileid))
+        filename = downloadFile.filename
+        print("DateiName: ", filename)
+
+        response = make_response(downloadFile.read())
+        response.headers['Content-Type'] = 'application/octet-stream'
+        response.headers["Content-Disposition"] = "attachment; filename={}".format(
+            filename)
+    else:
+        print("id leer")
+        return ''
+    return response    
 
 
 
