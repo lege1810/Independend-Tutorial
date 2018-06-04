@@ -245,6 +245,18 @@ def fillDB():
     studCorp.insert(allCourses)
 
 
+def initDB():
+    # DB-Connection
+    db = client.myTestBase
+    # Collection
+    studCorp = db.studCorp
+    allCourses = newAllCourses()
+    allUsers = newAllUsers()
+
+    studCorp.insert(allUsers)
+    studCorp.insert(allCourses)
+
+
 def getCollection():
     # DB-Connection
     db = client.myTestBase
@@ -265,13 +277,6 @@ def deleteCollection():
     db.drop_collection(studCorp)
 
 
-def initDB():
-    # DB-Connection
-    db = client.myTestBase
-    # Collection
-    studCorp = db.studCorp
-    allCourses = newAllCourses()
-    allUsers = newAllUsers()
 
     studCorp.insert(allUsers)
     studCorp.insert(allCourses)
@@ -283,7 +288,7 @@ def getAllUsersWrapperObject():
     fullDB = studCorp.find()
     return fullDB[0]
 
-
+#get all users
 def getAllUsers():
     db = client.myTestBase
     studCorp = db.studCorp
@@ -295,6 +300,33 @@ def getUserByMail(mail):
     users = getAllUsers()
     user = next((x for x in users if x['mail'] == mail), None)
     return user
+
+
+#get user by cookieID
+def getUser(cookieID):
+    allUsers = getAllUsers()
+    foundUser = {}
+    for user in allUsers:
+        if user['id'] == cookieID:
+            foundUser = user
+            break
+    return foundUser
+
+
+def updateUserData(oldUser, newUser):
+    return None
+
+
+#checking if user already exits by comparing mail
+def userExists(mail):
+    users = getAllUsers()
+    user = next((x for x in users if x['mail'] == mail), None)
+    return user is not None
+
+
+#checking if user is logged in
+def isLoggedIn():
+    return 'mail' in session
 
 
 def getAllCoursesWrapperObject():
@@ -367,6 +399,7 @@ def updateDataBase(whatToUpdate, document):
         studCorp.update_one(docSelector, {"$set": document})
     except Exception:
         print("Fehler in UpdateDataBase, Dokument zum updaten nicht gefunden.")
+        
 
 
 def getDocumentIndex(documentID, course):
@@ -741,7 +774,6 @@ def send_fonts(filename):
 @app.route('/assets/img/<filename>')
 def send_image(filename):
     return send_from_directory("templates/assets/img", filename)
-
 
 @app.route('/assets/js/<filename>')
 def send_js(filename):
