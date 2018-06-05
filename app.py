@@ -283,11 +283,6 @@ def deleteCollection():
     db.drop_collection(studCorp)
 
 
-
-    studCorp.insert(allUsers)
-    studCorp.insert(allCourses)
-
-
 def getAllUsersWrapperObject():
     db = client.myTestBase
     studCorp = db.studCorp
@@ -872,7 +867,7 @@ if __name__ == "__main__":
     #deleteCollection()
     
     #initDB()
-    # fillDB()
+    #fillDB()
 
     app.secret_key = 'oiwfhwinehi'  # add rnd chars here
     app.run(debug=True, host='0.0.0.0')
