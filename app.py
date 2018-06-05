@@ -314,8 +314,13 @@ def getUser(cookieID):
     return foundUser
 
 
-def updateUserData(oldUser, newUser):
-    return None
+def updateUserData(mail, newUser):
+    allUsers = getAllUsersWrapperObject()
+    for user in allUsers['users']:
+        if user['mail'] == mail:
+            user = newUser
+            break
+    updateDataBase('allUsers', allUsers)
 
 
 #checking if user already exits by comparing mail
@@ -323,6 +328,16 @@ def userExists(mail):
     users = getAllUsers()
     user = next((x for x in users if x['mail'] == mail), None)
     return user is not None
+
+
+def getUser(cookieID):
+    allUsers = getAllUsers()
+    foundUser = {}
+    for user in allUsers:
+        if user['id'] == cookieID:
+            foundUser = user
+            break
+    return foundUser
 
 
 #checking if user is logged in
@@ -382,16 +397,6 @@ def getCourseIndex(courseID):
     return courseIndex
 
 
-def getUser(cookieID):
-    allUsers = getAllUsers()
-    foundUser = {}
-    for user in allUsers:
-        if user['id'] == cookieID:
-            foundUser = user
-            break
-    return foundUser
-
-
 def updateDataBase(whatToUpdate, document):
     db = client.myTestBase
     studCorp = db.studCorp
@@ -419,13 +424,19 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
     templateToRender = None
     if int(course['categorys']['documents'][documentIndex]['styleTyp']) == 1:
         print("Template 1 ausgeführt")
-        templateToRender = render_template('tutorialStyle1.html', user=getuserWithMail(
-            session['mail']), course=course, documentIndex=documentIndex,
-            documentImgID=documentImgID, documentVideoID=documentVideoID)
+        if isLoggedIn():
+            templateToRender = render_template('tutorialStyle1.html', username = getUserFromSession()['nickname'], userLogged = True, course=course, documentIndex=documentIndex,
+                documentImgID=documentImgID, documentVideoID=documentVideoID)
+        else:
+            templateToRender = render_template('tutorialStyle1.html', userLogged = False, course=course, documentIndex=documentIndex,
+                documentImgID=documentImgID, documentVideoID=documentVideoID)
     else:
         print("Template 2 ausgeführt")
-        templateToRender = render_template('tutorialStyle2.html', user=getuserWithMail(
-            session['mail']), course=course, documentIndex=documentIndex,
+        if isLoggedIn():
+            templateToRender = render_template('tutorialStyle2.html', username = getUserFromSession()['nickname'], userLogged = True, course=course, documentIndex=documentIndex,
+            documentImgID=documentImgID)
+        else:
+            templateToRender = render_template('tutorialStyle2.html', userLogged = False, course=course, documentIndex=documentIndex,
             documentImgID=documentImgID)
     return templateToRender
 
@@ -480,7 +491,10 @@ def getuserWithMail(mail):
     return user
 
 def getUserFromSession():
-    return getuserWithMail(session['mail'])
+    if 'mail' in session:
+        return getuserWithMail(session['mail'])
+    else:
+        return test
 
 # checking if user is logged in
 def isLoggedIn():
@@ -535,7 +549,10 @@ def getIndex():
 
     #langingPage.html erbt von unloggedLayout oder loggedLayout, 
     #userLoged entscheidet, von welchem der Templates geerbt werden soll, nice oder? :D
-    return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
+    if isLoggedIn():
+        return render_template('landingPage.html', userLoged = True, courses = requiredCourses, username = getUserFromSession()['nickname'])
+    else:
+        return render_template('landingPage.html', userLoged = False, courses = requiredCourses)
     #return render_template('indexKristof.html')
 
 @app.route('/uploadTutorial', methods=['POST', 'GET'])
@@ -608,9 +625,11 @@ def uploadTutorial():
             if  pagesStyle[x] == '1':
                 print("Style 1 und videoIndex = ", vidIndex)
                 newDoc['content']['courseVideoID'] = videoID
-                rawVideo = pagesVideo[vidIndex].read()
-                fsCollection.put(
-                    rawVideo, filename=pagesVideo[vidIndex].filename, _id=videoID)
+                print(pagesVideo)
+                if len(pagesVideo[vidIndex].filename) > 0:
+                    rawVideo = pagesVideo[vidIndex].read()
+                    fsCollection.put(
+                        rawVideo, filename=pagesVideo[vidIndex].filename, _id=videoID)
                 vidIndex = vidIndex +1
             newTut['categorys']['documents'].append(newDoc)
 
@@ -770,6 +789,12 @@ def login():
     else:
         print("else in login, session: ", session)
         return getIndex()
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return getIndex()
 
 # --------Get BootStrap-Content-Routen-------
 @app.route('/assets/bootstrap/css/<filename>')

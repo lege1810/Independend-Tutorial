@@ -1,9 +1,4 @@
-{% if userLoged %} 
-{% extends "loggedLayout.html" %} 
-{% else %} 
-{% extends "unloggedLayout.html" %} 
-{%endif %} 
-{% block content %}
+{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content %}
 <div style="margin-top:0px;padding-bottom:15px;">
     <div class="container">
         <div class="row register-form">
@@ -28,10 +23,10 @@
                     </div>
                     <div class="form-row form-group">
                         <div class="col-sm-4 label-column">
-                            <label class="col-form-label" name="nickname" for="name-input-field">Nickname </label>
+                            <label class="col-form-label" for="name-input-field">Nickname </label>
                         </div>
                         <div class="col-sm-6 input-column">
-                            <input class="form-control" type="text">
+                            <input class="form-control" type="text" name="nickname">
                         </div>
                     </div>
                     <div class="form-row form-group">

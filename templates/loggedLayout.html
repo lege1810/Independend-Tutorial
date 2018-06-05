@@ -1,0 +1,121 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iT_landingPage</title>
+    <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
+    <link rel="stylesheet" href="../assets/css/styles.min.css">
+</head>
+
+
+<body id="login">
+    <nav class="navbar navbar-light navbar-expand-md sticky-top navigation-clean-search" style="padding:15px;margin-left:40px;margin-right:40px;">
+        <div class="container-fluid"><a class="navbar-brand text-capitalize" href="/" style="margin:0px;padding:0px;">Independent Tutorials</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1" style="padding:0px;"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav ml-auto" style="margin:0px;">
+                    <li class="nav-item" role="presentation"><a class="nav-link text-capitalize" href="#">About Us</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link text-capitalize" href="#">News</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link text-capitalize" href="overview_tut.html">Tutorials</a></li>
+                    <li class="dropdown show"><a class="dropdown-toggle nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">
+                    {% block username %}
+                        {{username}}
+                        {% endblock %}
+                    </a>
+                        <div class="dropdown-menu hide" role="menu" style="margin-right:0px;margin-top:0px;margin-left:-35px;padding-left:4px;">
+                            <a class="dropdown-item" role="presentation" href="#" style="margin-left:0px;padding-left:0px;padding-right:0px;padding-bottom:4px;">
+                                <a href="/logout">
+                                    <div class="btn-group" role="group"><button class="btn btn-light" type="button">Profile</button></div>
+                                </a>
+                                <a href="/logout">
+                                    <div class="btn-group" role="group"><button class="btn btn-light" type="button">Logout</button></div>
+                                </a>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        </div>
+    </nav>
+    {% block content %}
+    <!--Content ab hier -->
+
+    <!--Content bis hier -->
+    {% endblock %}
+    <div class="footer-clean">
+        <footer>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Services</h3>
+                        <ul>
+                            <li>
+                                <a href="#">Web design</a>
+                            </li>
+                            <li>
+                                <a href="#">Development</a>
+                            </li>
+                            <li>
+                                <a href="#">Hosting</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li>
+                                <a href="#">Company</a>
+                            </li>
+                            <li>
+                                <a href="#">Team</a>
+                            </li>
+                            <li>
+                                <a href="#">Legacy</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Careers</h3>
+                        <ul>
+                            <li>
+                                <a href="#">Job openings</a>
+                            </li>
+                            <li>
+                                <a href="#">Employee success</a>
+                            </li>
+                            <li>
+                                <a href="#">Benefits</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 item social">
+                        <a href="#">
+                            <i class="icon ion-social-facebook"></i>
+                        </a>
+                        <a href="#">
+                            <i class="icon ion-social-twitter"></i>
+                        </a>
+                        <a href="#">
+                            <i class="icon ion-social-snapchat"></i>
+                        </a>
+                        <a href="#">
+                            <i class="icon ion-social-instagram"></i>
+                        </a>
+                        <p class="copyright">Company Name © 2017</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+    <script src="../assets/js/script.min.js"></script>
+
+</body>
+
+</html>

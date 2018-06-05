@@ -1,58 +1,54 @@
-{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content
-	%}
-	<div style="margin-top:0px;padding-bottom:15px;">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
-						<li class="nav-item">
-							<a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-capitalize" href="#">Diskussionen</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-capitalize" href="overview_tut.html">Kursdetails</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-capitalize" href="overview_tut.html">Recap</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
-					<aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">
-						<ul class="list-group nav nav-tabs card-header-tabs">
-							{% for document in course.categorys.documents %}
-							<li class="list-group-item nav-item" style="padding:0px;">
-								<a class="nav-link" href="/Tutorial/?courseID={{ course.id }}&documentID={{document.id}}">
-									<span style="margin:0px;padding:0px;">{{ document.title }}</span>
-								</a>
-							</li>
-							{% endfor %}
-	
-							<li class="list-group-item nav-item" style="padding:0px;">
-								<a href="/TutorialDownloads/?courseID={{ course.id }}" class="nav-link">
-									<span style="margin:0px;padding:0px;">Downloads</span>
-								</a>
-							</li>
-						</ul>
-					</aside>
-				</div>
-				<div class="col-md-8">
-					<div class="card" style="margin-right:0px;margin-left:-15px;">
-						<div class="card-body">
-							<h4 class="card-title">{{course.categorys.documents[documentIndex].title}}</h4>
-							<img class="d-block" src="/img/{{documentImgID}}" width="560" height="315" style="margin:0 auto;width:700px;">
-							<p class="card-text">{{course.categorys.documents[documentIndex].content.p[0]}}</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	{% endblock %}
+{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content %}
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
+                    <li class="nav-item">
+                        <a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-capitalize" href="overview_tut.html">Kursdetails</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-capitalize" href="overview_tut.html">Recap</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
+                <aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">
+                    <ul class="list-group nav nav-tabs card-header-tabs">
+                        {% for document in course.categorys.documents %}
+                        <li class="list-group-item nav-item" style="padding:0px;">
+                            <a class="nav-link" href="/Tutorial/?courseID={{ course.id }}&documentID={{document.id}}">
+                                <span style="margin:0px;padding:0px;">{{ document.title }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+
+                        <li class="list-group-item nav-item" style="padding:0px;">
+                            <a href="/TutorialDownloads/?courseID={{ course.id }}" class="nav-link">
+                                <span style="margin:0px;padding:0px;">Downloads</span>
+                            </a>
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="col-md-8">
+                <div class="card" style="margin-right:0px;margin-left:-15px;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{course.categorys.documents[documentIndex].title}}</h4>
+                        <img class="d-block" src="/img/{{documentImgID}}" width="560" height="315" style="margin:0 auto;width:700px;">
+                        <p class="card-text">{{course.categorys.documents[documentIndex].content.p[0]}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

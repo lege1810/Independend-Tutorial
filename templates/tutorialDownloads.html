@@ -1,9 +1,4 @@
-{% if userLoged %} 
-{% extends "loggedLayout.html" %} 
-{% else %} 
-{% extends "unloggedLayout.html" %} 
-{%endif %} 
-{% block content%}
+{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content%}
 <div style="margin-top:0px;padding-bottom:15px;">
     <div class="container">
         <div class="row">
@@ -31,28 +26,15 @@
             <div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
                 <aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">
                     <ul class="list-group nav nav-tabs card-header-tabs">
+                        {% for document in course.categorys.documents %}
                         <li class="list-group-item nav-item" style="padding:0px;">
-                            <a href="#" class="nav-link">
-                                <span style="margin:0px;padding:0px;">Topic 1</span>
+                            <a class="nav-link" href="/Tutorial/?courseID={{ course.id }}&documentID={{document.id}}">
+                                <span style="margin:0px;padding:0px;">{{ document.title }}</span>
                             </a>
                         </li>
+                        {% endfor %}
                         <li class="list-group-item nav-item" style="padding:0px;">
-                            <a href="#" class="nav-link">
-                                <span style="margin:0px;padding:0px;">Topic 2</span>
-                            </a>
-                        </li>
-                        <li class="list-group-item nav-item" style="padding:0px;">
-                            <a href="#" class="nav-link">
-                                <span style="margin:0px;padding:0px;">Topic 3</span>
-                            </a>
-                        </li>
-                        <li class="list-group-item nav-item" style="padding:0px;">
-                            <a href="#" class="nav-link">
-                                <span style="margin:0px;padding:0px;">Topic 4</span>
-                            </a>
-                        </li>
-                        <li class="list-group-item nav-item" style="padding:0px;">
-                            <a href="#" class="nav-link">
+                            <a href="/TutorialDownloads/?courseID={{ course.id }}" class="nav-link">
                                 <span style="margin:0px;padding:0px;">Downloads</span>
                             </a>
                         </li>

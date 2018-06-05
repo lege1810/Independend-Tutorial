@@ -112,7 +112,7 @@
                                 <label class="col-form-label">Bild/ PDF/ etc. hinzufügen</label>
                             </div>
                             <div class="col">
-                                <input type="file" name ="fileDownloads" style="width:700px;" accept="audio/*,video/*,image/*,.pdf"> 
+                                <input type="file" name="fileDownloads" style="width:700px;" accept="audio/*,video/*,image/*,.pdf">
                             </div>
                         </div>
                         <div class="row">
@@ -124,7 +124,7 @@
                             </div>
                         </div>
                         <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
-                      
+
                         <div class="row">
                             <div class="col">
                                 <div class="btn-group" role="group">
@@ -146,9 +146,11 @@
     addPageButton = document.getElementById("addPage");
     allPages = document.getElementById("allPages")
     singlePage = allPages.firstChild.nextSibling
+    singlePage.getElementByName("pageTitle")
     newPage = singlePage.cloneNode(true)
-    addPageButton.addEventListener("click", function () {
+    addPageButton.addEventListener("click", function() {
         newPagetoAppend = newPage.cloneNode(true)
+
         allPages.appendChild(newPagetoAppend)
         pageCount.value++;
         initDD()
@@ -159,8 +161,8 @@
         videoDiv = document.getElementsByName("videoUpload");
         imgDiv = document.getElementsByName("ImgUpload");
         for (var i = 0; i < styleDD.length; i++) {
-            (function (index) {
-                styleDD[index].addEventListener("change", function () {
+            (function(index) {
+                styleDD[index].addEventListener("change", function() {
                     if (styleDD[index].selectedIndex == 0) {
                         videoDiv[index].style.display = "flex";
                         imgDiv[index].style.display = "none";
@@ -173,5 +175,4 @@
         }
     }
     initDD()
-
 </script> {% endblock %}
