@@ -570,10 +570,10 @@ def uploadTutorial():
 
         pagesTitle = request.form.getlist('pageTitle')
         pagesStyle = request.form.getlist('pageStyle')
-        pagesVideo = request.files.getlist('videoFile')
+        #pagesVideo = request.files.getlist('videoFile')
         pagesText = request.form.getlist('docText')
         pagesText2 = request.form.getlist('docText2')
-        pagesImg = request.files.getlist('courseImg')
+        #pagesImg = request.files.getlist('courseImg')
         countPages = request.form.get('countPages')
         fileDownloads = request.files.getlist('fileDownloads')
         fileDescription = request.form.getlist('fileDescription')
@@ -598,8 +598,7 @@ def uploadTutorial():
                 courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
 
      # für jede Seite im erstellten Kurs:
-        pagesIndex = 0
-        vidIndex = 0
+     
         for x in range(0, int(countPages)):
             # für Kurs Img/video
             imgID = ObjectId()
@@ -617,23 +616,23 @@ def uploadTutorial():
             #Wenn es nur ein BIld und ein Video gibt, werden die gerade beide an die erste Seite im Tutorial angehängt!!!! ÄNDERN
             print("styles ", pagesStyle)
             if pagesStyle[x] == '2':
-                print("Style 2 und Pagesindex ", pagesIndex)
-                newDoc['content']['courseImgID'] = imgID
-                fsCollection.put(
-                    pagesImg[pagesIndex], filename=pagesImg[pagesIndex].filename, _id=imgID)
-                pagesIndex = pagesIndex + 1
-            if  pagesStyle[x] == '1':
-                print("Style 1 und videoIndex = ", vidIndex)
-                newDoc['content']['courseVideoID'] = videoID
-                print(pagesVideo)
-                if len(pagesVideo[vidIndex].filename) > 0:
-                    rawVideo = pagesVideo[vidIndex].read()
-                    fsCollection.put(
-                        rawVideo, filename=pagesVideo[vidIndex].filename, _id=videoID)
-                vidIndex = vidIndex +1
+           
+                img = request.files.get('img'+str(x))
+                if img is not None:
+                    print("img gefunden")
+                    newDoc['content']['courseImgID'] = imgID
+                    fsCollection.put(img, filename=img.filename, _id=imgID)
+               
+            elif pagesStyle[x] == '1':
+               
+                vid = request.files.get('vid'+str(x))
+                if vid is not None:
+                    print("vid gefunden")
+                    newDoc['content']['courseVideoID'] = videoID
+                    fsCollection.put(vid.read(), filename=vid.filename, _id=videoID)
+            
+            
             newTut['categorys']['documents'].append(newDoc)
-
-        print("Tutorial ID ")
        
        #hänge fileDownloads ins Grid-fs und die ID dazu in das Tutorial unter courseDownloads an.
         for x in range(0, len(fileDownloads)):
@@ -664,7 +663,7 @@ def uploadTutorial():
                                       newTut['categorys']['documents'][0]['content']['courseVideoID'])
     elif request.method == 'GET' and userFromSession!= None:
         if userFromSession['isTutor']:
-            return render_template('upload.html')
+            return render_template('upload.html', username = userFromSession['nickname'])
         else:
             print("User ist kein Tutor")
             return getIndex()

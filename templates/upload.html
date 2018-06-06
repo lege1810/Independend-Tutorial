@@ -1,4 +1,4 @@
-{% extends "unloggedLayout.html" %} {% block content %}
+{% extends "loggedLayout.html" %} {% block content %}
 <div style="color:red">{{info}}</div>
 
 <div style="margin-top:0px;padding-bottom:15px;">
@@ -70,7 +70,7 @@
                                             <label class="col-form-label">Video hinzufügen&nbsp;</label>
                                         </div>
                                         <div class="col">
-                                            <input id="video_file" name="videoFile" accept="video/*" type="file" style="width:700px;">
+                                            <input id="video_file" name="videoFile" class="videoFile" accept="video/*" type="file" style="width:700px;">
                                         </div>
                                     </div>
                                     <div class="row" style="display: none;" name="ImgUpload">
@@ -78,7 +78,7 @@
                                             <label class="col-form-label">Bild hinzufügen&nbsp;</label>
                                         </div>
                                         <div class="col">
-                                            <input type="file" name="courseImg" accept="image/*" style="width:700px;">
+                                            <input type="file" name="courseImg" class ="courseImg" accept="image/*" style="width:700px;">
                                         </div>
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@
                             <div class="col">
                                 <div class="btn-group" role="group">
                                     <input type="hidden" id="pageCount" name="countPages" value="1">
-                                    <input class="btn btn-light" type="submit" value="Speichern">
+                                    <input class="btn btn-light" type="submit" value="Speichern" id="submitButton">
                                 </div>
                             </div>
                             <div class="col"></div>
@@ -142,27 +142,71 @@
 </div>
 
 <script>
+
     pageCount = document.getElementById("pageCount")
+    pageCount.value = 1
     addPageButton = document.getElementById("addPage");
     allPages = document.getElementById("allPages")
-    singlePage = allPages.firstChild.nextSibling
-    singlePage.getElementByName("pageTitle")
-    newPage = singlePage.cloneNode(true)
-    addPageButton.addEventListener("click", function() {
-        newPagetoAppend = newPage.cloneNode(true)
 
-        allPages.appendChild(newPagetoAppend)
+    singlePage = allPages.firstChild.nextSibling
+    newPage = singlePage.cloneNode(true)
+
+    allVideoInputs = document.getElementsByClassName("videoFile")
+    allImgInputs = document.getElementsByClassName("courseImg")
+
+    pageNr = document.createElement("input")
+    pageNr.type = "hidden"
+    pageNr.className = "pageNrs"
+    pageNr.value = 0
+
+    singlePage.appendChild(pageNr)
+
+    addPageButton.addEventListener("click", function () {
+        newPagetoAppend = newPage.cloneNode(true)
+        pageNr = document.createElement("input")
+        pageNr.type = "hidden"
+        pageNr.className = "pageNrs"
         pageCount.value++;
+        pageNr.value = pageCount.value
+        newPagetoAppend.appendChild(pageNr)
+        allPages.appendChild(newPagetoAppend)
+        initnewPage()
         initDD()
     });
+
+    function initnewPage() {
+        for (var i = 0; i < allVideoInputs.length; i++) {
+            allVideoInputs[i].addEventListener("change", changeInputNames)
+        }
+
+        for (var i = 0; i < allImgInputs.length; i++) {
+            allImgInputs[i].addEventListener("change", changeInputNames)
+        }
+    }
+
+
+    function changeInputNames() {
+        pageCount = document.getElementById("pageCount")
+        allVideoInputs = document.getElementsByClassName("videoFile")
+        allImgInputs = document.getElementsByClassName("courseImg")
+        for (var i = 0; i < pageCount.value; i++) {
+            if (allVideoInputs[i].files.length != 0) {
+                allVideoInputs[i].setAttribute("name", "vid" + i);
+            }
+            if (allImgInputs[i].files.length != 0) {
+                allImgInputs[i].setAttribute("name", "img" + i);
+            }
+        }
+
+    }
 
     function initDD() {
         styleDD = document.getElementsByName("pageStyle");
         videoDiv = document.getElementsByName("videoUpload");
         imgDiv = document.getElementsByName("ImgUpload");
         for (var i = 0; i < styleDD.length; i++) {
-            (function(index) {
-                styleDD[index].addEventListener("change", function() {
+            (function (index) {
+                styleDD[index].addEventListener("change", function () {
                     if (styleDD[index].selectedIndex == 0) {
                         videoDiv[index].style.display = "flex";
                         imgDiv[index].style.display = "none";
@@ -175,4 +219,5 @@
         }
     }
     initDD()
+    initnewPage()
 </script> {% endblock %}

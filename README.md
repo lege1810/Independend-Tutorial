@@ -13,7 +13,7 @@ ToDo:
 6. Die Suche muss funktionieren - erst wenn tutoriallisten auf der homeseite fertig sind - kristof
 8. Recap - kristof
 9. fortschritt - moritz
-10. tutorial edit/upload auch ohne bild/video - leon
+10. tutorial edit - leon
 
 ToDo Kristof:
 2. Tutorialübersicht erstellen
