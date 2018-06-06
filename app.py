@@ -472,10 +472,11 @@ def getCourseIfExists(courseID):
 def isCourseOwner(userID, courseID):
     user = getUser(userID)
     userIsCourseOwner = False
-    for ownCourses in user['ownCourses']:
-        if ownCourses['course']['courseID'] == courseID:
-            userIsCourseOwner = True
-            break
+    if user['isTutor'] and len(user['ownCourses'])> 0:
+        for ownCourses in user['ownCourses']:
+            if ownCourses['course']['courseID'] == courseID:
+                userIsCourseOwner = True
+                break
     return userIsCourseOwner
 
 # checking if user already exits by comparing mail
@@ -494,7 +495,7 @@ def getUserFromSession():
     if 'mail' in session:
         return getuserWithMail(session['mail'])
     else:
-        return test
+        return None
 
 # checking if user is logged in
 def isLoggedIn():
@@ -613,21 +614,16 @@ def uploadTutorial():
                 newDoc['content']['p'].append(pagesText[x])
             if len(pagesText2) > x:
                 newDoc['content']['p'].append(pagesText2[x])
-            #Wenn es nur ein BIld und ein Video gibt, werden die gerade beide an die erste Seite im Tutorial angehängt!!!! ÄNDERN
-            print("styles ", pagesStyle)
+            
             if pagesStyle[x] == '2':
-           
                 img = request.files.get('img'+str(x))
                 if img is not None:
-                    print("img gefunden")
                     newDoc['content']['courseImgID'] = imgID
                     fsCollection.put(img, filename=img.filename, _id=imgID)
                
             elif pagesStyle[x] == '1':
-               
                 vid = request.files.get('vid'+str(x))
                 if vid is not None:
-                    print("vid gefunden")
                     newDoc['content']['courseVideoID'] = videoID
                     fsCollection.put(vid.read(), filename=vid.filename, _id=videoID)
             
@@ -704,13 +700,25 @@ def getTutorialWithDocumentID():
     documentID = request.args.get('documentID')
     if documentID is not None:
         documentIndex = getDocumentIndex(documentID, course)
+        documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
+        documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
+        return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
     else:
-        documentIndex = 0
-
-    documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
-    documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
+        #In diesem Fall, sende Vorseite zum Tutorial (zum Kurs, teilnehmen, teilnahme beenden, tut bearbeiten)
+        user = getUserFromSession()
+        if user is not None:
+            if isCourseOwner(user['id'], course):
+                return render_template('tutorialDetailsForTutor.html', course = course, username=user['nickname'])
+            else:
+                isMember = False
+                for courseid in user['courses']:
+                    if courseid == course['id']:
+                        isMember = True
+                        break
+                return render_template('tutorialDetailsForUser.html', course = course, username=user['nickname'], isMember = isMember)
+        else:
+            return render_template('tutorialDetailsForGuest.html', course = course)
     
-    return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
 
 # show register form or save register informations in mongo
 
@@ -783,10 +791,7 @@ def login():
                 return getIndex()
 
         return 'Invalid username/password combination'
-    elif request.method == 'GET' and not isLoggedIn():
-        return render_template('loginTemplate.html')
     else:
-        print("else in login, session: ", session)
         return getIndex()
 
 
