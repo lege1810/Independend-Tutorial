@@ -24,7 +24,7 @@ wsServer.on('request', function(request) {
                     sendCourses(mail, connection);
                 }
             } else {
-                console.log("Chat: " + message.utf8Data + "\n")
+                console.log("Chat: " + message + "\n")
                 for (var i = 0; i < clients.length; i++) {
                     clients[i].send(message);
                 }

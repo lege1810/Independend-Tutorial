@@ -796,10 +796,6 @@ def getTutorialWithDocumentID():
         return renderTutorialPrePage(course)
         # show register form or save register informations in mongo
 
-@app.route('/websocketChat/<filename>') 
-def send_WsChat(filename): 
-    return send_from_directory("websocketChat", filename) 
-
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
