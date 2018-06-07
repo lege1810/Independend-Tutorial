@@ -3,45 +3,52 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var clients = []
-var server = http.createServer(function(request, response) {
-    // process HTTP request. Since we're writing just WebSockets
-    // server we don't have to implement anything.
-});
+var server = http.createServer(function(request, response) {});
 server.listen(1337, function() {});
 
-// create the server
 wsServer = new WebSocketServer({
     httpServer: server
 });
 
-// WebSocket server
 wsServer.on('request', function(request) {
     var connection = request.accept(null, request.origin);
-    clients.push(connection)
-        // This is the most important callback for us, we'll handle
-        // all messages from users here.
+    clients.push(connection);
+
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            // process WebSocket message
-            console.log("Nachricht : " + JSON.stringify(message.utf8Data))
-            for (var i = 0; i < clients.length; i++) {
-                clients[i].send(JSON.stringify(message.utf8Data))
+            var message = JSON.stringify(message.utf8Data);
+            if (message.substring(1, 5) == 'sys ') {
+                console.log("Sys: " + message);
+                if (message.substring(1, 14) == 'sys username:') {
+                    var mail = message.substring(14, message.length - 1);
+                    sendCourses(mail, connection);
+                }
+            } else {
+                console.log("Chat: " + message.utf8Data + "\n")
+                for (var i = 0; i < clients.length; i++) {
+                    clients[i].send(message);
+                }
             }
         }
     });
 
     connection.on('close', function(connection) {
-
+        //close
     });
 });
 
 
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
+var dbo;
 
 MongoClient.connect(url, function(err, db) {
     if (err) throw err;
-    var dbo = db.db("myTestBase");
+    dbo = db.db("myTestBase");
+});
+
+function sendCourses(mail, connection) {
+    var retCourses = [];
 
     dbo.collection("studCorp").findOne({ 'id': 'allCourses' }, function(err, resultCourses) {
         if (err) throw err;
@@ -53,7 +60,7 @@ MongoClient.connect(url, function(err, db) {
             var user = {};
 
             for (var i = 0; i < users.length; i++) {
-                if (users[i].mail == 'm.maart@gmx.net') {
+                if (users[i].mail == mail) {
                     user = users[i];
                 }
             }
@@ -61,12 +68,12 @@ MongoClient.connect(url, function(err, db) {
             for (var j = 0; j < allCourses.length; j++) {
                 for (var x = 0; x < user.ownCourses.length; x++) {
                     if (String(allCourses[j].id) == String(user.ownCourses[x])) {
-                        console.log("-->" + allCourses[j].name);
+                        retCourses.push(allCourses[j].name);
                     }
                 }
             }
-            db.close();
+
+            connection.send("sys coureses:" + JSON.stringify(retCourses));
         });
-        db.close();
     });
-});
+}

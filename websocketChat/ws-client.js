@@ -6,7 +6,7 @@ window.addEventListener("load", function() {
 
     connection.onopen = function() {
         console.log('Connected');
-        connection.send("sysnachticht-user:" + document.getElementById("name").value);
+        connection.send("sys username:" + document.getElementById("mail").value);
     };
 
     connection.onerror = function(error) {
@@ -15,10 +15,27 @@ window.addEventListener("load", function() {
 
     connection.onmessage = function(message) {
         try {
-            var json = JSON.parse(JSON.parse(message.data));
-            if (getTutorium() == json.tutorium) {
-                var content = document.getElementById("content");
-                content.innerHTML = content.innerHTML + "<br>" + json['name'] + ': ' + json['message'];
+            if (message.data.substring(0, 4) == 'sys ') {
+                if (message.data.substring(0, 13) == 'sys coureses:') {
+                    var courses = JSON.parse(message.data.substring(13, message.data.lengh));
+                    var listBox = document.getElementById('tutorium');
+
+                    courses.forEach(element => {
+                        var opt = document.createElement("option");
+                        listBox.options.add(opt);
+                        opt.text = element;
+                        opt.value = element;
+                    });
+                }
+            } else {
+                var json = JSON.parse(JSON.parse(message.data));
+                if (getTutorium() == json.tutorium) {
+                    var content = document.getElementById("content");
+                    if (content.innerHTML != '') {
+                        content.innerHTML += "<br>";
+                    }
+                    content.innerHTML += json['name'] + ': ' + json['message'];
+                }
             }
         } catch (e) {
             console.log('This doesn\'t look like a valid JSON: ',
