@@ -1,0 +1,39 @@
+'Recap': {
+    'id': 'ggrfhguehrghegu4805',
+    'title': 'Farben',
+    Questions: {
+        'id': 'ggrfhguehrghegu4805',
+        'text': 'Was ist Rot?'
+        Answers: [{
+                'id': 'ggrfhguehrghegu4805',
+                'text': 'Ein Apfel',
+                'isCorrect': True
+            },
+            {
+                'id': 'ggrfhguehrghegu4805',
+                'text': 'Ein Apfel',
+                'isCorrect': True
+            }
+        ]
+    }
+}
+
+'Progress': {
+    'Answers': [{
+            'answerID': '39087gu8g9090854',
+            isCorrect: True
+        },
+        {
+            'answerID': '39087gu8g9090855',
+            isCorrect: True
+        }
+    ],
+    'Downloads': [{
+        'downloadID': '39087gu8g9090855',
+        isDownloaded: True
+    }],
+    'Documents': [{
+        'documentID': '39087gu8g9090855',
+        hasWatched: True
+    }]
+}

@@ -806,7 +806,8 @@ def editProfile():
         password = request.form.get('password')
         password2 = request.form.get('password2')
         isTutor = request.form.get('isTutor')
-        if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 and len(password) > 0 :
+       # if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 :
+
     elif request.method == 'GET' and isLoggedIn():
         user = getUserFromSession()
         render_template('editProfile.html', username = user['nickname'], user = user)
