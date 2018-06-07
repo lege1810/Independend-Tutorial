@@ -31,6 +31,42 @@ wsServer.on('request', function(request) {
     });
 
     connection.on('close', function(connection) {
-        // close user connection
+
+    });
+});
+
+
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("myTestBase");
+
+    dbo.collection("studCorp").findOne({ 'id': 'allCourses' }, function(err, resultCourses) {
+        if (err) throw err;
+        allCourses = resultCourses.courses;
+
+        dbo.collection("studCorp").findOne({ 'id': 'allUsers' }, function(err, resultUser) {
+            if (err) throw err;
+            var users = resultUser.users;
+            var user = {};
+
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].mail == 'm.maart@gmx.net') {
+                    user = users[i];
+                }
+            }
+
+            for (var j = 0; j < allCourses.length; j++) {
+                for (var x = 0; x < user.ownCourses.length; x++) {
+                    if (String(allCourses[j].id) == String(user.ownCourses[x])) {
+                        console.log("-->" + allCourses[j].name);
+                    }
+                }
+            }
+            db.close();
+        });
+        db.close();
     });
 });

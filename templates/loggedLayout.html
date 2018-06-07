@@ -9,10 +9,31 @@
     <link rel="stylesheet" href="../assets/fonts/ionicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
     <link rel="stylesheet" href="../assets/css/styles.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.chat.css">
+    <script language="javascript" type="text/javascript" src="../assets/js/ws-client.js"></script>
 </head>
 
 
 <body id="login">
+
+    <!-- Websocket-Chat -->
+    <div id="contentContainer">
+        <div id="dragContainer">
+            Chat
+        </div>
+        <select id="tutorium" size="1">
+            <option>Mathe</option>
+            <option>Englisch</option>
+            <option>Deutsch</option>
+            <option>Web-Systeme</option>
+        </select>
+
+        <div id="content"></div>
+        <input type="hidden" id="name" value="{{session['nickname']}}">
+        <input type="text" id="message" placeholder="Message"><br>
+        <input type="button" id="send" value="Send">
+    </div>
+
     <nav class="navbar navbar-light navbar-expand-md sticky-top navigation-clean-search" style="padding:15px;margin-left:40px;margin-right:40px;">
         <div class="container-fluid"><a class="navbar-brand text-capitalize" href="/" style="margin:0px;padding:0px;">Independent Tutorials</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1" style="padding:0px;"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">

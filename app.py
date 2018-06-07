@@ -474,7 +474,8 @@ def isCourseOwner(userID, courseID):
     userIsCourseOwner = False
     if user['isTutor'] and len(user['ownCourses'])> 0:
         for ownCourses in user['ownCourses']:
-            if ownCourses['course']['courseID'] == courseID:
+            print(ownCourses, " and ", courseID)
+            if ownCourses == courseID:
                 userIsCourseOwner = True
                 break
     return userIsCourseOwner
@@ -707,7 +708,7 @@ def getTutorialWithDocumentID():
         #In diesem Fall, sende Vorseite zum Tutorial (zum Kurs, teilnehmen, teilnahme beenden, tut bearbeiten)
         user = getUserFromSession()
         if user is not None:
-            if isCourseOwner(user['id'], course):
+            if isCourseOwner(user['id'], course['id']):
                 return render_template('tutorialDetailsForTutor.html', course = course, username=user['nickname'])
             else:
                 isMember = False
@@ -787,6 +788,7 @@ def login():
         if user:
             if bcrypt.hashpw(password.encode('utf-8'), user['passphrase']) == user['passphrase']:
                 session['mail'] = mail
+                session['nickname'] = user['nickname']
                 print("logged in")
                 return getIndex()
 
@@ -799,6 +801,11 @@ def login():
 def logout():
     session.clear()
     return getIndex()
+
+
+@app.route('/chat')
+def testchat():
+    return render_template('ws-client.html')
 
 # --------Get BootStrap-Content-Routen-------
 @app.route('/assets/bootstrap/css/<filename>')
