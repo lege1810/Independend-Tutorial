@@ -14,9 +14,10 @@ wsServer.on('request', function(request) {
     var connection = request.accept(null, request.origin);
     clients.push(connection);
 
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') {
-            var message = JSON.stringify(message.utf8Data);
+    connection.on('message', function(rowMessage) {
+        if (rowMessage.type === 'utf8') {
+            console.log(rowMessage.utf8Data);
+            var message = JSON.stringify(rowMessage.utf8Data);
             if (message.substring(1, 5) == 'sys ') {
                 console.log("Sys: " + message);
                 if (message.substring(1, 14) == 'sys username:') {
@@ -26,6 +27,8 @@ wsServer.on('request', function(request) {
             } else {
                 console.log("Chat: " + message + "\n")
                 for (var i = 0; i < clients.length; i++) {
+                    var jsonMessage = JSON.parse(rowMessage.utf8Data);
+                    addToMongo(jsonMessage.message, jsonMessage.name, jsonMessage.tutorium);
                     clients[i].send(message);
                 }
             }
@@ -76,4 +79,8 @@ function sendCourses(mail, connection) {
             connection.send("sys coureses:" + JSON.stringify(retCourses));
         });
     });
+}
+
+function addToMongo(message, name, tutorium) {
+
 }
