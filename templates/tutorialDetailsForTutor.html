@@ -6,9 +6,8 @@
                 <img class="d-block" src="/img/{{course.courseBannerID}}" id="tutorial_overview-image" style="margin:0 auto;width:300px;">
             </div>
             <div class="col-md-8" style="padding:15px;">
-                <h1 style="font-size:24px;">Tutorial Overview</h1>
-                <p>Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas
-                    eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+                <h1 style="font-size:24px;">{{course.name}}</h1>
+                <p>{{course.description}}</p>
                 <div class="btn-toolbar">
                     <div class="btn-group" role="group" style="padding:15px;">
                         <a href="/Tutorial/?courseID={{course.id}}&documentID={{course.categorys.documents[0].id}}">

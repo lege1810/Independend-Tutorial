@@ -366,7 +366,7 @@ def getAllCourses():
 
 def getCourse(courseID):
     allCourses = getAllCourses()
-    foundcourse = {}
+    foundcourse = None
     for course in allCourses:
         if course['id'] == courseID:
             foundcourse = course
@@ -377,7 +377,7 @@ def getCourse(courseID):
 
 def getCourseWithString(courseID):
     allCourses = getAllCourses()
-    foundcourse = {}
+    foundcourse = None
     for course in allCourses:
         print("DB ", course['id'], " courseID ", courseID)
         if str(course['id']) == courseID:
@@ -427,18 +427,24 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
     # Unterscheidung des Template Styles
     templateToRender = None
     if int(course['categorys']['documents'][documentIndex]['styleTyp']) == 1:
-        print("Template 1 ausgeführt")
         if isLoggedIn():
-            templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, documentVideoID=documentVideoID)
+            if isCourseMember(getUserFromSession()['id'], course['id']):
+                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
+                                                documentVideoID=documentVideoID, userIsCourseMember = True)
+            else:
+                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex, 
+                                                documentVideoID=documentVideoID, userIsCourseMember = False)
         else:
             templateToRender = render_template('tutorialStyle1.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID, documentVideoID=documentVideoID)
     else:
-        print("Template 2 ausgeführt")
         if isLoggedIn():
-            templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID)
+            if isCourseMember(getUserFromSession()['id'], course['id']):
+                templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
+                                               documentImgID=documentImgID, userIsCourseMember = True)
+            else:
+                templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
+                                               documentImgID=documentImgID, userIsCourseMember = False)
         else:
             templateToRender = render_template('tutorialStyle2.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID)
@@ -470,18 +476,25 @@ def getCourseIfExists(courseID):
     course = None
     if courseID is not None:
         course = getCourseWithString(courseID)
-    else:
-        print("Tutorial nicht vorhanden")
     return course
 
+
+def isCourseMember(userID, courseID):
+    user = getUser(userID)
+    userIsCourseMember = False
+    if len(user['courses']) > 0:
+        for course in user['courses']:
+            if course == courseID:
+                userIsCourseMember = True
+                break
+    return userIsCourseMember
 
 def isCourseOwner(userID, courseID):
     user = getUser(userID)
     userIsCourseOwner = False
     if user['isTutor'] and len(user['ownCourses']) > 0:
-        for ownCourses in user['ownCourses']:
-            print(ownCourses, " and ", courseID)
-            if ownCourses == courseID:
+        for ownCourse in user['ownCourses']:
+            if ownCourse == courseID:
                 userIsCourseOwner = True
                 break
     return userIsCourseOwner
@@ -518,20 +531,17 @@ def isLoggedIn():
 @app.route('/changeTutorial/', methods=['GET'])
 def editTutIndex():
     courseID = request.args.get('courseID')
-    emptyCourse = {}
     foundCourse = getCourseWithString(courseID)
     if isLoggedIn():
         userFromSession = getUserFromSession()
         for courseidSession in userFromSession['ownCourses']:
             if str(courseidSession) == courseID:
-                if foundCourse == emptyCourse:
-                    print("Kurs nicht gefunden!")
-                    return getIndex()
+                if foundCourse is not None:
+                    return getIndex("Kurs nicht gefunden!")
                 else:
                     return render_template('editTutorial.html', course=foundCourse)
 
-    print("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
-    return getIndex()
+    return getIndex("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
 
 # Wenn Tutorial schon existiert
 
@@ -551,7 +561,7 @@ def editTutorial():
 
 
 @app.route('/', methods=['GET'])
-def getIndex():
+def getIndex(info = None):
     courses = getAllCourses()
     requiredCourses = getIndexTutorials(courses)
     for course in requiredCourses['Satz0']:
@@ -563,12 +573,17 @@ def getIndex():
             course['courseImg'] = course['courseBannerID']
 
     # langingPage.html erbt von unloggedLayout oder loggedLayout,
-    # userLoged entscheidet, von welchem der Templates geerbt werden soll, nice oder? :D
+    # userLoged entscheidet, von welchem der Templates geerbt werden soll
     if isLoggedIn():
-        return render_template('landingPage.html', userLoged=True, courses=requiredCourses, username=getUserFromSession()['nickname'])
+        if info is not None:
+            return render_template('landingPage.html', userLoged=True, courses=requiredCourses, username=getUserFromSession()['nickname'], info = info)
+        else:
+            return render_template('landingPage.html', userLoged=True, courses=requiredCourses, username=getUserFromSession()['nickname'])
     else:
-        return render_template('landingPage.html', userLoged=False, courses=requiredCourses)
-    # return render_template('indexKristof.html')
+        if info is not None:
+            return render_template('landingPage.html', userLoged=False, courses=requiredCourses, info = info)
+        else:
+            return render_template('landingPage.html', userLoged=False, courses=requiredCourses)
 
 
 @app.route('/addUserCourse/')
@@ -631,8 +646,8 @@ def searchTutorial():
 @app.route('/uploadTutorial/', methods=['POST', 'GET'])
 def uploadTutorial():
     if not isLoggedIn():
-        print("Nicht eingeloggt")
-        return getIndex()
+        print()
+        return getIndex("Nicht eingeloggt")
 
     userFromSession = getuserWithMail(session['mail'])
     if request.method == 'POST' and userFromSession['isTutor']:
@@ -734,29 +749,13 @@ def uploadTutorial():
         if userFromSession['isTutor']:
             return render_template('upload.html', username=userFromSession['nickname'])
         else:
-            print("User ist kein Tutor")
-            return getIndex()
+            return getIndex("User ist kein Tutor")
     else:
-        return getIndex()
+        return getIndex("Unbekannter Fehler")
 
 
-# Wahrscheinlich nicht mehr notwendig, /Tutorial/ behandelt alles hieraus
-# @app.route('/Tutorial', methods=['GET'])
-# def getTutorialWithoutDocumentID():
-#     courseID = request.args.get('courseID')
-#     course = getCourseIfExists(courseID)
-
-#     # documentIndex immer 0, wenn Tutorial ohne Dokument geöffnet wird
-#     documentIndex = 0
-
-#     documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
-#     documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
-
-#     return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
-
-# Um auf die anderen Seiten des Tutorials zu kommen
 def renderTutorialPrePage(course):
-    # In diesem Fall, sende Vorseite zum Tutorial (zum Kurs, teilnehmen, teilnahme beenden, tut bearbeiten)
+    #sende Vorseite zum Tutorial 
     user = getUserFromSession()
     if user is not None:
         if isCourseOwner(user['id'], course['id']):
@@ -776,13 +775,14 @@ def renderTutorialPrePage(course):
 def getCourseDownloads():
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
-
-    return render_template('tutorialDownloads.html', course=course)
-
+    if course is not None:
+        return render_template('tutorialDownloads.html', course=course)
+    else:
+        return getIndex("Kurs nicht gefunden")
+      
 
 @app.route('/Tutorial/')
 def getTutorialWithDocumentID():
-    # cookieID =  #readCookie()
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
 
@@ -794,11 +794,10 @@ def getTutorialWithDocumentID():
         return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
     else:
         return renderTutorialPrePage(course)
-        # show register form or save register informations in mongo
 
 @app.route('/editProfile', methods=['POST', 'GET'])
 def editProfile():
-    if request.method == 'POST':
+    if request.method == 'POST' and isLoggedIn():
         mail = request.form.get('mail')
         firstName = request.form.get('firstName')
         lastName = request.form.get('lastName')
@@ -806,13 +805,17 @@ def editProfile():
         password = request.form.get('password')
         password2 = request.form.get('password2')
         isTutor = request.form.get('isTutor')
-       # if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 :
+        if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 :
+            allUsers = getAllUsersWrapperObject()
+            user = getUserFromSession()
+
+
 
     elif request.method == 'GET' and isLoggedIn():
         user = getUserFromSession()
         render_template('editProfile.html', username = user['nickname'], user = user)
 
-
+# show register form or save register informations in mongo
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
@@ -897,8 +900,6 @@ def testchat():
     return render_template('ws-client.html')
 
 # --------Get BootStrap-Content-Routen-------
-
-
 @app.route('/assets/bootstrap/css/<filename>')
 def send_bootStrapCss(filename):
     return send_from_directory("templates/assets/bootstrap/css", filename)

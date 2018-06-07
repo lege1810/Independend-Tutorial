@@ -30,6 +30,9 @@
         <input type="text" id="message" placeholder="Message"><br>
         <input type="button" id="send" value="Send">
     </div>
+    {% if info is not undefined %}
+    <div style="display: none" id ="triggerInfo">{{info}}</div>
+    {% endif %}
 
     <nav class="navbar navbar-light navbar-expand-md sticky-top navigation-clean-search" style="padding:15px;margin-left:40px;margin-right:40px;">
         <div class="container-fluid"><a class="navbar-brand text-capitalize" href="/" style="margin:0px;padding:0px;">Independent Tutorials</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1" style="padding:0px;"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
@@ -133,7 +136,12 @@
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
     <script src="../assets/js/script.min.js"></script>
-
+    <script>
+        var triggerInfo = document.getElementById("triggerInfo")
+        if(triggerInfo != null){
+            alert(triggerInfo.textContent)
+        }
+    </script>
 </body>
 
 </html>
