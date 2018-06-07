@@ -606,8 +606,29 @@ def delCourse():
 
     return renderTutorialPrePage(course)
 
+@app.route('/searchTutorial/', methods=['POST'])
+def searchTutorial():
+    searchText = request.form.get('search-bar')
+    searchText = searchText.lower()
+    foundCourses = []
+    allCourses = getAllCourses()
+    for course in allCourses:
+        courseName = course['name'].lower()
+        courseDesc = ''
+        if course['description'] is not None:
+            courseDesc = course['description'].lower()
+        if searchText in courseName or searchText in courseDesc:
+            foundCourses.append(course)
+    if isLoggedIn():
+        return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
+    else:
+        return render_template('searchTutorial.html', userLoged=False)
 
-@app.route('/uploadTutorial', methods=['POST', 'GET'])
+    # if string1.lower() == string2.lower():
+    # print "The strings are the same (case insensitive)"
+    
+
+@app.route('/uploadTutorial/', methods=['POST', 'GET'])
 def uploadTutorial():
     if not isLoggedIn():
         print("Nicht eingeloggt")
@@ -709,6 +730,7 @@ def uploadTutorial():
         return renderTutorialTemplate(newTut, 0, newTut['categorys']['documents'][0]['content']['courseImgID'],
                                       newTut['categorys']['documents'][0]['content']['courseVideoID'])
     elif request.method == 'GET' and userFromSession != None:
+        #Wenn Seite erst aufgerufen werden soll
         if userFromSession['isTutor']:
             return render_template('upload.html', username=userFromSession['nickname'])
         else:
@@ -890,7 +912,9 @@ def send_image(filename):
 def send_js(filename):
     return send_from_directory("templates/assets/js", filename)
 # ------------------------------------------------
-
+@app.route('/websocketChat/<filename>')
+def send_WsChat(filename):
+    return send_from_directory("websocketChat", filename)
 # geht auch mit file, statt videos und imgs getrennt zu behandeln, später ändern!
 
 
