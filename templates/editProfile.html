@@ -1,0 +1,70 @@
+{% extends "loggedLayout.html" %} {% block content %}
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        <div class="row register-form">
+            <div class="col-md-8 offset-md-2">
+                <form class="custom-form" action="/editProfile" method="post">
+                    <h1>Update Profile</h1>
+                    <div class="form-row form-group">
+                        <div class="col-sm-4 label-column">
+                            <label class="col-form-label" for="name-input-field">Vorname </label>
+                        </div>
+                        <div class="col-sm-6 input-column">
+                            <input class="form-control" name="firstName" type="text" value={{user.first_name}}>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col-sm-4 label-column">
+                            <label class="col-form-label" for="name-input-field">Name </label>
+                        </div>
+                        <div class="col-sm-6 input-column">
+                            <input class="form-control" name="lastName" type="text" value={{user.last_name}}>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col-sm-4 label-column">
+                            <label class="col-form-label" for="name-input-field">Nickname </label>
+                        </div>
+                        <div class="col-sm-6 input-column">
+                            <input class="form-control" type="text" name="nickname" value={{user.nickname}}>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col-sm-4 label-column">
+                            <label class="col-form-label" for="email-input-field">Email </label>
+                        </div>
+                        <div class="col-sm-6 input-column">
+                            <input class="form-control" name="mail" type="email" value={{user.mail}}>
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col-sm-4 label-column">
+                            <label class="col-form-label" for="pawssword-input-field">Password </label>
+                        </div>
+                        <div class="col-sm-6 input-column">
+                            <input class="form-control" name="password" type="password">
+                        </div>
+                    </div>
+                    <div class="form-row form-group">
+                        <div class="col-sm-4 label-column">
+                            <label class="col-form-label" for="repeat-pawssword-input-field">repeat Password</label>
+                        </div>
+                        <div class="col-sm-6 input-column">
+                            <input class="form-control" name="password2" type="password">
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        {% if user.isTutor %}
+                        <input class="form-check-input" name="isTutor" value="isTutor" type="checkbox" id="formCheck-1" checked>
+                        {%else%}
+                        <input class="form-check-input" name="isTutor" value="isTutor" type="checkbox" id="formCheck-1">
+                        {%endif%}
+                        <label class="form-check-label" for="formCheck-1">I want to be tutor</label>
+                    </div>
+                    <button class="btn btn-light" type="submit">submit changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
