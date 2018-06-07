@@ -1,6 +1,4 @@
-{% extends "loggedLayout.html" %} 
-
-{% block content %}
+{% extends "loggedLayout.html" %} {% block content %}
 <div style="margin-top:0px;padding-bottom:15px;">
     <div class="container">
         <div class="row">
@@ -16,7 +14,9 @@
                         <a href="/Tutorial/?courseID={{course.id}}&documentID={{course.categorys.documents[0].id}}">
                             <button class="btn btn-light" type="button" style="padding-left:11px;margin-left:0px;margin-right:15px;">Zum Kurs</button>
                         </a>
-                        <button class="btn btn-light" type="button" style="margin-right:15px;">Kurs bearbeiten</button>
+                        <a href="/changeTutorial/?courseID={{course.id}}">
+                            <button class="btn btn-light" type="button" style="margin-right:15px;">Kurs bearbeiten</button>
+                        </a>
                     </div>
                 </div>
             </div>

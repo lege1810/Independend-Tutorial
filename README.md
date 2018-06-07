@@ -8,7 +8,6 @@ Install:
 
 ToDo:
 1. Chat node.js inc. zugriff auf mongo - moritz
-2. Vorseite zum tutorial vorhängen für alle berechtigungsgruppen - leon
 3. Der Profilebutton muss zur Profilbearbeiten-Seite zeigen - moritz
 5. Tutorialsübersicht einbinden - kristof
 6. Die Suche muss funktionieren - erst wenn tutoriallisten auf der homeseite fertig sind - kristof

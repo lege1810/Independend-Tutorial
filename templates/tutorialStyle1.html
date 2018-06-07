@@ -8,14 +8,16 @@
                         <a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
+                        <a class="nav-link text-capitalize" href="/Tutorial/?courseID={{course.id}}">Kursdetails</a>
                     </li>
+                    {% if userLogged %}
                     <li class="nav-item">
-                        <a class="nav-link text-capitalize" href="overview_tut.html">Kursdetails</a>
+                        <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-capitalize" href="overview_tut.html">Recap</a>
                     </li>
+                    {%endif%}
                 </ul>
             </div>
         </div>
