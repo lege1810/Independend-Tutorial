@@ -708,7 +708,7 @@ def uploadTutorial():
                     newDoc['content']['courseImgID'] = imgID
                     fsCollection.put(img, filename=img.filename, _id=imgID)
 
-            elif pagesStyle[x] == '1':
+            if pagesStyle[x] == '1':
                 vid = request.files.get('vid'+str(x))
                 if vid is not None:
                     newDoc['content']['courseVideoID'] = videoID
@@ -744,7 +744,7 @@ def uploadTutorial():
         # öffne erstelltes Tutorium
         return renderTutorialTemplate(newTut, 0, newTut['categorys']['documents'][0]['content']['courseImgID'],
                                       newTut['categorys']['documents'][0]['content']['courseVideoID'])
-    elif request.method == 'GET' and userFromSession != None:
+    if request.method == 'GET' and userFromSession != None:
         #Wenn Seite erst aufgerufen werden soll
         if userFromSession['isTutor']:
             return render_template('upload.html', username=userFromSession['nickname'])
@@ -867,10 +867,11 @@ def register():
 
                 #logging in user
                 session['mail'] = mail
+                session['nickname'] = nickname
 
                 return 'user added'
             else:
-                return render_template('register.html', info = 'user already exists')
+                return 'user already exists'
         else:
             return 'user data not correct'
     else:
@@ -1004,10 +1005,10 @@ def getDownloadFile(fileid):
 
 # startpunkt des py-programms
 if __name__ == "__main__":
-    # deleteCollection()
+    #deleteCollection()
 
-    # initDB()
-    # fillDB()
+    #initDB()
+    #fillDB()
 
     app.secret_key = 'oiwfhwinehi'  # add rnd chars here
     app.run(debug=True, host='0.0.0.0')
