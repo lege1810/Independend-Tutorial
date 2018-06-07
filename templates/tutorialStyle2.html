@@ -1,26 +1,7 @@
-{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content %}
+{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %}  {% block content %}
 <div style="margin-top:0px;padding-bottom:15px;">
     <div class="container">
-        <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
-                    <li class="nav-item">
-                        <a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-capitalize" href="/Tutorial/?courseID={{course.id}}">Kursdetails</a>
-                    </li>
-                    {% if userIsCourseMember %}
-                    <li class="nav-item">
-                        <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-capitalize" href="overview_tut.html">Recap</a>
-                    </li>
-                    {%endif%}
-                </ul>
-            </div>
-        </div>
+            {% include "tutorialNavigation.html" %}
         <div class="row">
             <div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
                 <aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">

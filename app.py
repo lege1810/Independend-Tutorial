@@ -776,7 +776,15 @@ def getCourseDownloads():
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
     if course is not None:
-        return render_template('tutorialDownloads.html', course=course)
+        templateToRender = None
+        if isLoggedIn():
+            if isCourseMember(getUserFromSession()['id'], course['id']):
+                templateToRender = render_template('tutorialDownloads.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, userIsCourseMember = True)
+            else:
+                templateToRender = render_template('tutorialDownloads.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, userIsCourseMember = False)
+        else:
+            templateToRender = render_template('tutorialDownloads.html', userLogged=False, course=course)
+        return templateToRender
     else:
         return getIndex("Kurs nicht gefunden")
       
