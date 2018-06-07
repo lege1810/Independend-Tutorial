@@ -796,6 +796,22 @@ def getTutorialWithDocumentID():
         return renderTutorialPrePage(course)
         # show register form or save register informations in mongo
 
+@app.route('/editProfile', methods=['POST', 'GET'])
+def editProfile():
+    if request.method == 'POST':
+        mail = request.form.get('mail')
+        firstName = request.form.get('firstName')
+        lastName = request.form.get('lastName')
+        nickname = request.form.get('nickname')
+        password = request.form.get('password')
+        password2 = request.form.get('password2')
+        isTutor = request.form.get('isTutor')
+        if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 and len(password) > 0 :
+    elif request.method == 'GET' and isLoggedIn():
+        user = getUserFromSession()
+        render_template('editProfile.html', username = user['nickname'], user = user)
+
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
@@ -842,7 +858,7 @@ def register():
 
                 return 'user added'
             else:
-                return 'user already exists'
+                return render_template('register.html', info = 'user already exists')
         else:
             return 'user data not correct'
     else:
