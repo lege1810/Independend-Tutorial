@@ -1,110 +1,120 @@
 {% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {% endif %} {% block content %}
 <div style="margin-top:0px;padding-bottom:15px;">
     <div class="container">
+        {% include "tutorialNavigation.html" %}
         <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs ml-auto" id="navTutorial" style="margin:0px;">
-                    <li class="nav-item"><a class="nav-link text-capitalize" href="#">Lernmaterialien</a></li>
-                    <li class="nav-item"><a class="nav-link text-capitalize" href="#">Diskussionen</a></li>
-                    <li class="nav-item"><a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a></li>
-                    <li class="nav-item"><a class="nav-link text-capitalize" href="overview_tut.html">Kursdetails</a></li>
-                    <li class="nav-item"><a class="nav-link text-capitalize" href="overview_tut.html">Recap</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
-                <aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">
-                    <ul class="list-group nav nav-tabs card-header-tabs">
-                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 1</span></a></li>
-                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 2</span></a></li>
-                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 3</span></a></li>
-                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 4</span></a></li>
-                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Downloads</span></a></li>
-                    </ul>
-                </aside>
-            </div>
             <div class="col-md-8">
                 <div class="card" style="margin-right:0px;margin-left:-15px;">
-                    <div class="card-header sr-only invisible">
-                        <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.1</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.2</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.3</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.4</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.5</a></li>
-                            <li class="nav-item"><a class="nav-link active inactive" href="#">Recap</a></li>
-                        </ul>
-                    </div>
                     <div class="card-body" style="padding:0px;">
                         <div class="form-group">
-                            <form>
-                                <div class="col" style="padding-top:15px;padding-bottom:15px;">
-                                    <!-- Question -->
-                                    <h1 style="font-size:24px;width:100%;">Question</h1>
-                                    <textarea rows="5" class="form-control input-block"></textarea>
+                            <div class="col" style="padding-top:15px;padding-bottom:15px;">
+                                <!-- Question -->
+                                <form action="/recap" accept-charset="UTF-8" method="post">
+                                    <div id="questionsContainer">
+                                        <input type="hidden" name="courseID" value="{{course.id}}">
 
-                                    <!-- Answer -->
-                                    <div id="answersConainer">
-                                        <div id="answerContainer">
-                                            <input type="hidden" id="answerNumber" value="1">
-                                            <div class="form-row" style="margin-left:25px;">
-                                                <div class="col">
-                                                    <label id="anserLabel">Answer 1</label>
-                                                    <input type="text" name="answer_1" id="answerText" class="form-control input-block">
+                                        <div id=questionContainer>
+                                            <h1 style="font-size:24px;width:100%;">Question 1</h1>
+                                            <textarea rows="2" name="questionText_1" class="form-control input-block"></textarea>
+
+                                            <!-- Answers -->
+                                            <div id="answersConainer">
+                                                <div id="answerContainer">
+                                                    <div class="form-row" style="margin-left:25px;">
+                                                        <div class="col">
+                                                            <label id="anserLabel">Answer 1</label>
+                                                            <input type="text" name="question_1_answer_1" id="answerText" class="form-control input-block">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row" style="margin-left:25px;">
+                                                        <div class="col">
+                                                            <label>Is correct answer:</label>
+                                                            <input style="margin-left:20px;" type="checkbox" value="1" name="question_1_isCorrectAnswer_1" id="isCorrectAnswer">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-row" style="margin-left:25px;">
-                                                <div class="col">
-                                                    <label>Is correct answer:</label>
-                                                    <input style="margin-left:20px;" type="checkbox" value="1" name="isCorrectAnswer_1" id="isCorrectAnswer">
-                                                </div>
+
+                                                <!-- Interface add answer -->
+                                                <input style="margin-left:20px;" type="button" id="btnAddAnswer" value="Add answer" class="btn btn-light" answerID="1" questionID="1">
                                             </div>
                                         </div>
+
+                                        <!-- Interface add question -->
+                                        <input style="margin-left:20px;" type="button" id="btnAddQuestion" value="Add question" class="btn btn-light" questionID="1">
                                     </div>
 
-                                    <!-- Interface -->
-                                    <div class="form-row" style="margin-left:25px;">
-                                        <div class="col">
-                                            <input style="margin-left:20px;" type="button" id="btnAddAnswer" value="Add answer" class="btn btn-light">
-                                            <input style="margin-left:20px;" type="submit" value="Save" class="btn btn-light">
-                                        </div>
+                                    <!-- Interface submit button -->
+                                    <div class="col">
+                                        <input style="margin-left:20px;" type="submit" value="Save" class="btn btn-light">
                                     </div>
+                                </form>
 
-                                    <script>
-                                        window.addEventListener("load", function() {
-                                            document.getElementById('btnAddAnswer').addEventListener("click", function() {
-                                                var answersContainer = document.getElementById('answersConainer');
-                                                var answerContainer = document.getElementById('answerContainer');
-                                                var newContainer = answerContainer.cloneNode(true);
-                                                var answerNumber = answerContainer.childNodes[1].value;
+                                <script>
+                                    window.addEventListener("load", function() {
+                                        registerAnswerEvent();
 
-                                                var outer = newContainer.outerHTML;
-                                                outer = outer.replace("Answer " + Integer(answerNumber), "Answer " + Integer(answerNumber) + 1);
-                                                console.log(outer);
-                                                // newContainer = newContainer.outerHTML.replace("Answer " + answerNumber, "Answer " + answerNumber + 1);
-                                                // console.log(newContainer.outerHTML);
+                                        document.getElementById('btnAddQuestion').addEventListener("click", function(sender) {
+                                            var container = sender.target.parentNode;
 
-                                                answersContainer.innerHTML += newContainer.outerHTML;
-                                            });
+                                            var questionIndex = Number(sender.target.getAttribute('questionID')) + 1;
+
+                                            var question = "<div id=questionContainer><h1 style=\"font-size:24px;width:100%;\">Question %QUESTIONCOUNTER%</h1><textarea rows=\"2\" name=\"questionText_%QUESTIONCOUNTER%\" class=\"form-control input-block\"></textarea><div id=\"answerContainer\"><div class=\"form-row\" style=\"margin-left:25px;\"><div class=\"col\"><label id=\"anserLabel\">Answer%ANSWERCOUNTER%</label><input type=\"text\" name=\"question_%QUESTIONCOUNTER%_answer_%ANSWERCOUNTER%\" id=\"answerText\" class=\"form-control input-block\"></div></div><div class=\"form-row\" style=\"margin-left:25px;\"><div class=\"col\"><label>Is correct answer:</label><input style=\"margin-left:20px;\" type=\"checkbox\" value=\"1\" name=\"question_%QUESTIONCOUNTER%_isCorrectAnswer_%ANSWERCOUNTER%\"id=\"isCorrectAnswer\"></div></div></div><input style=\"margin-left:20px;\" type=\"button\" id=\"btnAddAnswer_%QUESTIONCOUNTER%\" value=\"Add answer\" class=\"btn btn-light\" answerID=\"1\" questionID=\"%QUESTIONCOUNTER%\"></div>";
+                                            question = replaceAll(question, "%ANSWERCOUNTER%", "1");
+                                            question = replaceAll(question, "%QUESTIONCOUNTER%", String(questionIndex));
+                                            console.log(question);
+                                            var div = document.createElement('div');
+                                            div.innerHTML = question.trim();
+
+                                            container.insertBefore(div, sender.target);
+
+                                            sender.target.setAttribute('questionID', questionIndex);
+                                            registerAnswerEvent('btnAddAnswer_' + questionIndex);
                                         });
-                                    </script>
+                                    });
 
+                                    function registerAnswerEvent(name) {
+                                        var eleName = "btnAddAnswer";
+                                        if (name) {
+                                            eleName = name;
+                                        }
+
+                                        document.getElementById(eleName).addEventListener("click", function(sender) {
+                                            var container = sender.target.parentNode;
+
+                                            var answerIndex = Number(sender.target.getAttribute('answerID')) + 1;
+                                            var questionIndex = Number(sender.target.getAttribute('questionID'));
+
+                                            var answer = "<div id=\"answerContainer\"> <div class = \"form-row\" style=\"margin-left:25px;\"> <div class=\"col\"> <label id=\"anserLabel\">Answer %ANSWERCOUNTER%</label> <input type=\"text\" name=\"question_%QUESTIONCOUNTER%_answer_%ANSWERCOUNTER%\" id=\"answerText\" class=\"form-control input-block\"> </div> </div> <div class = \"form-row\" style=\"margin-left:25px;\"> <div class = \"col\"> <label> Is correct answer: </label> <input style = \"margin-left:20px;\" type=\"checkbox\" value=\"1\" name=\"question_%QUESTIONCOUNTER%_isCorrectAnswer_%ANSWERCOUNTER%\" id=\"isCorrectAnswer\"> </div> </div> </div>";
+                                            answer = replaceAll(answer, "%ANSWERCOUNTER%", answerIndex);
+                                            answer = replaceAll(answer, "%QUESTIONCOUNTER%", questionIndex);
+
+                                            var div = document.createElement('div');
+                                            div.innerHTML = answer.trim();
+
+                                            sender.target.setAttribute('answerID', answerIndex);
+                                            container.insertBefore(div, sender.target);
+                                        });
+                                    }
+
+                                    function replaceAll(str, find, replace) {
+                                        return str.replace(new RegExp(find, 'g'), replace);
+                                    }
+                                </script>
+
+                            </div>
+                            <!-- <div class="col" style="padding-top:15px;padding-bottom:15px;">
+                                <h1 style="font-size:24px;width:100%;">Question 2</h1>
+                                <p style="width:100%;">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+                                <div class="form-row" style="margin-left:25px;">
+                                    <div class="col"><label>possiblie answer 1</label><input style="margin-left:20px;" type="checkbox"></div>
                                 </div>
-                                <div class="col" style="padding-top:15px;padding-bottom:15px;">
-                                    <h1 style="font-size:24px;width:100%;">Question 2</h1>
-                                    <p style="width:100%;">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-                                    <div class="form-row" style="margin-left:25px;">
-                                        <div class="col"><label>possiblie answer 1</label><input style="margin-left:20px;" type="checkbox"></div>
-                                    </div>
-                                    <div class="form-row" style="margin-left:25px;">
-                                        <div class="col"><label>possiblie answer 2</label><input style="margin-left:20px;" type="checkbox"></div>
-                                    </div>
-                                    <div class="form-row" style="margin-left:25px;">
-                                        <div class="col"><label>possiblie answer 3</label><input style="margin-left:20px;" type="checkbox"></div>
-                                    </div>
+                                <div class="form-row" style="margin-left:25px;">
+                                    <div class="col"><label>possiblie answer 2</label><input style="margin-left:20px;" type="checkbox"></div>
                                 </div>
-                            </form>
+                                <div class="form-row" style="margin-left:25px;">
+                                    <div class="col"><label>possiblie answer 3</label><input style="margin-left:20px;" type="checkbox"></div>
+                                </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

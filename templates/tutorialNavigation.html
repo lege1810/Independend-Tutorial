@@ -1,21 +1,20 @@
-
 <div class="row">
-        <div class="col">
-            <ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
-                <li class="nav-item">
-                    <a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-capitalize" href="/Tutorial/?courseID={{course.id}}">Kursdetails</a>
-                </li>
-                {% if userIsCourseMember %}
-                <li class="nav-item">
-                    <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-capitalize" href="overview_tut.html">Recap</a>
-                </li>
-                {%endif%}
-            </ul>
-        </div>
+    <div class="col">
+        <ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
+            <li class="nav-item">
+                <a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-capitalize" href="/Tutorial/?courseID={{course.id}}">Kursdetails</a>
+            </li>
+            {% if userIsCourseMember %}
+            <li class="nav-item">
+                <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-capitalize" href="/recap?courseID={{course.id}}">Recap</a>
+            </li>
+            {%endif%}
+        </ul>
     </div>
+</div>

@@ -56,9 +56,9 @@ def newEmptyCourse():
         'description': None,
         'courseBannerID': None,
         'courseDownloads': [],
+        'recap' : None,
         'categorys': {
-            'documents': [],
-            'quiz': []},
+            'documents': []},
     }
 
 
@@ -84,7 +84,7 @@ def newDocument():
     }
 
 
-def newQuiz():
+def newRecap():
     return {
         'name': None,
         'questions': []
@@ -753,12 +753,48 @@ def uploadTutorial():
     else:
         return getIndex("Unbekannter Fehler")
 
-@app.route('/recap', methods=['GET'])
+
+@app.route('/recap',  methods=['POST', 'GET'])
 def recap():
-    courseID = request.args.get('courseID')
-    course = getCourse(courseID)
-    return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
- 
+    if request.method == 'POST':
+        courseID = request.form.get('courseID')
+        recap = newRecap()
+
+        questionCounter = 1
+        while(request.form.get('questionText_' + str(questionCounter))):
+            print('neue frage')
+            question = newQuestion()
+            question['questionText'] = request.form.get('questionText_' + str(questionCounter))
+            answerCounter = 1
+            while(request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter))):
+                print('neue antwort')
+                answer = newAnswer()
+                answer['answerText'] = request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter))
+                if request.form.get('question_' + str(questionCounter) + '_isCorrectAnswer_' + str(answerCounter)):
+                    answer['answerIsCorrect'] = True
+                else:
+                    answer['answerIsCorrect'] = False
+                question['answers'].append(answer)
+                answerCounter += 1
+            
+            recap['questions'].append(question)
+            questionCounter += 1
+        
+
+        courses = getAllCoursesWrapperObject()
+        for course in courses['courses']:
+            if str(course['id']) == courseID:
+                course['recap'] = recap
+                print('-----> course found!')
+                break
+
+        updateDataBase('allCourses', courses)
+        return getIndex()
+    else:
+        courseID = request.args.get('courseID')
+        course = getCourseIfExists(courseID)
+
+        return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
 
 
 def renderTutorialPrePage(course):
