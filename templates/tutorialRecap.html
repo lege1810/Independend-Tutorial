@@ -40,17 +40,56 @@
                         <div class="form-group">
                             <form>
                                 <div class="col" style="padding-top:15px;padding-bottom:15px;">
-                                    <h1 style="font-size:24px;width:100%;">Question 1</h1>
-                                    <p style="width:100%;">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-                                    <div class="form-row" style="margin-left:25px;">
-                                        <div class="col"><label>possiblie answer 1</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    <!-- Question -->
+                                    <h1 style="font-size:24px;width:100%;">Question</h1>
+                                    <textarea rows="5" class="form-control input-block"></textarea>
+
+                                    <!-- Answer -->
+                                    <div id="answersConainer">
+                                        <div id="answerContainer">
+                                            <input type="hidden" id="answerNumber" value="1">
+                                            <div class="form-row" style="margin-left:25px;">
+                                                <div class="col">
+                                                    <label id="anserLabel">Answer 1</label>
+                                                    <input type="text" name="answer_1" id="answerText" class="form-control input-block">
+                                                </div>
+                                            </div>
+                                            <div class="form-row" style="margin-left:25px;">
+                                                <div class="col">
+                                                    <label>Is correct answer:</label>
+                                                    <input style="margin-left:20px;" type="checkbox" value="1" name="isCorrectAnswer_1" id="isCorrectAnswer">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Interface -->
                                     <div class="form-row" style="margin-left:25px;">
-                                        <div class="col"><label>possiblie answer 2</label><input style="margin-left:20px;" type="checkbox"></div>
+                                        <div class="col">
+                                            <input style="margin-left:20px;" type="button" id="btnAddAnswer" value="Add answer" class="btn btn-light">
+                                            <input style="margin-left:20px;" type="submit" value="Save" class="btn btn-light">
+                                        </div>
                                     </div>
-                                    <div class="form-row" style="margin-left:25px;">
-                                        <div class="col"><label>possiblie answer 3</label><input style="margin-left:20px;" type="checkbox"></div>
-                                    </div>
+
+                                    <script>
+                                        window.addEventListener("load", function() {
+                                            document.getElementById('btnAddAnswer').addEventListener("click", function() {
+                                                var answersContainer = document.getElementById('answersConainer');
+                                                var answerContainer = document.getElementById('answerContainer');
+                                                var newContainer = answerContainer.cloneNode(true);
+                                                var answerNumber = answerContainer.childNodes[1].value;
+
+                                                var outer = newContainer.outerHTML;
+                                                outer = outer.replace("Answer " + answerNumber, "Answer " + answerNumber + 1);
+                                                console.log(outer);
+                                                // newContainer = newContainer.outerHTML.replace("Answer " + answerNumber, "Answer " + answerNumber + 1);
+                                                // console.log(newContainer.outerHTML);
+
+                                                answersContainer.innerHTML += newContainer.outerHTML;
+                                            });
+                                        });
+                                    </script>
+
                                 </div>
                                 <div class="col" style="padding-top:15px;padding-bottom:15px;">
                                     <h1 style="font-size:24px;width:100%;">Question 2</h1>
