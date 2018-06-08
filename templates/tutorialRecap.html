@@ -80,7 +80,7 @@
                                                 var answerNumber = answerContainer.childNodes[1].value;
 
                                                 var outer = newContainer.outerHTML;
-                                                outer = outer.replace("Answer " + answerNumber, "Answer " + answerNumber + 1);
+                                                outer = outer.replace("Answer " + Integer(answerNumber), "Answer " + Integer(answerNumber) + 1);
                                                 console.log(outer);
                                                 // newContainer = newContainer.outerHTML.replace("Answer " + answerNumber, "Answer " + answerNumber + 1);
                                                 // console.log(newContainer.outerHTML);
