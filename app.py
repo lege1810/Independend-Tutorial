@@ -756,21 +756,9 @@ def uploadTutorial():
 
 @app.route('/recap', methods=['GET'])
 def recap():
-    searchText = request.form.get('search-bar')
-    searchText = searchText.lower()
-    foundCourses = []
-    allCourses = getAllCourses()
-    for course in allCourses:
-        courseName = course['name'].lower()
-        courseDesc = ''
-        if course['description'] is not None:
-            courseDesc = course['description'].lower()
-        if searchText in courseName or searchText in courseDesc:
-            foundCourses.append(course)
-    if isLoggedIn():
-        return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
-    else:
-        return render_template('searchTutorial.html', userLoged=False)
+    courseID = request.args.get('courseID')
+    course = getCourse(courseID)
+    return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
 
 
 def renderTutorialPrePage(course):

@@ -1,5 +1,4 @@
-{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block username
-%} {{username}} {% endblock %} {% block content %}
+{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content %}
 <div class="article-list" style="padding-bottom:15px;">
     <div class="container">
         <div class="row">
@@ -11,8 +10,7 @@
             <div class="col" style="padding-top:15px;">
                 <div class="form-group" style="margin-bottom:15px;">
                     <form action="/searchTutorial/" method="POST" enctype="multipart/form-data">
-                        <input class="d-inline-block search-input" type="text" name="search-bar" placeholder="Finde Tutorien..." autocomplete="off"
-                            style="width:400px;margin-left:auto;margin-right:6px;">
+                        <input class="d-inline-block search-input" type="text" name="search-bar" placeholder="Finde Tutorien..." autocomplete="off" style="width:400px;margin-left:auto;margin-right:6px;">
                         <button class="btn btn-light d-inline-block search-btn" type="submit" style="margin-right:0;margin-left:0;padding:10px;width:46px;height:46px;margin-bottom:3px;">
                             <i class="fa fa-search"></i>
                         </button>
