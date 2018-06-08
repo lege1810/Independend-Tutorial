@@ -1,0 +1,77 @@
+{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {% endif %} {% block content %}
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-tabs ml-auto" id="navTutorial" style="margin:0px;">
+                    <li class="nav-item"><a class="nav-link text-capitalize" href="#">Lernmaterialien</a></li>
+                    <li class="nav-item"><a class="nav-link text-capitalize" href="#">Diskussionen</a></li>
+                    <li class="nav-item"><a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a></li>
+                    <li class="nav-item"><a class="nav-link text-capitalize" href="overview_tut.html">Kursdetails</a></li>
+                    <li class="nav-item"><a class="nav-link text-capitalize" href="overview_tut.html">Recap</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4" style="padding-right:15px;padding-left:25px;margin-left:0px;">
+                <aside id="aside" class="card-header" style="margin-right:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;">
+                    <ul class="list-group nav nav-tabs card-header-tabs">
+                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 1</span></a></li>
+                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 2</span></a></li>
+                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 3</span></a></li>
+                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Topic 4</span></a></li>
+                        <li class="list-group-item nav-item" style="padding:0px;"><a href="#" class="nav-link"><span style="margin:0px;padding:0px;">Downloads</span></a></li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="col-md-8">
+                <div class="card" style="margin-right:0px;margin-left:-15px;">
+                    <div class="card-header sr-only invisible">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.1</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.2</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.3</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.4</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">Topic 2.5</a></li>
+                            <li class="nav-item"><a class="nav-link active inactive" href="#">Recap</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-body" style="padding:0px;">
+                        <div class="form-group">
+                            <form>
+                                <div class="col" style="padding-top:15px;padding-bottom:15px;">
+                                    <h1 style="font-size:24px;width:100%;">Question 1</h1>
+                                    <p style="width:100%;">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+                                    <div class="form-row" style="margin-left:25px;">
+                                        <div class="col"><label>possiblie answer 1</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    </div>
+                                    <div class="form-row" style="margin-left:25px;">
+                                        <div class="col"><label>possiblie answer 2</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    </div>
+                                    <div class="form-row" style="margin-left:25px;">
+                                        <div class="col"><label>possiblie answer 3</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    </div>
+                                </div>
+                                <div class="col" style="padding-top:15px;padding-bottom:15px;">
+                                    <h1 style="font-size:24px;width:100%;">Question 2</h1>
+                                    <p style="width:100%;">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+                                    <div class="form-row" style="margin-left:25px;">
+                                        <div class="col"><label>possiblie answer 1</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    </div>
+                                    <div class="form-row" style="margin-left:25px;">
+                                        <div class="col"><label>possiblie answer 2</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    </div>
+                                    <div class="form-row" style="margin-left:25px;">
+                                        <div class="col"><label>possiblie answer 3</label><input style="margin-left:20px;" type="checkbox"></div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
