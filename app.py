@@ -753,12 +753,23 @@ def uploadTutorial():
     else:
         return getIndex("Unbekannter Fehler")
 
-
 @app.route('/recap', methods=['GET'])
 def recap():
-    courseID = request.args.get('courseID')
-    course = getCourse(courseID)
-    return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
+    searchText = request.form.get('search-bar')
+    searchText = searchText.lower()
+    foundCourses = []
+    allCourses = getAllCourses()
+    for course in allCourses:
+        courseName = course['name'].lower()
+        courseDesc = ''
+        if course['description'] is not None:
+            courseDesc = course['description'].lower()
+        if searchText in courseName or searchText in courseDesc:
+            foundCourses.append(course)
+    if isLoggedIn():
+        return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
+    else:
+        return render_template('searchTutorial.html', userLoged=False)
 
 
 def renderTutorialPrePage(course):
@@ -823,12 +834,33 @@ def editProfile():
         if len(mail) > 0 and len(firstName) > 0 and len(lastName) > 0 :
             allUsers = getAllUsersWrapperObject()
             user = getUserFromSession()
-
-
+            if mail is not user['mail']:
+                user['mail'] = mail
+                session['mail'] = mail
+            if firstName is not user['first_name']:
+                user['first_name'] = firstName
+            if lastName is not user['last_name']:
+                user['last_name'] = lastName
+            if nickname is not user['nickname']:
+                user['nickname'] = nickname
+                session['nickname'] = nickname
+            if password is not '' and password == password2:
+                user['passphrase'] = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            if isTutor is not user['isTutor']:
+                user['isTutor'] = isTutor
+            #or , item in enumerate(alist)
+            for idx,userFromAllUsers in enumerate(allUsers['users']):
+                if user['id'] == userFromAllUsers['id']:
+                    allUsers['users'][idx] = user
+                    break
+            updateDataBase('allUsers', allUsers)
+            return render_template('editProfile.html', user = user, info = "applied changes")
 
     elif request.method == 'GET' and isLoggedIn():
         user = getUserFromSession()
-        render_template('editProfile.html', username = user['nickname'], user = user)
+        return render_template('editProfile.html', user = user)
+    else:
+        return getIndex("User nicht eingeloggt")
 
 # show register form or save register informations in mongo
 @app.route('/register', methods=['POST', 'GET'])
@@ -900,7 +932,7 @@ def login():
                 print("logged in")
                 return getIndex()
 
-        return 'Invalid username/password combination'
+        return getIndex("Invalid username or password")
     else:
         return getIndex()
 
