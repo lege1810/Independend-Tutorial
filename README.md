@@ -11,7 +11,6 @@ Importent:
 
 ToDo:
 9. fortschritt - moritz
-10. tutorial edit -leon (nur noch löschen von Seiten + Löschen von Downloads, Downloads mit MultipartReader)
 
 ToDo Kristof:
 3. Link füllen oder entferrnen; z.b.: about us, web design...

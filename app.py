@@ -609,6 +609,53 @@ def editTutIndex():
 
     return getIndex("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
 
+@app.route('/deleteDownload/')
+def deleteDownload():
+    if isLoggedIn():
+        courseID = request.args.get('courseID')
+        downloadID = request.args.get('downloadID')
+        user = getUserFromSession()
+    
+        if isCourseOwner(user['id'], ObjectId(courseID)):
+            allCourses = getAllCoursesWrapperObject()
+            foundCourse = None
+            for course in allCourses['courses']:
+                if str(course['id']) == courseID:
+                    for download in course['courseDownloads']:
+                        if str(download['fileID']) == downloadID:
+                            course['courseDownloads'].remove(download)
+                            print("Download aus Tutorial gelöscht")
+                            break
+                    foundCourse = course
+                    break
+            updateDataBase('allCourses', allCourses)
+            return render_template('editTutorial.html', course = foundCourse)
+
+    return getIndex("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
+    
+@app.route('/deletePage/')
+def deletePage():
+    if isLoggedIn():
+        courseID = request.args.get('courseID')
+        docID = request.args.get('documentID')
+        user = getUserFromSession()
+    
+        if isCourseOwner(user['id'], ObjectId(courseID)):
+            allCourses = getAllCoursesWrapperObject()
+            foundCourse = None
+            for course in allCourses['courses']:
+                if str(course['id']) == courseID:
+                    for doc in course['categorys']['documents']:
+                        if str(doc['id']) == docID:
+                            course['categorys']['documents'].remove(doc)
+                            print("Seite im Kurs gelöscht")
+                            break
+                    foundCourse = course
+                    break
+            updateDataBase('allCourses',allCourses)
+            return render_template('editTutorial.html', course = foundCourse)
+
+    return getIndex("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
 
 
 @app.route('/editTutorial/', methods=['POST'])
