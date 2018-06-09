@@ -940,6 +940,37 @@ def renderTutorialPrePage(course):
     else:
         return render_template('tutorialDetailsForGuest.html', course=course)
 
+@app.route('/TutorialOverview/')
+def getTutorialOverview():
+    if isLoggedIn():
+        user = getUserFromSession()
+        isTutor = user['isTutor']
+
+        courses = getAllCourses()
+        
+        memberCourses = []
+        ownCourses = []
+
+        #für alle KursId, in denen der User eingetragen ist,
+        for courseID in user['courses']:
+            #durchsuche alle Kurse und hänge Kurs an memberCourses
+            for course in courses:
+                if courseID == course['id']:
+                    memberCourses.append(course)
+                    break
+
+        #für alle KursId, in eigenen Kursen vom User,
+        for ownCourseID in user['ownCourses']:
+            #durchsuche alle Kurse und hänge Kurs an ownCourses
+            for course in courses:
+                if ownCourseID == course['id']:
+                    ownCourses.append(course)
+                    break
+        print(memberCourses)
+        return render_template('tutorialOverview.html', memberCourses = memberCourses, ownCourses = ownCourses, userisTutor = isTutor)
+    else:
+        return getIndex("Nutzer nicht eingeloggt")
+
 
 @app.route('/TutorialDownloads/', methods=['GET'])
 def getCourseDownloads():
