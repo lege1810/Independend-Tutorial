@@ -9,6 +9,10 @@
             </li>
             {% if userIsCourseMember or userIsCourseOwner %}
             <li class="nav-item">
+                <a class="nav-link text-capitalize" href="/TutorialChat?courseID={{course.id}}">Diskussionen</a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
             </li>
             <li class="nav-item">

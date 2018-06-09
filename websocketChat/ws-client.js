@@ -4,8 +4,7 @@ window.addEventListener("load", function() {
     var connection = new WebSocket('ws://192.168.178.112:1337');
 
     connection.onopen = function() {
-        console.log('Connected');
-        connection.send("sys username:" + document.getElementById("mail").value);
+        connection.send('sys selectedTut:' + getTutorium());
     };
 
     connection.onerror = function(error) {
@@ -15,20 +14,7 @@ window.addEventListener("load", function() {
     connection.onmessage = function(message) {
         try {
             if (message.data.substring(0, 4) == 'sys ') {
-                if (message.data.substring(0, 13) == 'sys coureses:') {
-                    var courses = JSON.parse(message.data.substring(13, message.data.lengh));
-                    var listBox = document.getElementById('tutorium');
-
-                    courses.forEach(element => {
-                        var values = element.split("_");
-                        var opt = document.createElement("option");
-                        listBox.options.add(opt);
-                        opt.text = values[0];
-                        opt.value = values[1];
-                    });
-
-                    changeTutorium(connection);
-                } else if (message.data.substring(0, 12) == 'sys oldChat:') {
+                if (message.data.substring(0, 12) == 'sys oldChat:') {
                     var content = document.getElementById("content");
                     var messages = JSON.parse(message.data.substring(12, message.data.lengh));
                     messages.forEach(msg => {
@@ -65,41 +51,15 @@ window.addEventListener("load", function() {
         connection.send(JSON.stringify(message));
         message.value = "";
     });
-
-    addListeners();
 });
-
-
-// ###################### draggable chat ######################
-
-function addListeners() {
-    document.getElementById('dragContainer').addEventListener('mousedown', mouseDown, false);
-    window.addEventListener('mouseup', mouseUp, false);
-
-}
-
-function mouseUp() {
-    window.removeEventListener('mousemove', divMove, true);
-}
-
-function mouseDown(e) {
-    window.addEventListener('mousemove', divMove, true);
-}
-
-function divMove(e) {
-    var div = document.getElementById('contentContainer');
-    div.style.position = 'absolute';
-    div.style.top = e.clientY + 'px';
-    div.style.left = e.clientX + 'px';
-}
 
 
 // ###################### helper functions ######################
 
 function addContent(nickname, message) {
     var content = document.getElementById("content");
-    if (content.innerHTML != '') {
-        content.innerHTML = "<br>" + content.innerHTML;
+    if (content.innerHTML.trim() != "") {
+        content.innerHTML = '<br>' + content.innerHTML;
     }
     content.innerHTML = '<b>' + nickname + '</b>: ' + message + content.innerHTML;
 }
@@ -111,9 +71,5 @@ function changeTutorium(connection) {
 
 function getTutorium() {
     var tutorium = document.getElementById("tutorium");
-    if (tutorium.selectedIndex != -1) {
-        return tutorium.options[tutorium.selectedIndex].value;
-    } else {
-        return '';
-    }
+    return tutorium.value;
 }

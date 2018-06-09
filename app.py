@@ -587,6 +587,13 @@ def insertAnswer(userMail, foreignKey, answerValue):
     updateDataBase('allUsers', users)
 
 
+def getUserAnswer(mail, foreignKey):
+    user = getUserByMail(mail)
+    for answer in user['progress']['answers']:
+        if answer['foreignKey'] == str(foreignKey):
+            return answer['value']
+
+
 @app.route('/changeTutorial/', methods=['GET'])
 def editTutIndex():
     courseID = request.args.get('courseID')
@@ -998,13 +1005,6 @@ def recap():
                 userLogged=isLoggedIn(),
                 userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
                 userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-
-
-def getUserAnswer(mail, foreignKey):
-    user = getUserByMail(mail)
-    for answer in user['progress']['answers']:
-        if answer['foreignKey'] == str(foreignKey):
-            return answer['value']
             
 
 @app.route('/recapAnswer', methods=['POST'])
@@ -1076,6 +1076,24 @@ def getTutorialOverview():
         return getIndex("Nutzer nicht eingeloggt")
 
 
+@app.route('/TutorialChat/', methods=['GET'])
+def getCourseChat():
+    courseID = request.args.get('courseID')
+    course = getCourseIfExists(courseID)
+    if course is not None:
+        if isLoggedIn():
+            return render_template('tutorialChat.html',
+                username=getUserFromSession()['nickname'],
+                userLogged=True,
+                course=course,
+                userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+                userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        else:
+            return getIndex("Nicht eingelogget!")
+    else:
+        return getIndex("Kurs nicht gefunden")
+
+
 @app.route('/TutorialDownloads/', methods=['GET'])
 def getCourseDownloads():
     courseID = request.args.get('courseID')
@@ -1109,6 +1127,7 @@ def getTutorialWithDocumentID():
         return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
     else:
         return renderTutorialPrePage(course)
+
 
 @app.route('/editProfile', methods=['POST', 'GET'])
 def editProfile():
@@ -1150,6 +1169,7 @@ def editProfile():
         return render_template('editProfile.html', user = user)
     else:
         return getIndex("User nicht eingeloggt")
+
 
 # show register form or save register informations in mongo
 @app.route('/register', methods=['POST', 'GET'])

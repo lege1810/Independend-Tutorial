@@ -9,27 +9,11 @@
     <link rel="stylesheet" href="../assets/fonts/ionicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
     <link rel="stylesheet" href="../assets/css/styles.min.css">
-    <link rel="stylesheet" href="../websocketChat/styles.chat.css">
-    <script language="javascript" type="text/javascript" src="../websocketChat/ws-client.js"></script>
 </head>
 
 
 <body id="login">
-
-    <!-- Websocket-Chat -->
-    <div id="contentContainer">
-        <div id="dragContainer">
-            Chat
-        </div>
-        <select id="tutorium" size="1">
-        </select>
-
-        <div id="content"></div>
-        <input type="hidden" id="mail" value="{{session['mail']}}">
-        <input type="hidden" id="name" value="{{session['nickname']}}">
-        <input type="text" id="message" placeholder="Message"><br>
-        <input type="button" id="send" value="Send">
-    </div>
+    <!-- Infodialog -->
     {% if info is not undefined %}
     <div style="display: none" id="triggerInfo">{{info}}</div>
     {% endif %}

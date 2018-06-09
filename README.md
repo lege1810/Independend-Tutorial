@@ -6,6 +6,9 @@ Install:
 5. Install websocket(node.js):  npm install websocket --save
 6. Install mongodb (node.js)
 
+Importent:
+1. Edit IP at websocketChat/ws-client.js
+
 ToDo:
 9. fortschritt - moritz
 10. tutorial edit -leon (nur noch löschen von Seiten + Löschen von Downloads, Downloads mit MultipartReader)

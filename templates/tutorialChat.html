@@ -1,0 +1,27 @@
+{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content%}
+<script language="javascript" type="text/javascript" src="../websocketChat/ws-client.js"></script>
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        {% include "tutorialNavigation.html" %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card" style="margin-right:0px;margin-left:-15px;">
+                    <div class="card-body" id="contentContainer">
+                        <h3>Chat</h3>
+                        <input type="hidden" id="mail" value="{{session['mail']}}">
+                        <input type="hidden" id="name" value="{{session['nickname']}}">
+                        <input type="hidden" id="tutorium" value="{{course.id}}">
+                        <div class="d-flex" style="height:250px;padding:15px;width:100%;margin-bottom:15px;margin-top:15px;">
+                            <p id="content" style="overflow: scroll;padding: 15px;overflow-x: hidden;">
+
+                            </p>
+                        </div>
+                        <div class="d-flex"><input class="form-control-lg d-flex mx-auto" type="text" required="" placeholder="Message" maxlength="1000" autocomplete="off" id="message" style="width:100%;"></div><button class="btn btn-light d-block mx-auto" type="button"
+                            id="send" value="Absenden" style="margin-top:15px;">Absenden</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
