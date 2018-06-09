@@ -98,9 +98,17 @@ function sendCourses(mail, connection) {
             }
 
             for (var j = 0; j < allCourses.length; j++) {
-                for (var x = 0; x < user.ownCourses.length; x++) {
+                var added = false;
+                for (var x = 0; x < user.ownCourses.length && !added; x++) {
                     if (String(allCourses[j].id) == String(user.ownCourses[x])) {
                         retCourses.push(allCourses[j].name + "_" + allCourses[j].id);
+                        added = true;
+                    }
+                }
+                for (var y = 0; y < user.courses.length && !added; y++) {
+                    if (String(allCourses[j].id) == String(user.courses[y])) {
+                        retCourses.push(allCourses[j].name + "_" + user.courses[y]);
+                        added = true;
                     }
                 }
             }

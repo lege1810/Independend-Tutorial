@@ -57,9 +57,9 @@ def newEmptyCourse():
         'courseBannerID': None,
         'courseDownloadDescription': None,
         'courseDownloads': [],
+        'recap' : None,
         'categorys': {
-            'documents': [],
-            'quiz': []},
+            'documents': []},
     }
 
 
@@ -84,7 +84,7 @@ def newDocument():
     }
 
 
-def newQuiz():
+def newRecap():
     return {
         'name': None,
         'questions': []
@@ -429,10 +429,10 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
         if isLoggedIn():
             if isCourseMember(getUserFromSession()['id'], course['id']):
                 templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                                documentVideoID=documentVideoID, userIsCourseMember=True)
+                                                documentVideoID=documentVideoID, userIsCourseMember = True, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
             else:
-                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                                documentVideoID=documentVideoID, userIsCourseMember=False)
+                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex, 
+                                                documentVideoID=documentVideoID, userIsCourseMember = False, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             templateToRender = render_template('tutorialStyle1.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID, documentVideoID=documentVideoID)
@@ -440,10 +440,10 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
         if isLoggedIn():
             if isCourseMember(getUserFromSession()['id'], course['id']):
                 templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember=True)
+                                               documentImgID=documentImgID, userIsCourseMember = True, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
             else:
                 templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember=False)
+                                               documentImgID=documentImgID, userIsCourseMember = False, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             templateToRender = render_template('tutorialStyle2.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID)
@@ -892,24 +892,51 @@ def uploadTutorial():
     else:
         return getIndex("Unbekannter Fehler")
 
-@app.route('/recap', methods=['GET'])
-def recap():
-    searchText = request.form.get('search-bar')
-    searchText = searchText.lower()
-    foundCourses = []
-    allCourses = getAllCourses()
-    for course in allCourses:
-        courseName = course['name'].lower()
-        courseDesc = ''
-        if course['description'] is not None:
-            courseDesc = course['description'].lower()
-        if searchText in courseName or searchText in courseDesc:
-            foundCourses.append(course)
-    if isLoggedIn():
-        return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
-    else:
-        return render_template('searchTutorial.html', userLoged=False)
 
+@app.route('/recap', methods=['POST', 'GET'])
+def recap():
+    if request.method == 'POST':
+        courseID = request.form.get('courseID')
+        recap = newRecap()
+
+        questionCounter = 1
+        while(request.form.get('questionText_' + str(questionCounter))):
+            print('neue frage')
+            question = newQuestion()
+            question['questionText'] = request.form.get('questionText_' + str(questionCounter))
+            answerCounter = 1
+            while(request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter))):
+                print('neue antwort')
+                answer = newAnswer()
+                answer['answerText'] = request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter))
+                if request.form.get('question_' + str(questionCounter) + '_isCorrectAnswer_' + str(answerCounter)):
+                    answer['answerIsCorrect'] = True
+                else:
+                    answer['answerIsCorrect'] = False
+                question['answers'].append(answer)
+                answerCounter += 1
+            
+            recap['questions'].append(question)
+            questionCounter += 1
+        
+
+        courses = getAllCoursesWrapperObject()
+        for course in courses['courses']:
+            if str(course['id']) == courseID:
+                course['recap'] = recap
+                print('-----> course found!')
+                break
+
+        updateDataBase('allCourses', courses)
+        return getIndex()
+    else:
+        courseID = request.args.get('courseID')
+        course = getCourseIfExists(courseID)
+
+        if isCourseOwner(getUserByMail(session['mail'])['id'], course['id']):
+            return render_template('tutorialRecapEdit.html', course = course, userLogged=isLoggedIn())
+        else:
+            return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
 
 def renderTutorialPrePage(course):
     # sende Vorseite zum Tutorial 
