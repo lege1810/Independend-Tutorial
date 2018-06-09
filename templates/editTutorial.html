@@ -1,169 +1,354 @@
-<html>
-<div style="color:red">{{info}}</div>
-<form action="/uploadTutorial" method="POST" enctype="multipart/form-data">
-    <div>
-        Kurs Name
-        <input type="text" name="courseName" value="{{course.name}}">
-    </div>
-    <br>
-    {% if course.courseBannerID is not none %}
-    <img src="/img/{{course.courseBannerID}}"> 
-    <br>
-    Kurs Bild ändern:
-    <input type="file" name="courseBanner" accept="image/*"> 
-    {% else %} 
-    Kurs Bild hinzufügen:
-    <input type="file" name="courseBanner" accept="image/*"> 
-    {%endif %}
+{% extends "loggedLayout.html" %} {% block content %}
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div style="display: none" id="emptyCourse" class="singlePage">
+                    <div class="row">
+                        <div class="col">
+                            <label class="col-form-label">Titel der Seite</label>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="pageTitle">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="col-form-label">Template für die aktuelle Seite</label>
+                        </div>
+                        <div class="col">
+                            <select name="pageStyle">
+                                <option>1</option>
+                                <option>2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="uploadVideoOrImg">
+                        <div class="row" style="display: flex;" name="videoUpload">
+                            <div class="col">
+                                <label class="col-form-label">Video hinzufügen&nbsp;</label>
+                            </div>
+                            <div class="col">
+                                <input id="video_file" name="videoFile" class="videoFile" accept="video/*" type="file" style="width:700px;">
+                            </div>
+                        </div>
+                        <div class="row" style="display: none;" name="ImgUpload">
+                            <div class="col">
+                                <label class="col-form-label">Bild hinzufügen&nbsp;</label>
+                            </div>
+                            <div class="col">
+                                <input type="file" name="courseImg" class="courseImg" accept="image/*" style="width:700px;">
+                            </div>
+                        </div>
+                    </div>
 
-
-    <div>
-        Kurs Beschreibung
-        {% if course.description is not none %}
-        <input type="text" name="courseDescription" value ="{{course.description}}">
-        {% else %} 
-        <input type="text" name="courseDescription">
-        {%endif %}
-    </div>
-
-    <!--Eine Seite-->
-    <div id="allPages">
-        {% for doc in course.categorys.documents %}
-        <div name="singlePage" style="background-color: bisque">
-            <br>
-            <div>
-                Titel der Seite:
-                {% if doc.title is not none %}
-                <input type="text" name="pageTitle" value="{{doc.title}}">
-                {% else %}
-                <input type="text" name="pageTitle">
-                {%endif %}
-            </div>
-            <div>
-                Style der Seite:
-                <!-- DropDown für 1 und 2, je nach Auswahl wird
-                mit Javascript Möglichkeit fürs hochladen eines Videos ein und ausgeblendet-->
-                <select name="pageStyle" value="{{doc.styleTyp}}">
-                    <option>1</option>
-                    <option>2</option>
-                </select>
-                <div>
-                    <img src="" alt="Das Beispiel Bild, wie Tutorium mit dem ausgewählten Style aussieht">
+                    <div class="row">
+                        <div class="col">
+                            <label class="col-form-label">Detailreiche Beschreibung</label>
+                        </div>
+                        <div class="col">
+                            <textarea name="docText"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
                 </div>
-            </div>
+                <form action="/editTutorial/?courseID={{course.id}}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
 
-            <div name="uploadVideo">
-                {% if doc.content.courseVideoID is not none %}
-                <video width="320" height="240" controls>
-					<source src="/video/{{doc.content.courseVideoID}}" type="video/mp4">
-                </video>
-                <br>
-                Kursvideo ändern:
-                <input id="video_file" name="videoFile" accept="video/*" type="file">
-                {% else %}
-                Upload Video:
-                <input id="video_file" name="videoFile" accept="video/*" type="file">
-                {%endif %}
-            </div>
+                        <h3>Tutorium bearbeiten:</h3>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Kursname</label>
+                            </div>
+                            <div class="col">
+                                <input type="text" name="courseName" value="{{course.name}}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Bild zum Kurs (anzeige auf der Overview)</label>
+                            </div>
+                            <div class="col">
+                                {% if course.courseBannerID is not none %}
+                                <div>
+                                    <img src="/img/{{course.courseBannerID}}" style="width:200px; height: 200px;">
+                                </div>
+                                <div>
+                                    <input type="file" name="courseBanner" accept="image/*" style="width:200px;">
+                                </div>
+                                {% else %}
+                                <input type="file" name="courseBanner" accept="image/*" style="width:200px;"> {%endif %}
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Kursbeschreibung</label>
+                            </div>
+                            <div class="col">
+                                {% if course.description is not none %}
+                                <textarea type="text" name="courseDescription">{{course.description}}</textarea> {% else %}
+                                <textarea type="text" name="courseDescription"></textarea> {%endif %}
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div id="allPages">
 
-            <br> Große Textbox für Texte..
-            <div>
-                {% if doc.content.p[0] is not none %}
-                Text ändern:
-                <br>
-                <textarea rows="6" cols="50" name="docText">{{doc.content.p[0]}}</textarea>
-                {% else %}
-                Text hinzufügen:
-                <br>
-                <textarea rows="6" cols="50" name="docText"></textarea>
-                {%endif %}
-            </div>
+                            {% for doc in course.categorys.documents %}
+                            <div class="singlePage">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="col-form-label">Titel der Seite</label>
+                                    </div>
+                                    <div class="col">
+                                        {% if doc.title is not none %}
+                                        <input type="text" name="pageTitle" value="{{doc.title}}"> {% else %}
+                                        <input type="text" name="pageTitle"> {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="col-form-label">Template für die aktuelle Seite</label>
+                                    </div>
+                                    <div class="col">
+                                        {% if doc.content.courseImgID is not none %}
+                                        <select name="pageStyle">
+                                            <option>1</option>
+                                            <option selected>2</option>
+                                        </select>
+                                        {% elif doc.content.courseVideoID is not none %}
+                                        <select name="pageStyle">
+                                            <option selected>1</option>
+                                            <option>2</option>
+                                        </select>
+                                        {% else %}
+                                        <select name="pageStyle">
+                                            <option>1</option>
+                                            <option>2</option>
+                                        </select>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div id="uploadVideoOrImg">
+                                    <div class="row" style="display: flex;" name="videoUpload">
+                                        {% if doc.content.courseVideoID is not none %}
+                                        <div class="col">
+                                            <label class="col-form-label">Video ändern&nbsp;</label>
+                                        </div>
+                                        <div class="col">
+                                            <div>
+                                                <video width="200" height="200" controls>
+                                                    <source src="/video/{{doc.content.courseVideoID}}" type="video/mp4">
+                                                </video>
+                                            </div>
 
-            <div>
-                {% if doc.content.courseImgID is not none %}
-                Beschreibendes Bild für Seite des Tutoriums:
-                <br>
-                <img src="/img/{{doc.content.courseImgID}}">
-                <br>
-                Bild ändern:
-                <input type="file" name="courseImg" accept="image/*">
-                {% else %}
-                Beschreibendes Bild für Seite des Tutoriums hinzufügen:
-                <br>
-                <input type="file" name="courseImg" accept="image/*">
-                {%endif %}
-            </div>
+                                            <div>
+                                                <input id="video_file" name="videoFile" class="videoFile" accept="video/*" type="file" style="width:200px;">
+                                            </div>
+                                        </div>
+                                        {% elif doc.content.courseVideoID is none %}
+                                        <div class="col">
+                                            <label class="col-form-label">Video hinzufügen&nbsp;</label>
+                                        </div>
+                                        <div class="col">
+                                            <input id="video_file" name="videoFile" class="videoFile" accept="video/*" type="file" style="width:200px;">
+                                        </div>
+                                        {%endif %}
+                                    </div>
+                                    <div class="row" style="display: none;" name="ImgUpload">
+                                        {% if doc.content.courseImgID is not none %}
+                                        <div class="col">
+                                            <label class="col-form-label">Bild ändern&nbsp;</label>
+                                        </div>
+                                        <div class="col">
+                                            <div>
+                                                <img src="/img/{{doc.content.courseImgID}}" style="width: 200px; height: 200px;">
+                                            </div>
 
-           
-            <div>
-                <br>
-                Große Textbox für Bildbeschreibung:
-                <br>
-                {% if doc.content.p[1] is not none %}
-                Text ändern:
-                <br>
-                <textarea rows="6" cols="50" name="docText2">{{doc.content.p[1]}}</textarea>
-                {% else %}
-                Text hinzufügen:
-                <br>
-                <textarea rows="6" cols="50" name="docText2"></textarea>
-                {%endif %}
+                                            <div>
+                                                <input type="file" name="courseImg" class="courseImg" accept="image/*" style="width:200px;">
+                                            </div>
+                                        </div>
+                                        {% elif doc.content.courseImgID is none %}
+                                        <div class="col">
+                                            <label class="col-form-label">Bild hinzufügen&nbsp;</label>
+                                        </div>
+                                        <div class="col">
+                                            <input type="file" name="courseImg" class="courseImg" accept="image/*" style="width:200px;">
+                                        </div>
+                                        {%endif%}
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="col-form-label">Detailreiche Beschreibung</label>
+                                    </div>
+                                    <div class="col">
+                                        <textarea name="docText">{% if doc.content.p[0] is not none %}{{doc.content.p[0]}}{% endif %}</textarea>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                            </div>
+                            {%endfor%}
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Weitere Seite zum Tutorium hinzufügen</label>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-light" type="button" id="addPage">Seite hinzufügen</button>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Bild/ PDF/ etc. hinzufügen</label>
+                            </div>
+                            <div class="col">
+                                {% for download in course.courseDownloads %}
+                                <div>
+                                    {{ download.fileName }}
+                                </div>
+                                {%endfor%}
+                                <div>
+                                    <input type="file" name="fileDownloads" style="width:200px;" accept="audio/*,video/*,image/*,.pdf">
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label class="col-form-label">Beschreibung zu den Downloads</label>
+                            </div>
+                            <div class="col">
+                                <textarea name="fileDescription">{{course.courseDownloadDescription}}</textarea>
+                            </div>
+                        </div>
+                        <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="btn-group" role="group">
+                                    <input type="hidden" id="pageCount" name="countPages">
+                                    <input class="btn btn-light" type="submit" value="Speichern" id="submitButton">
+                                </div>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            ----------------------------------------
-            <br>
         </div>
-        {% endfor %}
     </div>
+</div>
 
-    <div>
-        Weitere Seite zum Tutorium hinzufügen:
-        <button type="button" id="addPage">
-            Seite hinzufügen
-        </button>
-    </div>
-
-
-    <div style="visibility: hidden">
-        {% block newCourse %}{% endblock %}
-    </div>
-
-    <br>
-
-    <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
-
-    <input type="hidden" id="pageCount" name="countPages" value="1">
-    <input type="submit">
-</form>
 <script>
-    pageCount = document.getElementById("pageCount")
-    addPageButton = document.getElementById("addPage");
-    allPages = document.getElementById("allPages")
-    singlePage = allPages.firstChild.nextSibling
-    newPage = singlePage.cloneNode(true)
-    addPageButton.addEventListener("click", function () {
-        newPage = newPage.cloneNode(true)
-        allPages.appendChild(newPage)
-        pageCount.value++;
-        initDD()
-    });
+    window.addEventListener("load", function () {
+        var addPageButton = document.getElementById("addPage");
+        var allPages = document.getElementById("allPages")
+        var newPage = document.getElementById("emptyCourse").cloneNode(true)
+        var pageCount = document.getElementsByName("pageTitle").length - 1
+        var countPages = document.getElementById("pageCount")
+        countPages.value = pageCount
 
-    function initDD() {
-        styleDD = document.getElementsByName("pageStyle");
-        videoDiv = document.getElementsByName("uploadVideo");
-        for (var i = 0; i < styleDD.length; i++) {
-            (function (index) {
-                styleDD[index].addEventListener("change", function () {
-                    if (styleDD[index].selectedIndex == 0) {
-                        videoDiv[index].style.visibility = "visible";
-                    } else {
-                        videoDiv[index].style.visibility = "hidden";
-                    }
-                });
-            })(i);
+        //Füge jeder bestehenden Seite die SeitenNr hinzu (ab index 1)
+        var existingPages = document.getElementsByClassName("singlePage")
+        for (var i = 0; i < existingPages.length; i++) {
+            var pageNr = document.createElement("input")
+            pageNr.type = "hidden"
+            pageNr.className = "pageNrs"
+            pageNr.value = i
+            if (i + 1 < existingPages.length) {
+                existingPages[i + 1].appendChild(pageNr)
+            }
         }
-    }
-    initDD()
 
-</script>
+        //Wenn Seite hinzugefügt, clone leere Seite, 
+        addPageButton.addEventListener("click", function () {
+            var countPages = document.getElementById("pageCount")
+            var newPagetoAppend = newPage.cloneNode(true)
+            newPagetoAppend.style.display = ""
+            var pageNr = document.createElement("input")
+            pageNr.type = "hidden"
+            pageNr.className = "pageNrs"
+            newPagetoAppend.appendChild(pageNr)
+            allPages.appendChild(newPagetoAppend)
+            var pageCount = document.getElementsByName("pageTitle").length - 1
+            pageNr.value = pageCount - 1
+            countPages.value = pageCount
+            console.log("Count pages : " + countPages.value)
+            initnewPage()
+            initDD()
+        });
 
-</html>
+        //wenn neue Seite hinzugefügt wird, hole alle bild und video inputs ab und 
+        function initnewPage() {
+            var allVideoInputs = document.getElementsByClassName("videoFile")
+            var allImgInputs = document.getElementsByClassName("courseImg")
+            for (var i = 1; i < allVideoInputs.length; i++) {
+                (function (index) {
+                    allVideoInputs[index].addEventListener("change", function () {
+                        var testIndex = index
+                        var otherTest = index -1
+                        if (allVideoInputs[testIndex].files.length != 0) {
+                            console.log("vid Change name")
+                            allVideoInputs[testIndex].setAttribute("name", "vid" + otherTest);
+                        }
+                    })
+                })(i);
+            }
+
+            for (var i = 1; i < allImgInputs.length; i++) {
+                (function (index) {
+                    allImgInputs[index].addEventListener("change", function () {
+                        var testIndex = index
+                        var otherTest = index -1
+                        if (allImgInputs[testIndex].files.length != 0) {
+                            console.log("Img Change name")
+                            allImgInputs[testIndex].setAttribute("name", "img" + otherTest);
+                        }
+                    })
+                })(i);
+            }
+        }
+
+
+        function initDD() {
+            var styleDD = document.getElementsByName("pageStyle");
+            var videoDiv = document.getElementsByName("videoUpload");
+            var imgDiv = document.getElementsByName("ImgUpload");
+
+            for (var i = 0; i < styleDD.length; i++) {
+                if (styleDD[i].selectedIndex == 0) {
+                    videoDiv[i].style.display = "flex";
+                    imgDiv[i].style.display = "none";
+                } else {
+                    videoDiv[i].style.display = "none";
+                    imgDiv[i].style.display = "flex";
+                }
+                (function (index) {
+                    styleDD[index].addEventListener("change", function () {
+                        if (styleDD[index].selectedIndex == 0) {
+                            videoDiv[index].style.display = "flex";
+                            imgDiv[index].style.display = "none";
+                        } else {
+                            videoDiv[index].style.display = "none";
+                            imgDiv[index].style.display = "flex";
+                        }
+                    });
+                })(i);
+            }
+        }
+        initDD()
+        initnewPage()
+    })
+</script> {% endblock %}
