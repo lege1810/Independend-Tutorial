@@ -55,6 +55,7 @@ def newEmptyCourse():
         'name': None,
         'description': None,
         'courseBannerID': None,
+        'courseDownloadDescription': None,
         'courseDownloads': [],
         'categorys': {
             'documents': [],
@@ -65,8 +66,7 @@ def newEmptyCourse():
 def newCourseDownload():
     return {
         'fileID': None,
-        'fileName': None,
-        'description': None
+        'fileName': None
     }
 
 
@@ -157,7 +157,7 @@ def fillDB():
     studCorp.insert(allUsers)
     # ------------------Define new Tutorial-----------------------------------
     newTutorial = newEmptyCourse()
-    #newTutorial['id'] = '1234567890qwertzuio2'
+    # newTutorial['id'] = '1234567890qwertzuio2'
     newTutorial['name'] = 'Web-Systeme'
     newTutorial['description'] = 'Lernen sie Technologien zu vergleichen'
 
@@ -216,7 +216,7 @@ def fillDB():
 
     # -----------------------------
     newTutorial2 = newEmptyCourse()
-    #newTutorial2['id'] = '1234567890qwertzuio'
+    # newTutorial2['id'] = '1234567890qwertzuio'
     newTutorial2['name'] = 'Mathe'
     newTutorial2['description'] = 'Integrale'
 
@@ -379,7 +379,6 @@ def getCourseWithString(courseID):
     allCourses = getAllCourses()
     foundcourse = None
     for course in allCourses:
-        print("DB ", course['id'], " courseID ", courseID)
         if str(course['id']) == courseID:
             foundcourse = course
             break
@@ -430,10 +429,10 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
         if isLoggedIn():
             if isCourseMember(getUserFromSession()['id'], course['id']):
                 templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                                documentVideoID=documentVideoID, userIsCourseMember = True)
+                                                documentVideoID=documentVideoID, userIsCourseMember=True)
             else:
-                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex, 
-                                                documentVideoID=documentVideoID, userIsCourseMember = False)
+                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
+                                                documentVideoID=documentVideoID, userIsCourseMember=False)
         else:
             templateToRender = render_template('tutorialStyle1.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID, documentVideoID=documentVideoID)
@@ -441,10 +440,10 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
         if isLoggedIn():
             if isCourseMember(getUserFromSession()['id'], course['id']):
                 templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember = True)
+                                               documentImgID=documentImgID, userIsCourseMember=True)
             else:
                 templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember = False)
+                                               documentImgID=documentImgID, userIsCourseMember=False)
         else:
             templateToRender = render_template('tutorialStyle2.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID)
@@ -488,6 +487,7 @@ def isCourseMember(userID, courseID):
                 userIsCourseMember = True
                 break
     return userIsCourseMember
+
 
 def isCourseOwner(userID, courseID):
     user = getUser(userID)
@@ -536,7 +536,7 @@ def editTutIndex():
         userFromSession = getUserFromSession()
         for courseidSession in userFromSession['ownCourses']:
             if str(courseidSession) == courseID:
-                if foundCourse is not None:
+                if foundCourse is None:
                     return getIndex("Kurs nicht gefunden!")
                 else:
                     return render_template('editTutorial.html', course=foundCourse)
@@ -546,19 +546,161 @@ def editTutIndex():
 # Wenn Tutorial schon existiert
 
 
-@app.route('/editTutorial', methods=['POST'])
+def deleteImgAndVideosFromCourse(course):
+     # öffne Grid-Fs-Collection
+    db = client.myTestBase
+    fsCollection = gridfs.GridFS(db)
+
+    if course['categorys']['documents'][x]['content']['courseImgID'] is not None:
+        fsCollection.delete(course['categorys']
+                            ['documents'][x]['content']['courseImgID'])
+        course['categorys']['documents'][x]['content']['courseImgID'] = None
+
+    if course['categorys']['documents'][x]['content']['courseVideoID'] is not None:
+        fsCollection.delete(
+            course['categorys']['documents'][x]['content']['courseVideoID'])
+        course['categorys']['documents'][x]['content']['courseVideoID'] = None
+    return course
+
+
+@app.route('/editTutorial/', methods=['POST'])
 def editTutorial():
-    #userID = request.args.get('cookieID')
     courseID = request.args.get('courseID')
-    # if isCourseOwner(userID, courseID)
-    courseIndex = getCourseIndex(courseID)
-    allCourses = getAllCoursesWrapperObject()
-    # bearbeite KursInformationen
+    course = getCourseWithString(courseID)
+    if course is not None:
+        if isLoggedIn() and isCourseOwner(getUserFromSession()['id'], course['id']):
+            allCourses = getAllCoursesWrapperObject()
 
-    # Wenn Feld leer, überschreibe nicht!!!!!!!!111
+             # öffne Grid-Fs-Collection
+            db = client.myTestBase
+            fsCollection = gridfs.GridFS(db)
 
-    #allCourses['courses'][courseIndex]['courseImgID'] = imgID
+            courseBanner = request.files.getlist('courseBanner')
+            courseName = request.form.get('courseName')
+            courseDescription = request.form.get('courseDescription')
+            pagesTitle = request.form.getlist('pageTitle')
+            pagesStyle = request.form.getlist('pageStyle')
+            pagesText = request.form.getlist('docText')
+            countPages = request.form.get('countPages')
+            fileDownloads = request.files.getlist('fileDownloads')
+            fileDescription = request.form.get('fileDescription')
 
+            if courseName is not course['name']:
+                course['name'] = courseName
+
+            if courseDescription is not course['description']:
+                course['description'] = courseDescription
+
+            if len(courseBanner) > 0:
+                bannerID = ObjectId()
+                fsCollection.delete(course['courseBannerID'])
+                course['courseBannerID'] = bannerID
+                fsCollection.put(
+                    courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
+
+            for x in range(0, int(countPages)):
+                # wenn Dokument an der stelle x existiert, ersetze, sonst erstelle neues Dokument
+                print("index ", x, " aktuelle Seitenanzahl ",len(course['categorys']['documents']), " neue Seitenanzahl ", countPages)
+                if x < len(course['categorys']['documents']):
+                    #ersetze Bilder oder Videos auf den Seiten des Tutorials
+                    img = request.files.get('img'+str(x))
+                    vid = request.files.get('vid'+str(x))
+                    if pagesStyle[x] == '2' and img is not None:
+                        print("neues img : ", img.filename)
+                        #lösche alte Bilder und Videos
+                        if course['categorys']['documents'][x]['content']['courseImgID'] is not None:
+                            fsCollection.delete(course['categorys']['documents'][x]['content']['courseImgID'])
+                            print("img gelöscht")
+                            course['categorys']['documents'][x]['content']['courseImgID'] = None
+
+                        if course['categorys']['documents'][x]['content']['courseVideoID'] is not None:
+                            fsCollection.delete(course['categorys']['documents'][x]['content']['courseVideoID'])
+                            print("vid gelöscht")
+                            course['categorys']['documents'][x]['content']['courseVideoID'] = None
+
+                        imgID = ObjectId()
+                        course['categorys']['documents'][x]['content']['courseImgID'] = imgID
+                        fsCollection.put(img, filename=img.filename, _id=imgID)
+                        print("neues img hochgeladen")
+                    elif pagesStyle[x] == '1' and vid is not None:
+                        print("neues vid : ", vid.filename)
+                        #lösche alte Bilder und Videos
+                        if course['categorys']['documents'][x]['content']['courseImgID'] is not None:
+                            fsCollection.delete(course['categorys']['documents'][x]['content']['courseImgID'])
+                            print("img gelöscht")
+                            course['categorys']['documents'][x]['content']['courseImgID'] = None
+
+                        if course['categorys']['documents'][x]['content']['courseVideoID'] is not None:
+                            fsCollection.delete(course['categorys']['documents'][x]['content']['courseVideoID'])
+                            print("vid gelöscht")
+                            course['categorys']['documents'][x]['content']['courseVideoID'] = None
+
+                        videoID = ObjectId()
+                        course['categorys']['documents'][x]['content']['courseVideoID'] = videoID
+                        fsCollection.put(vid.read(), filename=vid.filename, _id=videoID)
+                        print("neues vid hochgeladen")
+                    #ersetze Seitentitel/Style/Texte
+                    if pagesTitle[x] is not course['categorys']['documents'][x]['title']:
+                        course['categorys']['documents'][x]['title'] = pagesTitle[x]
+                        print("Seiten titel erneuert ", course['categorys']['documents'][x]['title'])
+                    if pagesStyle[x] is not course['categorys']['documents'][x]['styleTyp']:
+                        course['categorys']['documents'][x]['styleTyp'] = pagesStyle[x]
+                        print("Seiten Style erneuert ", course['categorys']['documents'][x]['styleTyp'])
+                    if pagesText[x] is not course['categorys']['documents'][x]['content']['p'][0]:
+                        course['categorys']['documents'][x]['content']['p'][0] = pagesText[x]
+                        print("Text erneuert ", course['categorys']['documents'][x]['content']['p'][0])
+        
+                else:
+                    #wenn seite noch nicht existiert erstelle neues Dokument
+                    imgID = ObjectId()
+                    videoID = ObjectId()
+
+                    # Neues Dokument
+                    newDoc = newDocument()
+                    if len(pagesTitle) > x:
+                        newDoc['title'] = pagesTitle[x]
+                        newDoc['styleTyp'] = pagesStyle[x]
+                    if len(pagesText) > x:
+                        newDoc['content']['p'].append(pagesText[x])
+
+                    if pagesStyle[x] == '2':
+                        img = request.files.get('img'+str(x))
+                        if img is not None:
+                            newDoc['content']['courseImgID'] = imgID
+                            fsCollection.put(img, filename=img.filename, _id=imgID)
+
+                    if pagesStyle[x] == '1':
+                        vid = request.files.get('vid'+str(x))
+                        if vid is not None:
+                            newDoc['content']['courseVideoID'] = videoID
+                            fsCollection.put(vid.read(), filename=vid.filename, _id=videoID)
+
+                    course['categorys']['documents'].append(newDoc)
+                    print("Neue Seite zum Tutorial hinzugefügt")
+
+            # hänge fileDownloads ins Grid-fs und die ID dazu in das Tutorial unter courseDownloads an.
+            course['courseDownloadDescription'] = fileDescription
+            for x in range(0, len(fileDownloads)):
+                fileID = ObjectId()
+                fsCollection.put(
+                    fileDownloads[x], filename=fileDownloads[x].filename, _id=fileID)
+                courseDownload = newCourseDownload()
+                courseDownload['fileID'] = fileID
+                courseDownload['fileName'] = fileDownloads[x].filename
+                course['courseDownloads'].append(courseDownload)
+            
+            #update DB
+            for j in range(0, len(allCourses['courses'])):
+                if allCourses['courses'][j]['id'] == course['id']:
+                    allCourses['courses'][j] = course
+                    break
+            updateDataBase('allCourses', allCourses)
+            # öffne bearbeitetes Tutorium
+            return renderTutorialPrePage(course)
+        else:
+            return getIndex("Sie sind nicht eingeloggt, oder nicht der Besitzer des Tutorials")
+    else:
+        return getIndex("Kurs zum bearbeiten nicht gefunden.")
 
 @app.route('/', methods=['GET'])
 def getIndex(info = None):
@@ -638,9 +780,6 @@ def searchTutorial():
         return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
     else:
         return render_template('searchTutorial.html', userLoged=False)
-
-    # if string1.lower() == string2.lower():
-    # print "The strings are the same (case insensitive)"
     
 
 @app.route('/uploadTutorial/', methods=['POST', 'GET'])
@@ -658,13 +797,13 @@ def uploadTutorial():
 
         pagesTitle = request.form.getlist('pageTitle')
         pagesStyle = request.form.getlist('pageStyle')
-        #pagesVideo = request.files.getlist('videoFile')
+        # pagesVideo = request.files.getlist('videoFile')
         pagesText = request.form.getlist('docText')
         pagesText2 = request.form.getlist('docText2')
-        #pagesImg = request.files.getlist('courseImg')
+        # pagesImg = request.files.getlist('courseImg')
         countPages = request.form.get('countPages')
         fileDownloads = request.files.getlist('fileDownloads')
-        fileDescription = request.form.getlist('fileDescription')
+        fileDescription = request.form.get('fileDescription')
 
         newTut = newEmptyCourse()
         if courseName:
@@ -685,6 +824,7 @@ def uploadTutorial():
             fsCollection.put(
                 courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
 
+        newTut['courseDownloadDescription'] = fileDescription
      # für jede Seite im erstellten Kurs:
 
         for x in range(0, int(countPages)):
@@ -725,7 +865,6 @@ def uploadTutorial():
             courseDownload = newCourseDownload()
             courseDownload['fileID'] = fileID
             courseDownload['fileName'] = fileDownloads[x].filename
-            courseDownload['description'] = fileDescription[x]
             newTut['courseDownloads'].append(courseDownload)
 
        # hänge KursID an die OwnCourses vom Tutor aus der Session
@@ -745,7 +884,7 @@ def uploadTutorial():
         return renderTutorialTemplate(newTut, 0, newTut['categorys']['documents'][0]['content']['courseImgID'],
                                       newTut['categorys']['documents'][0]['content']['courseVideoID'])
     if request.method == 'GET' and userFromSession != None:
-        #Wenn Seite erst aufgerufen werden soll
+        # Wenn Seite erst aufgerufen werden soll
         if userFromSession['isTutor']:
             return render_template('upload.html', username=userFromSession['nickname'])
         else:
@@ -773,7 +912,7 @@ def recap():
 
 
 def renderTutorialPrePage(course):
-    #sende Vorseite zum Tutorial 
+    # sende Vorseite zum Tutorial 
     user = getUserFromSession()
     if user is not None:
         if isCourseOwner(user['id'], course['id']):
@@ -848,7 +987,7 @@ def editProfile():
                 user['passphrase'] = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             if isTutor is not user['isTutor']:
                 user['isTutor'] = isTutor
-            #or , item in enumerate(alist)
+            # or , item in enumerate(alist)
             for idx,userFromAllUsers in enumerate(allUsers['users']):
                 if user['id'] == userFromAllUsers['id']:
                     allUsers['users'][idx] = user
@@ -904,7 +1043,7 @@ def register():
                 # update alle Kurse in DB
                 updateDataBase('allUsers', allUsers)
 
-                #logging in user
+                # logging in user
                 session['mail'] = mail
                 session['nickname'] = nickname
 
@@ -1044,10 +1183,10 @@ def getDownloadFile(fileid):
 
 # startpunkt des py-programms
 if __name__ == "__main__":
-    #deleteCollection()
+    # deleteCollection()
 
-    #initDB()
-    #fillDB()
+    # initDB()
+    # fillDB()
 
     app.secret_key = 'oiwfhwinehi'  # add rnd chars here
     app.run(debug=True, host='0.0.0.0')
