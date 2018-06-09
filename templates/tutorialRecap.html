@@ -9,16 +9,18 @@
                         <div class="form-group">
                             <div class="col" style="padding-top:15px;padding-bottom:15px;">
                                 <!-- Question -->
-                                <form action="/recap" accept-charset="UTF-8" method="post">
+                                <form action="/recapAnswer" accept-charset="UTF-8" method="post">
                                     <div id="questionsContainer">
-                                        {% for question in course.recap.questions %}
+                                        {% for question in course.recap.questions %} {% set questionCounter = loop.index %}
                                         <div class="col" style="padding-top:15px;padding-bottom:15px;">
                                             <h1 style="font-size:24px;width:100%;">Question {{ loop.index }}</h1>
                                             <p style="width:100%;">{{ question.questionText }}</p>
-
-                                            {% for answer in question.answers %}
+                                            <input type="hidden" name="question_{{loop.index}}" value="1"> {% for answer in question.answers %}
                                             <div class="form-row" style="margin-left:25px;">
-                                                <div class="col"><label>{{ answer.answerText }}</label><input style="margin-left:20px;" type="checkbox"></div>
+                                                <input type="hidden" name="question_{{questionCounter}}_answer_{{loop.index}}_id" value="{{answer.id}}">
+                                                <div class="col"><label style="color: {% if answer.userWasCorrect %}rgb(9, 187, 83){% else %}rgb(255, 16, 16){% endif %};">{{ answer.answerText }}</label>
+                                                    <input style="margin-left:20px;" type="checkbox" {% if answer.userChoose %}checked{% endif %} name="question_{{questionCounter}}_answer_{{loop.index}}_isCorrect">
+                                                </div>
                                             </div>
                                             {% endfor %}
                                         </div>

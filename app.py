@@ -45,7 +45,8 @@ def newEmptyUser():
         'passphrase': None,
         'isTutor': None,
         'courses': [],
-        'ownCourses': []
+        'ownCourses': [],
+        'progress': newEmptyProgress()
     }
 
 
@@ -60,6 +61,20 @@ def newEmptyCourse():
         'recap' : None,
         'categorys': {
             'documents': []},
+    }
+
+def newEmptyProgress():
+    return {
+        'answers': [],
+        'downloads': [],
+        'documents': []
+    }
+
+
+def newEmptyProgressItem():
+    return {
+        'foreignKey': None,
+        'value': None
     }
 
 
@@ -100,6 +115,7 @@ def newQuestion():
 
 def newAnswer():
     return {
+        'id': ObjectId(),
         'answerText': None,
         'answerIsCorrect': None
     }
@@ -530,6 +546,13 @@ def getUserWithMail(mail):
     return user
 
 
+def getUserWithID(id):
+    users = getAllUsers()
+    emptyUser = {}
+    user = next((x for x in users if x['id'] == id), None)
+    return user
+
+
 def getUserFromSession():
     if 'mail' in session:
         return getUserWithMail(session['mail'])
@@ -540,6 +563,28 @@ def getUserFromSession():
 # checking if user is logged in
 def isLoggedIn():
     return 'mail' in session
+    
+
+def insertAnswer(userMail, foreignKey, answerValue):
+    answerAllreadyExist = False
+    users = getAllUsersWrapperObject()
+    for user in users['users']:
+        if user['mail'] == userMail:
+            for answer in user['progress']['answers']:
+                if answer['foreignKey'] == foreignKey:
+                    answerAllreadyExist = True
+                    answer['value'] = answerValue
+                    break
+            
+            if answerAllreadyExist == False:
+                user['progress']['answers'].append({
+                    'foreignKey': foreignKey,
+                    'value': answerValue
+                    })
+            print(user)
+            break
+        
+    updateDataBase('allUsers', users)
 
 
 @app.route('/changeTutorial/', methods=['GET'])
@@ -936,17 +981,52 @@ def recap():
         if isCourseOwner(getUserByMail(session['mail'])['id'], course['id']):
             #show recap for owner
             return render_template('tutorialRecapEdit.html',
-            course = course,
-            userLogged=isLoggedIn(),
-            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
-            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+                course = course,
+                userLogged=isLoggedIn(),
+                userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+                userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             #show recap for user
+            for question in course['recap']['questions']:
+                for answer in question['answers']:
+                    userAnswer = getUserAnswer(session['mail'], answer['id'])
+                    answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
+                    answer['userChoose'] = userAnswer
+
             return render_template('tutorialRecap.html',
-            course = course,
-            userLogged=isLoggedIn(),
-            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
-            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+                course = course,
+                userLogged=isLoggedIn(),
+                userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+                userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+
+
+def getUserAnswer(mail, foreignKey):
+    user = getUserByMail(mail)
+    for answer in user['progress']['answers']:
+        if answer['foreignKey'] == str(foreignKey):
+            return answer['value']
+            
+
+@app.route('/recapAnswer', methods=['POST'])
+def recapAnswer():
+    
+    questionCounter = 1
+    while(request.form.get('question_' + str(questionCounter))):
+        
+        answerCounter = 1
+        while(request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_id')):
+            id = request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_id')
+            isChecked = False
+            if request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_isCorrect'):
+                isChecked = True
+                
+            insertAnswer(session['mail'], id, isChecked)
+
+            answerCounter += 1
+        questionCounter += 1
+    
+    return getIndex()
+
 
 def renderTutorialPrePage(course):
     # sende Vorseite zum Tutorial 
