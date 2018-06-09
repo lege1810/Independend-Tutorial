@@ -293,8 +293,6 @@ def getAllUsersWrapperObject():
     return fullDB[0]
 
 # get all users
-
-
 def getAllUsers():
     db = client.myTestBase
     studCorp = db.studCorp
@@ -427,32 +425,27 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
     # Unterscheidung des Template Styles
     templateToRender = None
     if int(course['categorys']['documents'][documentIndex]['styleTyp']) == 1:
-        if isLoggedIn():
-            if isCourseMember(getUserFromSession()['id'], course['id']):
-                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                                documentVideoID=documentVideoID, userIsCourseMember = True, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-            else:
-                templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex, 
-                                                documentVideoID=documentVideoID, userIsCourseMember = False, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-        else:
-            templateToRender = render_template('tutorialStyle1.html', userLogged=False, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, documentVideoID=documentVideoID)
+        templateToRender = render_template('tutorialStyle1.html',
+            username=session['nickname'],
+            userLogged=isLoggedIn(),
+            course=course,
+            documentIndex=documentIndex,
+            documentVideoID=documentVideoID,
+            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
     else:
-        if isLoggedIn():
-            if isCourseMember(getUserFromSession()['id'], course['id']):
-                templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember = True, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-            else:
-                templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember = False, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-        else:
-            templateToRender = render_template('tutorialStyle2.html', userLogged=False, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID)
+        templateToRender = render_template('tutorialStyle1.html',
+            username=session['nickname'],
+            userLogged=isLoggedIn(),
+            course=course,
+            documentIndex=documentIndex,
+            documentVideoID=documentVideoID,
+            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
     return templateToRender
 
+
 # Liefert die ersten 6 Kurse
-
-
 def getIndexTutorials(course):
     requiredCourses = {
         'Satz0': [],
@@ -500,15 +493,13 @@ def isCourseOwner(userID, courseID):
     return userIsCourseOwner
 
 # checking if user already exits by comparing mail
-
-
 def userExists(mail):
     users = getAllUsers()
     user = next((x for x in users if x['mail'] == mail), None)
     return user is not None
 
 
-def getuserWithMail(mail):
+def getUserWithMail(mail):
     users = getAllUsers()
     emptyUser = {}
     user = next((x for x in users if x['mail'] == mail), None)
@@ -517,13 +508,12 @@ def getuserWithMail(mail):
 
 def getUserFromSession():
     if 'mail' in session:
-        return getuserWithMail(session['mail'])
+        return getUserWithMail(session['mail'])
     else:
         return None
 
+
 # checking if user is logged in
-
-
 def isLoggedIn():
     return 'mail' in session
 
@@ -542,8 +532,6 @@ def editTutIndex():
                     return render_template('editTutorial.html', course=foundCourse)
 
     return getIndex("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
-
-# Wenn Tutorial schon existiert
 
 
 @app.route('/editTutorial', methods=['POST'])
@@ -602,6 +590,7 @@ def addCourse():
 
     return renderTutorialPrePage(course)
 
+
 @app.route('/delUserCourse/')
 def delCourse():
     courseID = request.args.get('courseID')
@@ -620,6 +609,7 @@ def delCourse():
         updateDataBase('allUsers', allUser)
 
     return renderTutorialPrePage(course)
+
 
 @app.route('/searchTutorial/', methods=['POST'])
 def searchTutorial():
@@ -649,7 +639,7 @@ def uploadTutorial():
         print()
         return getIndex("Nicht eingeloggt")
 
-    userFromSession = getuserWithMail(session['mail'])
+    userFromSession = getUserWithMail(session['mail'])
     if request.method == 'POST' and userFromSession['isTutor']:
 
         courseBanner = request.files.getlist('courseBanner')
@@ -757,9 +747,11 @@ def uploadTutorial():
 @app.route('/recap', methods=['POST', 'GET'])
 def recap():
     if request.method == 'POST':
+        #method is post: save recap
         courseID = request.form.get('courseID')
         recap = newRecap()
 
+        #get recap from post request
         questionCounter = 1
         while(request.form.get('questionText_' + str(questionCounter))):
             print('neue frage')
@@ -780,7 +772,7 @@ def recap():
             recap['questions'].append(question)
             questionCounter += 1
         
-
+        #save recap in mongo
         courses = getAllCoursesWrapperObject()
         for course in courses['courses']:
             if str(course['id']) == courseID:
@@ -791,12 +783,15 @@ def recap():
         updateDataBase('allCourses', courses)
         return getIndex()
     else:
+        #method is get: show recap
         courseID = request.args.get('courseID')
         course = getCourseIfExists(courseID)
 
         if isCourseOwner(getUserByMail(session['mail'])['id'], course['id']):
+            #show recap for owner
             return render_template('tutorialRecapEdit.html', course = course, userLogged=isLoggedIn())
         else:
+            #show recap for user
             return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
 
 def renderTutorialPrePage(course):
