@@ -1,0 +1,139 @@
+{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {% endif %} {% block content %}
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        {% include "tutorialNavigation.html" %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card" style="margin-right:0px;margin-left:-15px;">
+                    <div class="card-body" style="padding:0px;">
+                        <div class="form-group">
+                            <div class="col" style="padding-top:15px;padding-bottom:15px;">
+                                <!-- Question -->
+                                <form action="/recap" accept-charset="UTF-8" method="post">
+                                    <div id="questionsContainer">
+                                        <input type="hidden" name="courseID" value="{{course.id}}"> {% set questionCounter = course.recap.questions|length %} {% for question in course.recap.questions %}
+
+                                        <div id=questionContainer>
+                                            <h1 style="font-size:24px;width:100%;">Question {{ loop.index }}</h1>
+                                            <textarea rows="2" name="questionText_{{ questionCounter }}" class="form-control input-block">{{question.questionText}}</textarea>
+
+                                            <!-- Answers -->
+                                            <div id="answersConainer">
+                                                {% for answer in question.answers %}
+                                                <div id="answerContainer">
+                                                    <div class="form-row" style="margin-left:25px;">
+                                                        <div class="col">
+                                                            <label id="anserLabel">Answer {{ loop.index }}</label>
+                                                            <input type="text" name="question_{{ questionCounter }}_answer_{{ loop.index }}" id="answerText" class="form-control input-block" value="{{answer.answerText}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row" style="margin-left:25px;">
+                                                        <div class="col">
+                                                            <label>Is correct answer:</label>
+                                                            <input style="margin-left:20px;" type="checkbox" value="1" name="question_{{ questionCounter }}_isCorrectAnswer_{{ loop.index }}" id="isCorrectAnswer" {% if answer.answerIsCorrect %}checked{% endif %}>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+
+                                                <!-- Interface add answer -->
+                                                <input style="margin-left:20px;margin-top:10px;" type="button" id="btnAddAnswer" name="btnAddAnswer" value="Add answer" class="btn btn-light" answerID="{{ question.answers|length }}" questionID="{{ questionCounter }}">
+                                            </div>
+                                        </div> {% endfor %}
+
+                                        <!-- Interface add question -->
+                                        <input style="margin-left:20px;margin-top:10px;" type="button" id="btnAddQuestion" value="Add question" class="btn btn-light" questionID="{{ questionCounter }}">
+                                    </div>
+
+                                    <!-- Interface submit button -->
+                                    <input style="margin-left:20px;margin-top:10px;" type="submit" value="Save" class="btn btn-light">
+                                </form>
+
+                                <script>
+                                    window.addEventListener("load", function() {
+                                        console.log('load');
+                                        document.getElementsByName('btnAddAnswer').forEach(element => {
+                                            registerAnswerEvent(element);
+                                        });
+                                        registerQuestionEvent();
+                                    });
+
+                                    function registerQuestionEvent(element) {
+                                        var ele = document.getElementById("btnAddQuestion");
+                                        if (element) {
+                                            ele = element;
+                                        }
+
+                                        ele.addEventListener("click", function(sender) {
+                                            console.log('question event');
+                                            var container = sender.target.parentNode;
+
+                                            var questionIndex = Number(sender.target.getAttribute('questionID')) + 1;
+
+                                            var question = "<div id=questionContainer><h1 style=\"font-size:24px;width:100%;\">Question %QUESTIONCOUNTER%</h1><textarea rows=\"2\" name=\"questionText_%QUESTIONCOUNTER%\" class=\"form-control input-block\"></textarea><div id=\"answerContainer\"><div class=\"form-row\" style=\"margin-left:25px;\"><div class=\"col\"><label id=\"anserLabel\">Answer%ANSWERCOUNTER%</label><input type=\"text\" name=\"question_%QUESTIONCOUNTER%_answer_%ANSWERCOUNTER%\" id=\"answerText\" class=\"form-control input-block\"></div></div><div class=\"form-row\" style=\"margin-left:25px;\"><div class=\"col\"><label>Is correct answer:</label><input style=\"margin-left:20px;\" type=\"checkbox\" value=\"1\" name=\"question_%QUESTIONCOUNTER%_isCorrectAnswer_%ANSWERCOUNTER%\"id=\"isCorrectAnswer\"></div></div></div><input style=\"margin-left:20px;\" type=\"button\" id=\"btnAddAnswer_%QUESTIONCOUNTER%\" value=\"Add answer\" class=\"btn btn-light\" answerID=\"1\" questionID=\"%QUESTIONCOUNTER%\"></div>";
+                                            question = replaceAll(question, "%ANSWERCOUNTER%", "1");
+                                            question = replaceAll(question, "%QUESTIONCOUNTER%", String(questionIndex));
+
+                                            var div = document.createElement('div');
+                                            div.innerHTML = question.trim();
+
+                                            container.insertBefore(div, sender.target);
+
+                                            sender.target.setAttribute('questionID', questionIndex);
+                                            registerAnswerEvent(document.getElementById('btnAddAnswer_' + questionIndex));
+                                        });
+                                    }
+
+                                    function registerAnswerEvent(element) {
+                                        var ele = document.getElementById("btnAddAnswer");
+                                        if (element) {
+                                            ele = element;
+                                        }
+
+                                        ele.addEventListener("click", function(sender) {
+                                            console.log('answer event');
+                                            var container = sender.target.parentNode;
+
+                                            var answerIndex = Number(sender.target.getAttribute('answerID')) + 1;
+                                            var questionIndex = Number(sender.target.getAttribute('questionID'));
+
+                                            var answer = "<div id=\"answerContainer\"> <div class = \"form-row\" style=\"margin-left:25px;\"> <div class=\"col\"> <label id=\"anserLabel\">Answer %ANSWERCOUNTER%</label> <input type=\"text\" name=\"question_%QUESTIONCOUNTER%_answer_%ANSWERCOUNTER%\" id=\"answerText\" class=\"form-control input-block\"> </div> </div> <div class = \"form-row\" style=\"margin-left:25px;\"> <div class = \"col\"> <label> Is correct answer: </label> <input style = \"margin-left:20px;\" type=\"checkbox\" value=\"1\" name=\"question_%QUESTIONCOUNTER%_isCorrectAnswer_%ANSWERCOUNTER%\" id=\"isCorrectAnswer\"> </div> </div> </div>";
+                                            answer = replaceAll(answer, "%ANSWERCOUNTER%", answerIndex);
+                                            answer = replaceAll(answer, "%QUESTIONCOUNTER%", questionIndex);
+
+                                            var div = document.createElement('div');
+                                            div.innerHTML = answer.trim();
+
+                                            sender.target.setAttribute('answerID', answerIndex);
+                                            container.insertBefore(div, sender.target);
+                                        });
+                                    }
+
+                                    function replaceAll(str, find, replace) {
+                                        return str.replace(new RegExp(find, 'g'), replace);
+                                    }
+                                </script>
+
+                            </div>
+                            <!-- <div class="col" style="padding-top:15px;padding-bottom:15px;">
+                                <h1 style="font-size:24px;width:100%;">Question 2</h1>
+                                <p style="width:100%;">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+                                <div class="form-row" style="margin-left:25px;">
+                                    <div class="col"><label>possiblie answer 1</label><input style="margin-left:20px;" type="checkbox"></div>
+                                </div>
+                                <div class="form-row" style="margin-left:25px;">
+                                    <div class="col"><label>possiblie answer 2</label><input style="margin-left:20px;" type="checkbox"></div>
+                                </div>
+                                <div class="form-row" style="margin-left:25px;">
+                                    <div class="col"><label>possiblie answer 3</label><input style="margin-left:20px;" type="checkbox"></div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

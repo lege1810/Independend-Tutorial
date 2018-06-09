@@ -430,10 +430,10 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
         if isLoggedIn():
             if isCourseMember(getUserFromSession()['id'], course['id']):
                 templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                                documentVideoID=documentVideoID, userIsCourseMember = True)
+                                                documentVideoID=documentVideoID, userIsCourseMember = True, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
             else:
                 templateToRender = render_template('tutorialStyle1.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex, 
-                                                documentVideoID=documentVideoID, userIsCourseMember = False)
+                                                documentVideoID=documentVideoID, userIsCourseMember = False, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             templateToRender = render_template('tutorialStyle1.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID, documentVideoID=documentVideoID)
@@ -441,10 +441,10 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
         if isLoggedIn():
             if isCourseMember(getUserFromSession()['id'], course['id']):
                 templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember = True)
+                                               documentImgID=documentImgID, userIsCourseMember = True, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
             else:
                 templateToRender = render_template('tutorialStyle2.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, documentIndex=documentIndex,
-                                               documentImgID=documentImgID, userIsCourseMember = False)
+                                               documentImgID=documentImgID, userIsCourseMember = False, userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             templateToRender = render_template('tutorialStyle2.html', userLogged=False, course=course, documentIndex=documentIndex,
                                                documentImgID=documentImgID)
@@ -754,7 +754,7 @@ def uploadTutorial():
         return getIndex("Unbekannter Fehler")
 
 
-@app.route('/recap',  methods=['POST', 'GET'])
+@app.route('/recap', methods=['POST', 'GET'])
 def recap():
     if request.method == 'POST':
         courseID = request.form.get('courseID')
@@ -794,8 +794,10 @@ def recap():
         courseID = request.args.get('courseID')
         course = getCourseIfExists(courseID)
 
-        return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
-
+        if isCourseOwner(getUserByMail(session['mail'])['id'], course['id']):
+            return render_template('tutorialRecapEdit.html', course = course, userLogged=isLoggedIn())
+        else:
+            return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
 
 def renderTutorialPrePage(course):
     #sende Vorseite zum Tutorial 
