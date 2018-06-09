@@ -433,12 +433,12 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
             userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
             userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
     else:
-        templateToRender = render_template('tutorialStyle1.html',
+        templateToRender = render_template('tutorialStyle2.html',
             username=session['nickname'],
             userLogged=isLoggedIn(),
             course=course,
             documentIndex=documentIndex,
-            documentVideoID=documentVideoID,
+            documentImgID=documentImgID,
             userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
             userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
     return templateToRender
@@ -533,22 +533,6 @@ def editTutIndex():
 
     return getIndex("User nicht eingeloggt, oder nicht der Besitzer des Kurs")
 
-
-def deleteImgAndVideosFromCourse(course):
-     # öffne Grid-Fs-Collection
-    db = client.myTestBase
-    fsCollection = gridfs.GridFS(db)
-
-    if course['categorys']['documents'][x]['content']['courseImgID'] is not None:
-        fsCollection.delete(course['categorys']
-                            ['documents'][x]['content']['courseImgID'])
-        course['categorys']['documents'][x]['content']['courseImgID'] = None
-
-    if course['categorys']['documents'][x]['content']['courseVideoID'] is not None:
-        fsCollection.delete(
-            course['categorys']['documents'][x]['content']['courseVideoID'])
-        course['categorys']['documents'][x]['content']['courseVideoID'] = None
-    return course
 
 
 @app.route('/editTutorial/', methods=['POST'])
@@ -893,7 +877,6 @@ def recap():
         #get recap from post request
         questionCounter = 1
         while(request.form.get('questionText_' + str(questionCounter))):
-            print('neue frage')
             question = newQuestion()
             question['questionText'] = request.form.get('questionText_' + str(questionCounter))
             answerCounter = 1
@@ -928,10 +911,18 @@ def recap():
 
         if isCourseOwner(getUserByMail(session['mail'])['id'], course['id']):
             #show recap for owner
-            return render_template('tutorialRecapEdit.html', course = course, userLogged=isLoggedIn())
+            return render_template('tutorialRecapEdit.html',
+            course = course,
+            userLogged=isLoggedIn(),
+            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             #show recap for user
-            return render_template('tutorialRecap.html', course = course, userLogged=isLoggedIn())
+            return render_template('tutorialRecap.html',
+            course = course,
+            userLogged=isLoggedIn(),
+            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
 
 def renderTutorialPrePage(course):
     # sende Vorseite zum Tutorial 
@@ -955,15 +946,12 @@ def getCourseDownloads():
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
     if course is not None:
-        templateToRender = None
-        if isLoggedIn():
-            if isCourseMember(getUserFromSession()['id'], course['id']):
-                templateToRender = render_template('tutorialDownloads.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, userIsCourseMember = True)
-            else:
-                templateToRender = render_template('tutorialDownloads.html', username=getUserFromSession()['nickname'], userLogged=True, course=course, userIsCourseMember = False)
-        else:
-            templateToRender = render_template('tutorialDownloads.html', userLogged=False, course=course)
-        return templateToRender
+        return render_template('tutorialDownloads.html',
+            username=getUserFromSession()['nickname'],
+            userLogged=isLoggedIn(),
+            course=course,
+            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
     else:
         return getIndex("Kurs nicht gefunden")
       
@@ -1069,13 +1057,19 @@ def register():
                 session['mail'] = mail
                 session['nickname'] = nickname
 
-                return 'user added'
+                return getIndex("User added")
             else:
-                return 'user already exists'
+                return getIndex("User already exists")
         else:
-            return 'user data not correct'
+            return getIndex("user data not correct")
     else:
-        return render_template('register.html')
+        user = getUserFromSession()
+        if user is not None:
+            return getIndex("Already logged")
+        else:
+            return render_template('register.html', userLoged = False)
+
+        
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -1205,9 +1199,9 @@ def getDownloadFile(fileid):
 
 # startpunkt des py-programms
 if __name__ == "__main__":
-    # deleteCollection()
+    #deleteCollection()
 
-    # initDB()
+    #initDB()
     # fillDB()
 
     app.secret_key = 'oiwfhwinehi'  # add rnd chars here

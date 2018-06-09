@@ -65,7 +65,6 @@
                                         }
 
                                         ele.addEventListener("click", function(sender) {
-                                            console.log('question event');
                                             var container = sender.target.parentNode;
 
                                             var questionIndex = Number(sender.target.getAttribute('questionID')) + 1;
@@ -91,7 +90,6 @@
                                         }
 
                                         ele.addEventListener("click", function(sender) {
-                                            console.log('answer event');
                                             var container = sender.target.parentNode;
 
                                             var answerIndex = Number(sender.target.getAttribute('answerID')) + 1;

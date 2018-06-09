@@ -2,16 +2,15 @@
     <div class="col">
         <ul class="nav nav-tabs ml-auto" id="navTutorial" data-spy="affix" data-offset-top="70px">
             <li class="nav-item">
-                <a class="nav-link text-capitalize" href="#">Lernmaterialien</a>
+                <a class="nav-link text-capitalize" href="/Tutorial/?courseID={{course.id}}&documentID={{course.categorys.documents[0].id}}">Lernmaterialien</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/Tutorial/?courseID={{course.id}}">Kursdetails</a>
             </li>
-            {% if userIsCourseMember %}
+            {% if userIsCourseMember or userIsCourseOwner %}
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="overview_tut.html">Fortschritt</a>
             </li>
-            {%endif%} {% if userIsCourseMember or userIsCourseOwner %}
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/recap?courseID={{course.id}}">Recap</a>
             </li>

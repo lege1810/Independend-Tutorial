@@ -7,11 +7,9 @@ Install:
 6. Install mongodb (node.js)
 
 ToDo:
-1. Chat node.js inc. zugriff auf mongo - moritz
-5. Tutorialsübersicht einbinden - kristof
-8. Recap - kristof
+5. Tutorialsübersicht einbinden - kristof (Leon danach)
 9. fortschritt - moritz
-10. tutorial edit - leon
+10. tutorial edit -leon (nur noch löschen von Seiten + Löschen von Downloads, Downloads mit MultipartReader)
 
 ToDo Kristof:
 2. Tutorialübersicht erstellen
