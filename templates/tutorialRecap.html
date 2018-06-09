@@ -18,7 +18,10 @@
                                             <input type="hidden" name="question_{{loop.index}}" value="1"> {% for answer in question.answers %}
                                             <div class="form-row" style="margin-left:25px;">
                                                 <input type="hidden" name="question_{{questionCounter}}_answer_{{loop.index}}_id" value="{{answer.id}}">
-                                                <div class="col"><label style="color: {% if answer.userWasCorrect %}rgb(9, 187, 83){% else %}rgb(255, 16, 16){% endif %};">{{ answer.answerText }}</label>
+                                                <div class="col">
+                                                    <label {% if answer.userChoose is not none %}style="color: {% if answer.userWasCorrect %}rgb(9, 187, 83){% else %}rgb(255, 16, 16){% endif %}{% endif %};">
+                                                    {{ answer.answerText }}
+                                                    </label>
                                                     <input style="margin-left:20px;" type="checkbox" {% if answer.userChoose %}checked{% endif %} name="question_{{questionCounter}}_answer_{{loop.index}}_isCorrect">
                                                 </div>
                                             </div>

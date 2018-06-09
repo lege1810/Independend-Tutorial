@@ -1016,13 +1016,23 @@ def recap():
             
             recap['questions'].append(question)
             questionCounter += 1
+
+        #del all given answers from users
+        users = getAllUsersWrapperObject()
+        users = getAllUsersWrapperObject()
+        for user in users['users']:
+            for userAnswer in reversed(user['progress']['answers']):
+                for courseQuestion in getCourseWithString(courseID)['recap']['questions']:
+                    for courseAnswer in courseQuestion['answers']:
+                        if userAnswer['foreignKey'] == str(courseAnswer['id']):
+                            user['progress']['answers'].remove(userAnswer)
+        updateDataBase('allUsers', users)
         
         #save recap in mongo
         courses = getAllCoursesWrapperObject()
         for course in courses['courses']:
             if str(course['id']) == courseID:
                 course['recap'] = recap
-                print('-----> course found!')
                 break
 
         updateDataBase('allCourses', courses)
@@ -1062,12 +1072,12 @@ def recapAnswer():
         
         answerCounter = 1
         while(request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_id')):
-            id = request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_id')
+            answerID = request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_id')
             isChecked = False
             if request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_isCorrect'):
                 isChecked = True
                 
-            insertAnswer(session['mail'], id, isChecked)
+            insertAnswer(session['mail'], answerID, isChecked)
 
             answerCounter += 1
         questionCounter += 1
