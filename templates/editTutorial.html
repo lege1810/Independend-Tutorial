@@ -105,10 +105,16 @@
                                         <label class="col-form-label">Titel der Seite</label>
                                     </div>
                                     <div class="col">
+
                                         {% if doc.title is not none %}
                                         <input type="text" name="pageTitle" value="{{doc.title}}"> {% else %}
                                         <input type="text" name="pageTitle"> {% endif %}
+
+                                        <a href="/deletePage/?courseID={{course.id}}&documentID={{doc.id}}">
+                                            <button class="btn btn-light" type="button">Delete Page</button>
+                                        </a>
                                     </div>
+
                                 </div>
                                 <div class="row">
                                     <div class="col">
@@ -211,16 +217,22 @@
                         <br>
                         <div class="row">
                             <div class="col">
-                                <label class="col-form-label">Bild/ PDF/ etc. hinzufügen</label>
+                                <label class="col-form-label">Bild/ PDF/ etc. hinzufügen/löschen</label>
                             </div>
                             <div class="col">
                                 {% for download in course.courseDownloads %}
                                 <div>
                                     {{ download.fileName }}
+
+                                    <a href="/deleteDownload/?courseID={{course.id}}&downloadID={{download.fileID}}" style="margin-left: 25px;">
+                                        <button class="btn btn-light" type="button">X</button>
+                                    </a>
+
                                 </div>
+                                <br>
                                 {%endfor%}
                                 <div>
-                                    <input type="file" name="fileDownloads" style="width:200px;" accept="audio/*,video/*,image/*,.pdf">
+                                    <input type="file" name="fileDownloads" style="width:200px;" multiple accept="audio/*,video/*,image/*,.pdf">
                                 </div>
                             </div>
                         </div>
@@ -239,7 +251,7 @@
                             <div class="col">
                                 <div class="btn-group" role="group">
                                     <input type="hidden" id="pageCount" name="countPages">
-                                    <input class="btn btn-light" type="submit" value="Speichern" id="submitButton">
+                                    <input class="btn btn-light" type="submit" value="Speichern" id="submitButton" disabled>
                                 </div>
                             </div>
                             <div class="col"></div>
@@ -298,7 +310,7 @@
                 (function (index) {
                     allVideoInputs[index].addEventListener("change", function () {
                         var testIndex = index
-                        var otherTest = index -1
+                        var otherTest = index - 1
                         if (allVideoInputs[testIndex].files.length != 0) {
                             console.log("vid Change name")
                             allVideoInputs[testIndex].setAttribute("name", "vid" + otherTest);
@@ -311,7 +323,7 @@
                 (function (index) {
                     allImgInputs[index].addEventListener("change", function () {
                         var testIndex = index
-                        var otherTest = index -1
+                        var otherTest = index - 1
                         if (allImgInputs[testIndex].files.length != 0) {
                             console.log("Img Change name")
                             allImgInputs[testIndex].setAttribute("name", "img" + otherTest);
@@ -350,5 +362,7 @@
         }
         initDD()
         initnewPage()
+        //Disable Speicherbutton, bis Seite vollständig geladen
+        document.getElementById("submitButton").disabled = false
     })
 </script> {% endblock %}
