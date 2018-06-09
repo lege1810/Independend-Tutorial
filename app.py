@@ -317,6 +317,13 @@ def getUser(cookieID):
     return foundUser
 
 
+def getNicknameIfExists():
+    if 'nickname' in session:
+        return session['nickname']
+    else:
+        return ''
+
+
 def updateUserData(mail, newUser):
     allUsers = getAllUsersWrapperObject()
     for user in allUsers['users']:
@@ -424,23 +431,40 @@ def renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID
     # Unterscheidung des Template Styles
     templateToRender = None
     if int(course['categorys']['documents'][documentIndex]['styleTyp']) == 1:
-        templateToRender = render_template('tutorialStyle1.html',
-            username=session['nickname'],
-            userLogged=isLoggedIn(),
-            course=course,
-            documentIndex=documentIndex,
-            documentVideoID=documentVideoID,
-            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
-            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        if isLoggedIn():
+            templateToRender = render_template('tutorialStyle1.html',
+                username=getNicknameIfExists(),
+                userLogged=True,
+                course=course,
+                documentIndex=documentIndex,
+                documentVideoID=documentVideoID,
+                userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+                userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        else:
+            templateToRender = render_template('tutorialStyle1.html',
+                username=getNicknameIfExists(),
+                userLogged=False,
+                course=course,
+                documentIndex=documentIndex,
+                documentVideoID=documentVideoID)
     else:
-        templateToRender = render_template('tutorialStyle2.html',
-            username=session['nickname'],
-            userLogged=isLoggedIn(),
-            course=course,
-            documentIndex=documentIndex,
-            documentImgID=documentImgID,
-            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
-            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        if isLoggedIn():
+            templateToRender = render_template('tutorialStyle2.html',
+                username=getNicknameIfExists(),
+                userLogged=True,
+                course=course,
+                documentIndex=documentIndex,
+                documentImgID=documentImgID,
+                userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+                userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        else:
+            templateToRender = render_template('tutorialStyle2.html',
+                username=getNicknameIfExists(),
+                userLogged=False,
+                course=course,
+                documentIndex=documentIndex,
+                documentImgID=documentImgID)
+
     return templateToRender
 
 
@@ -946,12 +970,17 @@ def getCourseDownloads():
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
     if course is not None:
-        return render_template('tutorialDownloads.html',
-            username=getUserFromSession()['nickname'],
-            userLogged=isLoggedIn(),
-            course=course,
-            userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
-            userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        if isLoggedIn():
+            return render_template('tutorialDownloads.html',
+                username=getUserFromSession()['nickname'],
+                userLogged=True,
+                course=course,
+                userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+                userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        else:
+            return render_template('tutorialDownloads.html',
+                userLogged=False,
+                course=course)
     else:
         return getIndex("Kurs nicht gefunden")
       
@@ -1084,7 +1113,6 @@ def login():
             if bcrypt.hashpw(password.encode('utf-8'), user['passphrase']) == user['passphrase']:
                 session['mail'] = mail
                 session['nickname'] = user['nickname']
-                print("logged in")
                 return getIndex()
 
         return getIndex("Invalid username or password")
