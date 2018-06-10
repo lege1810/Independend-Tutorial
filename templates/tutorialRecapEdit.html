@@ -10,6 +10,7 @@
                             <div class="col" style="padding-top:15px;padding-bottom:15px;">
                                 <!-- Question -->
                                 <form action="/recap" accept-charset="UTF-8" method="post">
+                                    <input type="hidden" name="courseID" value="{{course.id}}">
                                     <div id="questionsContainer">
                                         <input type="hidden" name="courseID" value="{{course.id}}"> {% set questionCounter = course.recap.questions|length %} {% for question in course.recap.questions %}
 

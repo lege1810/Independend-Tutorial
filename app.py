@@ -565,7 +565,7 @@ def isLoggedIn():
     return 'mail' in session
     
 
-def insertAnswer(userMail, foreignKey, answerValue):
+def insertProgressAnswer(userMail, foreignKey, answerValue):
     answerAllreadyExist = False
     users = getAllUsersWrapperObject()
     for user in users['users']:
@@ -581,15 +581,68 @@ def insertAnswer(userMail, foreignKey, answerValue):
                     'foreignKey': foreignKey,
                     'value': answerValue
                     })
-            print(user)
+            break
+        
+    updateDataBase('allUsers', users)
+    
+
+def insertProgressDownload(userMail, foreignKey):
+    downloadAllreadyExist = False
+    users = getAllUsersWrapperObject()
+    for user in users['users']:
+        if user['mail'] == userMail:
+            for download in user['progress']['downloads']:
+                if download['foreignKey'] == foreignKey:
+                    downloadAllreadyExist = True
+                    download['value'] = True
+                    break
+            
+            if downloadAllreadyExist == False:
+                user['progress']['downloads'].append({
+                    'foreignKey': foreignKey,
+                    'value': True
+                    })
+            break
+        
+    updateDataBase('allUsers', users)
+    
+
+def insertProgressDocument(userMail, foreignKey):
+    documentAllreadyExist = False
+    users = getAllUsersWrapperObject()
+    for user in users['users']:
+        if user['mail'] == userMail:
+            for document in user['progress']['documents']:
+                if document['foreignKey'] == foreignKey:
+                    documentAllreadyExist = True
+                    document['value'] = True
+                    break
+            
+            if documentAllreadyExist == False:
+                user['progress']['documents'].append({
+                    'foreignKey': foreignKey,
+                    'value': True
+                    })
             break
         
     updateDataBase('allUsers', users)
 
 
+#gibt den progress von recap-answers zurück
 def getUserAnswer(mail, foreignKey):
     user = getUserByMail(mail)
     for answer in user['progress']['answers']:
+        if answer['foreignKey'] == str(foreignKey):
+            return answer['value']
+
+
+#gibt den progress zur datei zurück, falls nicht vergeben false (durchsucht progress.downloads und progress.documents)
+def getUserProgress(mail, foreignKey):
+    user = getUserByMail(mail)
+    for answer in user['progress']['downloads']:
+        if answer['foreignKey'] == str(foreignKey):
+            return answer['value']
+    for answer in user['progress']['documents']:
         if answer['foreignKey'] == str(foreignKey):
             return answer['value']
 
@@ -1004,7 +1057,6 @@ def recap():
             question['questionText'] = request.form.get('questionText_' + str(questionCounter))
             answerCounter = 1
             while(request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter))):
-                print('neue antwort')
                 answer = newAnswer()
                 answer['answerText'] = request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter))
                 if request.form.get('question_' + str(questionCounter) + '_isCorrectAnswer_' + str(answerCounter)):
@@ -1036,7 +1088,8 @@ def recap():
                 break
 
         updateDataBase('allCourses', courses)
-        return getIndex()
+        
+        return renderTutorialPrePage(course)
     else:
         #method is get: show recap
         courseID = request.args.get('courseID')
@@ -1051,6 +1104,8 @@ def recap():
                 userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
         else:
             #show recap for user
+
+            #prepare courses dictonary - insert user progress
             for question in course['recap']['questions']:
                 for answer in question['answers']:
                     userAnswer = getUserAnswer(session['mail'], answer['id'])
@@ -1066,7 +1121,7 @@ def recap():
 
 @app.route('/recapAnswer', methods=['POST'])
 def recapAnswer():
-    
+    courseID = request.form.get('courseID')
     questionCounter = 1
     while(request.form.get('question_' + str(questionCounter))):
         
@@ -1077,12 +1132,12 @@ def recapAnswer():
             if request.form.get('question_' + str(questionCounter) + '_answer_' + str(answerCounter) + '_isCorrect'):
                 isChecked = True
                 
-            insertAnswer(session['mail'], answerID, isChecked)
+            insertProgressAnswer(session['mail'], answerID, isChecked)
 
             answerCounter += 1
         questionCounter += 1
     
-    return getIndex()
+        return renderTutorialPrePage(getCourseIfExists(courseID))
 
 
 def renderTutorialPrePage(course):
@@ -1151,6 +1206,36 @@ def getCourseChat():
         return getIndex("Kurs nicht gefunden")
 
 
+@app.route('/TutorialProgress/', methods=['GET'])
+def getTutorialProgress():
+    courseID = request.args.get('courseID')
+    course = getCourseIfExists(courseID)
+
+    #prepare courses dictonary - insert user progress recap
+    for question in course['recap']['questions']:
+        for answer in question['answers']:
+            userAnswer = getUserAnswer(session['mail'], answer['id'])
+            answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
+            answer['userChoose'] = userAnswer
+
+    #prepare courses dictonary - insert user progress document
+    for document in course['categorys']['documents']:
+        document['userProgress'] = getUserProgress(session['mail'], document['id'])
+        print('document seen: ' + str(getUserProgress(session['mail'], document['id'])))
+
+    #prepare courses dictonary - insert user progress download
+    for download in course['courseDownloads']:
+        download['userProgress'] = getUserProgress(session['mail'], document['id'])
+        print('download downloaded: ' + str(getUserProgress(session['mail'], document['id'])))
+
+    return render_template('tutorialProgress.html',
+        username=getUserFromSession()['nickname'],
+        userLogged=True,
+        course=course,
+        userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+        userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+
+
 @app.route('/TutorialDownloads/', methods=['GET'])
 def getCourseDownloads():
     courseID = request.args.get('courseID')
@@ -1175,9 +1260,12 @@ def getCourseDownloads():
 def getTutorialWithDocumentID():
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
-
     documentID = request.args.get('documentID')
+
     if documentID is not None:
+        #insert progress
+        insertProgressDocument(session['mail'], documentID)
+
         documentIndex = getDocumentIndex(documentID, course)
         documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
         documentVideoID = course['categorys']['documents'][documentIndex]['content']['courseVideoID']
@@ -1396,12 +1484,15 @@ def getImg(imgid):
 @app.route('/download/<fileid>')
 def getDownloadFile(fileid):
     if fileid != 'None':
+        #insert progress
+        insertProgressDownload(session['mail'], fileid)
+
         db = client.myTestBase
         fsCollection = gridfs.GridFS(db)
         downloadFile = fsCollection.get_last_version(_id=ObjectId(fileid))
         filename = downloadFile.filename
         print("DateiName: ", filename)
-
+        
         response = make_response(downloadFile.read())
         response.headers['Content-Type'] = 'application/octet-stream'
         response.headers["Content-Disposition"] = "attachment; filename={}".format(
