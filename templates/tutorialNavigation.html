@@ -14,9 +14,11 @@
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/TutorialProgress?courseID={{course.id}}">Fortschritt</a>
             </li>
+            {% if course.recap is not none or userIsCourseOwner %}
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/recap?courseID={{course.id}}">Recap</a>
             </li>
+            {%endif%}
             {%endif%}
         </ul>
     </div>

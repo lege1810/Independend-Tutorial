@@ -923,6 +923,7 @@ def delCourse():
 def searchTutorial():
     searchText = request.form.get('search-bar')
     searchText = searchText.lower()
+    print("text ", searchText)
     foundCourses = []
     allCourses = getAllCourses()
     for course in allCourses:
@@ -935,7 +936,7 @@ def searchTutorial():
     if isLoggedIn():
         return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
     else:
-        return render_template('searchTutorial.html', userLoged=False)
+        return render_template('searchTutorial.html',courses = foundCourses, userLoged=False)
     
 
 @app.route('/uploadTutorial/', methods=['POST', 'GET'])
@@ -1077,13 +1078,14 @@ def recap():
 
         #del all given answers from users
         users = getAllUsersWrapperObject()
-        users = getAllUsersWrapperObject()
-        for user in users['users']:
-            for userAnswer in reversed(user['progress']['answers']):
-                for courseQuestion in getCourseWithString(courseID)['recap']['questions']:
-                    for courseAnswer in courseQuestion['answers']:
-                        if userAnswer['foreignKey'] == str(courseAnswer['id']):
-                            user['progress']['answers'].remove(userAnswer)
+        course = getCourseWithString(courseID)
+        if course['recap'] is not None:
+            for user in users['users']:
+                for userAnswer in reversed(user['progress']['answers']):
+                    for courseQuestion in course['recap']['questions']:
+                        for courseAnswer in courseQuestion['answers']:
+                            if userAnswer['foreignKey'] == str(courseAnswer['id']):
+                                user['progress']['answers'].remove(userAnswer)
         updateDataBase('allUsers', users)
         
         #save recap in mongo
@@ -1113,11 +1115,12 @@ def recap():
             #show recap for user
 
             #prepare courses dictonary - insert user progress
-            for question in course['recap']['questions']:
-                for answer in question['answers']:
-                    userAnswer = getUserAnswer(session['mail'], answer['id'])
-                    answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
-                    answer['userChoose'] = userAnswer
+            if course['recap'] is not None:
+                for question in course['recap']['questions']:
+                    for answer in question['answers']:
+                        userAnswer = getUserAnswer(session['mail'], answer['id'])
+                        answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
+                        answer['userChoose'] = userAnswer
 
             return render_template('tutorialRecap.html',
                 course = course,

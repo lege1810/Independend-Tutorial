@@ -1,7 +1,7 @@
 window.addEventListener("load", function() {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    var connection = new WebSocket('ws://192.168.178.112:1337');
+    var connection = new WebSocket('ws://localhost:1337');
 
     connection.onopen = function() {
         connection.send('sys selectedTut:' + getTutorium());
