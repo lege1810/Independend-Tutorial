@@ -75,13 +75,11 @@
                                                 <div class="row" style="padding-left:25px;padding-bottom:5px;margin:0px;">
                                                     <div class="col" style="padding:0px;">
                                                         <a href="/recap?courseID={{course.id}}">
-                                                            <div>
-                                                                <div class="row">
-                                                                    <div class="col" style="padding:0px;padding-right:0px;margin-right:-25px;"><span>{{question.questionText}}</span></div>
-                                                                    <div class="col" style="padding-right:0px;padding-left:0px;">
-                                                                        {% for answer in question.answers %}
-                                                                        <i class="icon ion-md-checkbox-outline" style="margin-left:0px;color:{% if answer.userAnswer is none %}rgb(107,111,107);{% elif answer.userWasCorrect %}rgb(62,154,72);{% else %}rgb(255,25,71);{% endif %}padding-left:15px;"></i>                                                                        {% endfor %}
-                                                                    </div>
+                                                            <div class="row">
+                                                                <div class="col" style="padding:0px;padding-right:0px;margin-right:-25px;"><span>{{question.questionText}}</span></div>
+                                                                <div class="col" style="padding-right:0px;padding-left:0px;">
+                                                                    {% for answer in question.answers %}
+                                                                    <i class="icon ion-md-checkbox-outline" style="margin-left:0px;color:{% if answer.userAnswer is none %}rgb(107,111,107);{% elif answer.userWasCorrect %}rgb(62,154,72);{% else %}rgb(255,25,71);{% endif %}padding-left:15px;"></i>                                                                    {% endfor %}
                                                                 </div>
                                                             </div>
                                                         </a>
