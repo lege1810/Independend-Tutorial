@@ -1455,7 +1455,6 @@ def send_js(filename):
 @app.route('/websocketChat/<filename>')
 def send_WsChat(filename):
     return send_from_directory("websocketChat", filename)
-# geht auch mit file, statt videos und imgs getrennt zu behandeln, später ändern!
 
 
 @app.route('/video/<videoid>')
