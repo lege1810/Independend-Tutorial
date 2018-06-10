@@ -39,7 +39,7 @@
             {% for course in courses.Satz0 %}
             <div class="col-sm-6 col-md-4 item">
                 <a href="/Tutorial/?courseID={{course.id}}">
-                    <img class="img-fluid" src="/img/{{course.courseImg}}">
+                    <img class="img-fluid" src="/img/{{course.courseBannerID}}">
                 </a>
                 <h3 class="name">{{course.name}}</h3>
                 <p class="description">{{course.description}}</p>
@@ -52,7 +52,7 @@
             {% for course in courses.Satz1 %}
             <div class="col-sm-6 col-md-4 item">
                 <a href="/Tutorial/?courseID={{course.id}}">
-                    <img class="img-fluid" src="/img/{{course.courseImg}}">
+                    <img class="img-fluid" src="/img/{{course.courseBannerID}}">
                 </a>
                 <h3 class="name">{{course.name}}</h3>
                 <p class="description">{{course.description}}</p>

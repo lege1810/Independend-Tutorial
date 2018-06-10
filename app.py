@@ -864,13 +864,6 @@ def editTutorial():
 def getIndex(info = None):
     courses = getAllCourses()
     requiredCourses = getIndexTutorials(courses)
-    for course in requiredCourses['Satz0']:
-        if course['id'] != None:
-            course['courseImg'] = course['courseBannerID']
-
-    for course in requiredCourses['Satz1']:
-        if course['id'] != None:
-            course['courseImg'] = course['courseBannerID']
 
     # langingPage.html erbt von unloggedLayout oder loggedLayout,
     # userLoged entscheidet, von welchem der Templates geerbt werden soll
@@ -945,19 +938,26 @@ def searchTutorial():
 
 @app.route('/News', methods=['GET'])
 def getnewTutorials():
-    foundCourses = []
+    requiredCourses = {
+        'Satz0': [],
+        'Satz1': []
+    }
     allCourses = getAllCourses()
     allCoursesLength = len(allCourses)
     for i in range(allCoursesLength-1,allCoursesLength-6,-1):
         if i >= 0:
-            foundCourses.append(allCourses[i])
+            #die ersten 3
+            if i > i-3:
+                requiredCourses['Satz0'].append(allCourses[i])
+            else:
+                requiredCourses['Satz1'].append(allCourses[i])
         else:
             break
 
     if isLoggedIn():
-        return render_template('newTutorials.html', courses = foundCourses, userLoged = True, username=getUserFromSession()['nickname'])
+        return render_template('newTutorials.html', courses = requiredCourses, userLoged = True, username=getUserFromSession()['nickname'])
     else:
-        return render_template('newTutorials.html', courses = foundCourses, userLoged=False)
+        return render_template('newTutorials.html', courses = requiredCourses, userLoged=False)
 
 
 
