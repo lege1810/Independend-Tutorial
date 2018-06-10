@@ -25,7 +25,7 @@
                                                             <div class="row">
                                                                 <div class="col" style="padding:0px;"><span>{{document.title}}</span></div>
                                                                 <div class="col" style="padding:0px;padding-left:0px;">
-                                                                    <i class="icon ion-md-checkbox-outline" style="margin-left:15px;color:{% if document.userProgress %}rgb(61,154,71);{% else %}rgb(255,25,71);{% endif %}(61,154,71);width:30px;height:30px;"></i>
+                                                                    <i class="icon ion-md-checkbox-outline" style="margin-left:15px;color:{% if document.userProgress %}rgb(61,154,71);{% else %}rgb(255,25,71);{% endif %}width:30px;height:30px;"></i>
                                                                 </div>
                                                             </div>
                                                         </a>
@@ -50,7 +50,7 @@
                                                             <div class="row">
                                                                 <div class="col" style="padding:0px;"><span>{{download.fileName}}</span></div>
                                                                 <div class="col" style="padding:0px;padding-left:0px;">
-                                                                    <i class="icon ion-ios-cloud-download" style="margin-left:15px;color:rgb(61,154,71);width:30px;height:30px;"></i>
+                                                                    <i class="icon ion-ios-cloud-download" style="margin-left:15px;color:{% if download.userProgress %}rgb(61,154,71);{% else %}rgb(255,25,71);{% endif %}width:30px;height:30px;"></i>
                                                                 </div>
                                                             </div>
                                                         </a>
@@ -69,7 +69,6 @@
                                     <li class="list-group-item">
                                         <div class="row">
                                             <div class="col">
-
 
                                                 <!-- Question -->
 

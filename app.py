@@ -639,12 +639,18 @@ def getUserAnswer(mail, foreignKey):
 #gibt den progress zur datei zurück, falls nicht vergeben false (durchsucht progress.downloads und progress.documents)
 def getUserProgress(mail, foreignKey):
     user = getUserByMail(mail)
-    for answer in user['progress']['downloads']:
-        if answer['foreignKey'] == str(foreignKey):
-            return answer['value']
-    for answer in user['progress']['documents']:
-        if answer['foreignKey'] == str(foreignKey):
-            return answer['value']
+
+    for download in user['progress']['downloads']:
+        if download['foreignKey'] == str(foreignKey):
+            print('---> ' + download['foreignKey'] + ' == ' + str(foreignKey))
+            return download['value']
+
+    for document in user['progress']['documents']:
+        if document['foreignKey'] == str(foreignKey):
+            print('---> ' + document['foreignKey'] + ' == ' + str(foreignKey))
+            return document['value']
+
+    return False
 
 
 @app.route('/changeTutorial/', methods=['GET'])
@@ -1088,8 +1094,9 @@ def recap():
                 break
 
         updateDataBase('allCourses', courses)
-        
-        return renderTutorialPrePage(course)
+
+        course = getCourseWithString(courseID)
+        return renderFirstPage(course)
     else:
         #method is get: show recap
         courseID = request.args.get('courseID')
@@ -1121,7 +1128,7 @@ def recap():
 
 @app.route('/recapAnswer', methods=['POST'])
 def recapAnswer():
-    courseID = request.form.get('courseID')
+    courseID = request.args.get('courseID')
     questionCounter = 1
     while(request.form.get('question_' + str(questionCounter))):
         
@@ -1136,9 +1143,9 @@ def recapAnswer():
 
             answerCounter += 1
         questionCounter += 1
-    
-        return renderTutorialPrePage(getCourseIfExists(courseID))
 
+    course = getCourseWithString(courseID)
+    return renderFirstPage(course)
 
 def renderTutorialPrePage(course):
     # sende Vorseite zum Tutorial 
@@ -1212,11 +1219,13 @@ def getTutorialProgress():
     course = getCourseIfExists(courseID)
 
     #prepare courses dictonary - insert user progress recap
-    for question in course['recap']['questions']:
-        for answer in question['answers']:
-            userAnswer = getUserAnswer(session['mail'], answer['id'])
-            answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
-            answer['userChoose'] = userAnswer
+    print(course['recap'])
+    if course['recap'] is not None:
+        for question in course['recap']['questions']:
+            for answer in question['answers']:
+                userAnswer = getUserAnswer(session['mail'], answer['id'])
+                answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
+                answer['userChoose'] = userAnswer
 
     #prepare courses dictonary - insert user progress document
     for document in course['categorys']['documents']:
@@ -1225,8 +1234,8 @@ def getTutorialProgress():
 
     #prepare courses dictonary - insert user progress download
     for download in course['courseDownloads']:
-        download['userProgress'] = getUserProgress(session['mail'], document['id'])
-        print('download downloaded: ' + str(getUserProgress(session['mail'], document['id'])))
+        download['userProgress'] = getUserProgress(session['mail'], download['fileID'])
+        print('download downloaded: ' + str(getUserProgress(session['mail'], download['fileID'])))
 
     return render_template('tutorialProgress.html',
         username=getUserFromSession()['nickname'],
@@ -1273,6 +1282,12 @@ def getTutorialWithDocumentID():
         return renderTutorialTemplate(course, documentIndex, documentImgID, documentVideoID)
     else:
         return renderTutorialPrePage(course)
+
+
+def renderFirstPage(course):
+        docImg = course['categorys']['documents'][0]['content']['courseImgID']
+        docVid = course['categorys']['documents'][0]['content']['courseVideoID']
+        return renderTutorialTemplate(course, 0, docImg, docVid)
 
 
 @app.route('/editProfile', methods=['POST', 'GET'])

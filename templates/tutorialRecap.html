@@ -9,8 +9,8 @@
                         <div class="form-group">
                             <div class="col" style="padding-top:15px;padding-bottom:15px;">
                                 <!-- Question -->
-                                <form action="/recapAnswer" accept-charset="UTF-8" method="post">
-                                    <input type="hidden" name="courseID" value="{{course.id}}">
+                                <form action="/recapAnswer?courseID={{course.id}}" accept-charset="UTF-8" method="post">
+
                                     <div id="questionsContainer">
                                         {% for question in course.recap.questions %} {% set questionCounter = loop.index %}
                                         <div class="col" style="padding-top:15px;padding-bottom:15px;">
