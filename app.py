@@ -1264,7 +1264,8 @@ def getTutorialWithDocumentID():
 
     if documentID is not None:
         #insert progress
-        insertProgressDocument(session['mail'], documentID)
+        if isLoggedIn():
+            insertProgressDocument(session['mail'], documentID)
 
         documentIndex = getDocumentIndex(documentID, course)
         documentImgID = course['categorys']['documents'][documentIndex]['content']['courseImgID']
@@ -1485,7 +1486,8 @@ def getImg(imgid):
 def getDownloadFile(fileid):
     if fileid != 'None':
         #insert progress
-        insertProgressDownload(session['mail'], fileid)
+        if isLoggedIn():
+            insertProgressDownload(session['mail'], fileid)
 
         db = client.myTestBase
         fsCollection = gridfs.GridFS(db)
