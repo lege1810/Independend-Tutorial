@@ -10,7 +10,8 @@ Importent:
 1. Edit IP at websocketChat/ws-client.js
 
 ToDo:
-9. fortschritt - moritz
+9. fortschritt für tutoren - moritz
+10. fortschritt löschen wenn document oder download gelöscht wird - moritz
 
 ToDo Kristof:
 3. Link füllen oder entferrnen; z.b.: about us, web design...
