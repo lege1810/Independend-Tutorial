@@ -647,6 +647,16 @@ def getUserProgress(mail, foreignKey):
     return False
 
 
+@app.route('/AboutUs', methods=['GET'])
+def getAboutUS():
+    if isLoggedIn():
+        return render_template('aboutUs.html', userLoged = True)
+    else:
+        return render_template('aboutUs.html', userLoged = False)
+
+
+
+
 @app.route('/changeTutorial/', methods=['GET'])
 def editTutIndex():
     courseID = request.args.get('courseID')
@@ -931,7 +941,26 @@ def searchTutorial():
         return render_template('searchTutorial.html', courses = foundCourses, userLoged=True, username=getUserFromSession()['nickname'])
     else:
         return render_template('searchTutorial.html',courses = foundCourses, userLoged=False)
-    
+
+
+@app.route('/News', methods=['GET'])
+def getnewTutorials():
+    foundCourses = []
+    allCourses = getAllCourses()
+    allCoursesLength = len(allCourses)
+    for i in range(allCoursesLength-1,allCoursesLength-6,-1):
+        if i >= 0:
+            foundCourses.append(allCourses[i])
+        else:
+            break
+
+    if isLoggedIn():
+        return render_template('newTutorials.html', courses = foundCourses, userLoged = True, username=getUserFromSession()['nickname'])
+    else:
+        return render_template('newTutorials.html', courses = foundCourses, userLoged=False)
+
+
+
 
 @app.route('/uploadTutorial/', methods=['POST', 'GET'])
 def uploadTutorial():

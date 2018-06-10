@@ -1,0 +1,48 @@
+{% if userLoged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {%endif %} {% block content %}
+<div class="article-list" style="padding-bottom:15px;">
+    <div class="container">
+        <div class="row" style="padding-bottom:0px;">
+            <div class="col" style="padding-top:15px;">
+                <div class="form-group" style="margin-bottom:15px;">
+                    <form action="/searchTutorial/" method="POST" enctype="multipart/form-data">
+                        <input class="d-inline-block search-input" type="text" name="search-bar" placeholder="Finde Tutorien..." autocomplete="off" style="width:400px;margin-left:auto;margin-right:6px;">
+                        <button class="btn btn-light d-inline-block search-btn" type="submit" style="margin-right:0;margin-left:0;padding:10px;width:46px;height:46px;margin-bottom:3px;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h2 class="text-left">Die neuesten Tutorien</h2>
+            </div>
+        </div>
+        {% for course in courses %}
+        <div class="row" style="padding-top:15px;padding-bottom:30px;">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <a href="/Tutorial/?courseID={{course.id}}">
+                            <img class="img-fluid d-block" src="/img/{{course.courseBannerID}}" style="margin:0 auto;width:360px;">
+                        </a>
+                    </div>
+                    <div class="col">
+                        <h3 class="name">{{course.name}}</h3>
+                        <p class="description">{{course.description}}</p>
+
+                        <div class="btn-toolbar">
+                            <div class="btn-group" role="group" style="padding:15px;">
+                                <a href="/Tutorial/?courseID={{course.id}}">
+                                    <button class="btn btn-light" type="button" style="padding-left:11px;margin-left:0px;margin-right:15px;">Zum Kurs</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
