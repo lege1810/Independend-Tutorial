@@ -121,153 +121,153 @@ def newAnswer():
     }
 
 
-def fillDB():
-    # DB-Connection
-    db = client.myTestBase
-    # Collection
-    studCorp = db.studCorp
-    # ------Define new Users/Tutors-------
-    singleExampleUser = newEmptyUser()
-    singleExampleUser['id'] = 1
-    singleExampleUser['mail'] = 'm.maart@gmx.net'
-    singleExampleUser['first_name'] = 'Moritz'
-    singleExampleUser['last_name'] = 'Maart'
-    singleExampleUser['nickname'] = 'nordie92'
-    singleExampleUser['passphrase'] = 'Okay123'
-    singleExampleUser['isTutor'] = False
+# # def fillDB():
+#     # DB-Connection
+#     db = client.myTestBase
+#     # Collection
+#     studCorp = db.studCorp
+#     # ------Define new Users/Tutors-------
+#     singleExampleUser = newEmptyUser()
+#     singleExampleUser['id'] = 1
+#     singleExampleUser['mail'] = 'm.maart@gmx.net'
+#     singleExampleUser['first_name'] = 'Moritz'
+#     singleExampleUser['last_name'] = 'Maart'
+#     singleExampleUser['nickname'] = 'nordie92'
+#     singleExampleUser['passphrase'] = 'Okay123'
+#     singleExampleUser['isTutor'] = False
 
-    singleExampleUser2 = newEmptyUser()
-    singleExampleUser2['id'] = 2
-    singleExampleUser2['mail'] = 'me.mail@web.net'
-    singleExampleUser2['first_name'] = 'Me'
-    singleExampleUser2['last_name'] = 'Muster'
-    singleExampleUser2['nickname'] = 'spaceboi'
-    singleExampleUser2['passphrase'] = 'Jauuuu111'
-    singleExampleUser2['isTutor'] = False
+#     singleExampleUser2 = newEmptyUser()
+#     singleExampleUser2['id'] = 2
+#     singleExampleUser2['mail'] = 'me.mail@web.net'
+#     singleExampleUser2['first_name'] = 'Me'
+#     singleExampleUser2['last_name'] = 'Muster'
+#     singleExampleUser2['nickname'] = 'spaceboi'
+#     singleExampleUser2['passphrase'] = 'Jauuuu111'
+#     singleExampleUser2['isTutor'] = False
 
-    singleExampleTutor = newEmptyUser()
-    singleExampleTutor['id'] = 3
-    singleExampleTutor['mail'] = 'a.b@c.de'
-    singleExampleTutor['first_name'] = 'Le'
-    singleExampleTutor['last_name'] = 'Ge'
-    singleExampleTutor['nickname'] = 'lege1810'
-    singleExampleTutor['passphrase'] = '12345'
-    singleExampleTutor['isTutor'] = True
+#     singleExampleTutor = newEmptyUser()
+#     singleExampleTutor['id'] = 3
+#     singleExampleTutor['mail'] = 'a.b@c.de'
+#     singleExampleTutor['first_name'] = 'Le'
+#     singleExampleTutor['last_name'] = 'Ge'
+#     singleExampleTutor['nickname'] = 'lege1810'
+#     singleExampleTutor['passphrase'] = '12345'
+#     singleExampleTutor['isTutor'] = True
 
-    newCourse = newEmptyUserCourse()
-    newCourse['course']['courseID'] = '1'
+#     newCourse = newEmptyUserCourse()
+#     newCourse['course']['courseID'] = '1'
 
-    newCourse2 = newEmptyUserCourse()
-    newCourse2['course']['courseID'] = '2'
+#     newCourse2 = newEmptyUserCourse()
+#     newCourse2['course']['courseID'] = '2'
 
-    singleExampleUser['courses'].append(newCourse)
-    singleExampleUser2['courses'].append(newCourse2)
-    singleExampleTutor['ownCourses'].append(newCourse)
+#     singleExampleUser['courses'].append(newCourse)
+#     singleExampleUser2['courses'].append(newCourse2)
+#     singleExampleTutor['ownCourses'].append(newCourse)
 
-    allUsers = newAllUsers()
+#     allUsers = newAllUsers()
 
-    allUsers['users'].append(singleExampleUser)
-    allUsers['users'].append(singleExampleUser2)
-    allUsers['users'].append(singleExampleTutor)
+#     allUsers['users'].append(singleExampleUser)
+#     allUsers['users'].append(singleExampleUser2)
+#     allUsers['users'].append(singleExampleTutor)
 
-    studCorp.insert(allUsers)
-    # ------------------Define new Tutorial-----------------------------------
-    newTutorial = newEmptyCourse()
-    # newTutorial['id'] = '1234567890qwertzuio2'
-    newTutorial['name'] = 'Web-Systeme'
-    newTutorial['description'] = 'Lernen sie Technologien zu vergleichen'
+#     studCorp.insert(allUsers)
+#     # ------------------Define new Tutorial-----------------------------------
+#     newTutorial = newEmptyCourse()
+#     # newTutorial['id'] = '1234567890qwertzuio2'
+#     newTutorial['name'] = 'Web-Systeme'
+#     newTutorial['description'] = 'Lernen sie Technologien zu vergleichen'
 
-    newDoc = newDocument()
-    newDoc['title'] = 'TestPage1'
-    newDoc['styleTyp'] = 1
-    newDoc['content']['link'] = 'rel="stylesheet" href="./css/design1.css"'
-    newDoc['content']['h1'].append('Überschrift1 Bla Bla Bla')
-    newDoc['content']['p'].append(
-        'Das ist alles ein Paragraph bla bla bla ... bla bla bla')
+#     newDoc = newDocument()
+#     newDoc['title'] = 'TestPage1'
+#     newDoc['styleTyp'] = 1
+#     newDoc['content']['link'] = 'rel="stylesheet" href="./css/design1.css"'
+#     newDoc['content']['h1'].append('Überschrift1 Bla Bla Bla')
+#     newDoc['content']['p'].append(
+#         'Das ist alles ein Paragraph bla bla bla ... bla bla bla')
 
-    # #öffne Grid-Fs-Collection
-    # db = client.myTestBase
-    # fsCollection = gridfs.GridFS(db)
+#     # #öffne Grid-Fs-Collection
+#     # db = client.myTestBase
+#     # fsCollection = gridfs.GridFS(db)
 
-    # #für Kurs Banner
-    # bannerID = ObjectId()
-    # newTut['courseBannerID'] = bannerID
-    # fsCollection.put(courseBanner, filename = courseBanner.filename, _id = bannerID)
+#     # #für Kurs Banner
+#     # bannerID = ObjectId()
+#     # newTut['courseBannerID'] = bannerID
+#     # fsCollection.put(courseBanner, filename = courseBanner.filename, _id = bannerID)
 
-    newDoc_1 = newDocument()
-    newDoc_1['title'] = 'TestPageNummer 2'
-    newDoc_1['styleTyp'] = 2
+#     newDoc_1 = newDocument()
+#     newDoc_1['title'] = 'TestPageNummer 2'
+#     newDoc_1['styleTyp'] = 2
 
-    newDoc_1['content']['link'] = 'rel="stylesheet" href="./css/design2.css"'
-    newDoc_1['content']['h1'].append('WAS GEHT AB ÜBERSCHRIFT')
-    newDoc_1['content']['p'].append(
-        'Beispiel Paragraph')
+#     newDoc_1['content']['link'] = 'rel="stylesheet" href="./css/design2.css"'
+#     newDoc_1['content']['h1'].append('WAS GEHT AB ÜBERSCHRIFT')
+#     newDoc_1['content']['p'].append(
+#         'Beispiel Paragraph')
 
-    newExampleQuiz = newQuiz()
-    newExampleQuiz['name'] = 'Quiz 1'
+#     newExampleQuiz = newQuiz()
+#     newExampleQuiz['name'] = 'Quiz 1'
 
-    newExampleQuestion = newQuestion()
-    newExampleQuestion['questionText'] = 'Ist der Himmel für uns blau?'
+#     newExampleQuestion = newQuestion()
+#     newExampleQuestion['questionText'] = 'Ist der Himmel für uns blau?'
 
-    newExampleAnswer = newAnswer()
-    newExampleAnswer['answerText'] = 'Ja'
-    newExampleAnswer['answerIsCorrect'] = True
+#     newExampleAnswer = newAnswer()
+#     newExampleAnswer['answerText'] = 'Ja'
+#     newExampleAnswer['answerIsCorrect'] = True
 
-    newExampleAnswer2 = newAnswer()
-    newExampleAnswer2['answerText'] = 'Nein'
-    newExampleAnswer2['answerIsCorrect'] = False
+#     newExampleAnswer2 = newAnswer()
+#     newExampleAnswer2['answerText'] = 'Nein'
+#     newExampleAnswer2['answerIsCorrect'] = False
 
-    newExampleQuestion['answers'].append(newExampleAnswer)
-    newExampleQuestion['answers'].append(newExampleAnswer2)
+#     newExampleQuestion['answers'].append(newExampleAnswer)
+#     newExampleQuestion['answers'].append(newExampleAnswer2)
 
-    newExampleQuiz['questions'].append(newExampleQuestion)
+#     newExampleQuiz['questions'].append(newExampleQuestion)
 
-    newTutorial['categorys']['quiz'].append(newExampleQuiz)
-    newTutorial['categorys']['documents'].append(newDoc)
-    newTutorial['categorys']['documents'].append(newDoc_1)
+#     newTutorial['categorys']['quiz'].append(newExampleQuiz)
+#     newTutorial['categorys']['documents'].append(newDoc)
+#     newTutorial['categorys']['documents'].append(newDoc_1)
 
-    allCourses = newAllCourses()
-    allCourses['id'] = 'allCourses'
-    allCourses['courses'].append(newTutorial)
+#     allCourses = newAllCourses()
+#     allCourses['id'] = 'allCourses'
+#     allCourses['courses'].append(newTutorial)
 
-    # -----------------------------
-    newTutorial2 = newEmptyCourse()
-    # newTutorial2['id'] = '1234567890qwertzuio'
-    newTutorial2['name'] = 'Mathe'
-    newTutorial2['description'] = 'Integrale'
+#     # -----------------------------
+#     newTutorial2 = newEmptyCourse()
+#     # newTutorial2['id'] = '1234567890qwertzuio'
+#     newTutorial2['name'] = 'Mathe'
+#     newTutorial2['description'] = 'Integrale'
 
-    newDoc2 = newDocument()
-    newDoc2['title'] = 'TestPage1'
-    newDoc2['styleTyp'] = 1
-    newDoc2['content']['link'] = 'rel="stylesheet" href="./css/design1.css"'
-    newDoc2['content']['h1'].append('Überschrift1 Bla Bla Bla')
-    newDoc2['content']['p'].append(
-        'Das ist alles ein Paragraph bla bla bla ... bla bla bla')
+#     newDoc2 = newDocument()
+#     newDoc2['title'] = 'TestPage1'
+#     newDoc2['styleTyp'] = 1
+#     newDoc2['content']['link'] = 'rel="stylesheet" href="./css/design1.css"'
+#     newDoc2['content']['h1'].append('Überschrift1 Bla Bla Bla')
+#     newDoc2['content']['p'].append(
+#         'Das ist alles ein Paragraph bla bla bla ... bla bla bla')
 
-    newExampleQuiz2 = newQuiz()
-    newExampleQuiz2['name'] = 'Quiz 1'
+#     newExampleQuiz2 = newQuiz()
+#     newExampleQuiz2['name'] = 'Quiz 1'
 
-    newExampleQuestion2 = newQuestion()
-    newExampleQuestion2['questionText'] = 'Ist der Himmel für uns blau?'
+#     newExampleQuestion2 = newQuestion()
+#     newExampleQuestion2['questionText'] = 'Ist der Himmel für uns blau?'
 
-    newExampleAnswer2_1 = newAnswer()
-    newExampleAnswer2_1['answerText'] = 'Ja'
-    newExampleAnswer2_1['answerIsCorrect'] = True
+#     newExampleAnswer2_1 = newAnswer()
+#     newExampleAnswer2_1['answerText'] = 'Ja'
+#     newExampleAnswer2_1['answerIsCorrect'] = True
 
-    newExampleAnswer2_2 = newAnswer()
-    newExampleAnswer2_2['answerText'] = 'Nein'
-    newExampleAnswer2_2['answerIsCorrect'] = False
+#     newExampleAnswer2_2 = newAnswer()
+#     newExampleAnswer2_2['answerText'] = 'Nein'
+#     newExampleAnswer2_2['answerIsCorrect'] = False
 
-    newExampleQuestion2['answers'].append(newExampleAnswer2_1)
-    newExampleQuestion2['answers'].append(newExampleAnswer2_2)
+#     newExampleQuestion2['answers'].append(newExampleAnswer2_1)
+#     newExampleQuestion2['answers'].append(newExampleAnswer2_2)
 
-    newExampleQuiz2['questions'].append(newExampleQuestion2)
+#     newExampleQuiz2['questions'].append(newExampleQuestion2)
 
-    newTutorial2['categorys']['quiz'].append(newExampleQuiz2)
-    newTutorial2['categorys']['documents'].append(newDoc2)
+#     newTutorial2['categorys']['quiz'].append(newExampleQuiz2)
+#     newTutorial2['categorys']['documents'].append(newDoc2)
 
-    allCourses['courses'].append(newTutorial2)
-    studCorp.insert(allCourses)
+#     allCourses['courses'].append(newTutorial2)
+#     studCorp.insert(allCourses)
 
 
 def initDB():
@@ -537,11 +537,6 @@ def getCourseMember(courseID):
 
 
 # checking if user already exits by comparing mail
-def userExists(mail):
-    users = getAllUsers()
-    user = next((x for x in users if x['mail'] == mail), None)
-    return user is not None
-
 
 def getUserWithMail(mail):
     users = getAllUsers()
@@ -564,10 +559,6 @@ def getUserFromSession():
         return None
 
 
-# checking if user is logged in
-def isLoggedIn():
-    return 'mail' in session
-    
 
 def insertProgressAnswer(userMail, foreignKey, answerValue):
     answerAllreadyExist = False
