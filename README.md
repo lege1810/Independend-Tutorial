@@ -13,6 +13,9 @@ ToDo:
 9. fortschritt für tutoren - moritz
 10. fortschritt löschen wenn document oder download gelöscht wird - moritz
 
+Bugfound:
+1. Errors wenn man alle documente aus tutorium löscht
+
 ToDo Kristof:
 3. Link füllen oder entferrnen; z.b.: about us, web design...
 4. Login in handyansicht bearbeiten

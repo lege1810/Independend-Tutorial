@@ -23,7 +23,7 @@
                                                     <label {% if answer.userChoose is not none %}style="color: {% if answer.userWasCorrect %}rgb(9, 187, 83){% else %}rgb(255, 16, 16){% endif %}{% endif %};">
                                                     {{ answer.answerText }}
                                                     </label>
-                                                    <input style="margin-left:20px;" type="checkbox" {% if answer.userChoose %}checked{% endif %} name="question_{{questionCounter}}_answer_{{loop.index}}_isCorrect">
+                                                    <input style="margin-left:20px;" type="checkbox" {% if answer.userChoose is not none %}disabled{% endif %} {% if answer.userChoose %}checked{% endif %} name="question_{{questionCounter}}_answer_{{loop.index}}_isCorrect">
                                                 </div>
                                             </div>
                                             {% endfor %}

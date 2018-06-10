@@ -573,7 +573,6 @@ def insertProgressAnswer(userMail, foreignKey, answerValue):
             for answer in user['progress']['answers']:
                 if answer['foreignKey'] == foreignKey:
                     answerAllreadyExist = True
-                    answer['value'] = answerValue
                     break
             
             if answerAllreadyExist == False:
@@ -1127,7 +1126,7 @@ def recap():
                 userLogged=isLoggedIn(),
                 userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
                 userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-            
+
 
 @app.route('/recapAnswer', methods=['POST'])
 def recapAnswer():
@@ -1147,8 +1146,26 @@ def recapAnswer():
             answerCounter += 1
         questionCounter += 1
 
-    course = getCourseWithString(courseID)
-    return renderFirstPage(course)
+    return showRecap(courseID)
+            
+
+def showRecap(courseID):
+    course = getCourseIfExists(courseID)
+
+    #prepare courses dictonary - insert user progress
+    if course['recap'] is not None:
+        for question in course['recap']['questions']:
+            for answer in question['answers']:
+                userAnswer = getUserAnswer(session['mail'], answer['id'])
+                answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
+                answer['userChoose'] = userAnswer
+
+    return render_template('tutorialRecap.html',
+        course = course,
+        userLogged=isLoggedIn(),
+        userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+        userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+        
 
 def renderTutorialPrePage(course):
     # sende Vorseite zum Tutorial 
