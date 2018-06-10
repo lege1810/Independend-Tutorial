@@ -327,7 +327,7 @@ def getUser(cookieID):
     allUsers = getAllUsers()
     foundUser = {}
     for user in allUsers:
-        if user['id'] == cookieID:
+        if str(user['id']) == str(cookieID):
             foundUser = user
             break
     return foundUser
@@ -354,16 +354,6 @@ def userExists(mail):
     users = getAllUsers()
     user = next((x for x in users if x['mail'] == mail), None)
     return user is not None
-
-
-def getUser(cookieID):
-    allUsers = getAllUsers()
-    foundUser = {}
-    for user in allUsers:
-        if user['id'] == cookieID:
-            foundUser = user
-            break
-    return foundUser
 
 
 # checking if user is logged in
@@ -531,6 +521,20 @@ def isCourseOwner(userID, courseID):
                 userIsCourseOwner = True
                 break
     return userIsCourseOwner
+
+
+def getCourseMember(courseID):
+    course = getCourseWithString(courseID)
+    users = getAllUsers()
+    retUsers = []
+
+    for user in users:
+        for userCourse in user['courses']:
+            if str(userCourse) == str(courseID):
+                retUsers.append(user)
+    
+    return retUsers
+
 
 # checking if user already exits by comparing mail
 def userExists(mail):
@@ -1152,6 +1156,7 @@ def recapAnswer():
 def showRecap(courseID):
     course = getCourseIfExists(courseID)
 
+
     #prepare courses dictonary - insert user progress
     if course['recap'] is not None:
         for question in course['recap']['questions']:
@@ -1165,7 +1170,7 @@ def showRecap(courseID):
         userLogged=isLoggedIn(),
         userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
         userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
-        
+
 
 def renderTutorialPrePage(course):
     # sende Vorseite zum Tutorial 
@@ -1237,25 +1242,26 @@ def getCourseChat():
 def getTutorialProgress():
     courseID = request.args.get('courseID')
     course = getCourseIfExists(courseID)
-
+    mail = session['mail']
+    
     #prepare courses dictonary - insert user progress recap
     print(course['recap'])
     if course['recap'] is not None:
         for question in course['recap']['questions']:
             for answer in question['answers']:
-                userAnswer = getUserAnswer(session['mail'], answer['id'])
+                userAnswer = getUserAnswer(mail, answer['id'])
                 answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
                 answer['userChoose'] = userAnswer
 
     #prepare courses dictonary - insert user progress document
     for document in course['categorys']['documents']:
-        document['userProgress'] = getUserProgress(session['mail'], document['id'])
-        print('document seen: ' + str(getUserProgress(session['mail'], document['id'])))
+        document['userProgress'] = getUserProgress(mail, document['id'])
+        print('document seen: ' + str(getUserProgress(mail, document['id'])))
 
     #prepare courses dictonary - insert user progress download
     for download in course['courseDownloads']:
-        download['userProgress'] = getUserProgress(session['mail'], download['fileID'])
-        print('download downloaded: ' + str(getUserProgress(session['mail'], download['fileID'])))
+        download['userProgress'] = getUserProgress(mail, download['fileID'])
+        print('download downloaded: ' + str(getUserProgress(mail, download['fileID'])))
 
     return render_template('tutorialProgress.html',
         username=getUserFromSession()['nickname'],
@@ -1263,6 +1269,60 @@ def getTutorialProgress():
         course=course,
         userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
         userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+
+
+@app.route('/TutorialProgressTutor', methods=['GET'])
+def progressTutor():
+    courseID = request.args.get('courseID')
+    course = getCourseIfExists(courseID)
+    courseMember = getCourseMember(courseID)
+
+    return render_template('tutorialProgressTutor.html',
+        username=getUserFromSession()['nickname'],
+        userLogged=True,
+        courseMember = courseMember,
+        course=course,
+        userIsCourseMember = isCourseMember(getUserFromSession()['id'], course['id']),
+        userIsCourseOwner = isCourseOwner(getUserFromSession()['id'], course['id']))
+
+
+@app.route('/TutorialProgressTutorContent', methods=['GET'])
+def progressTutorContent():
+    courseID = request.args.get('courseID')
+    course = getCourseIfExists(courseID)
+    courseMember = getCourseMember(courseID)
+
+    user = {}
+    if request.args.get('userID'):
+        user = getUser(request.args.get('userID'))
+        print('get', user['nickname'])
+    else:
+        user = getUserByMail(session['mail'])
+        print('session', user['nickname'])
+    
+    #prepare courses dictonary - insert user progress recap
+    print(course['recap'])
+    if course['recap'] is not None:
+        for question in course['recap']['questions']:
+            for answer in question['answers']:
+                userAnswer = getUserAnswer(user['mail'], answer['id'])
+                answer['userWasCorrect'] = answer['answerIsCorrect'] == userAnswer
+                answer['userChoose'] = userAnswer
+
+    #prepare courses dictonary - insert user progress document
+    for document in course['categorys']['documents']:
+        document['userProgress'] = getUserProgress(user['mail'], document['id'])
+        print('document seen: ' + str(getUserProgress(user['mail'], document['id'])))
+
+    #prepare courses dictonary - insert user progress download
+    for download in course['courseDownloads']:
+        download['userProgress'] = getUserProgress(user['mail'], download['fileID'])
+        print('download downloaded: ' + str(getUserProgress(user['mail'], download['fileID'])))
+
+
+    return render_template('tutorialProgressTutorContent.html',
+        courseMember = courseMember,
+        course=course)
 
 
 @app.route('/TutorialDownloads/', methods=['GET'])

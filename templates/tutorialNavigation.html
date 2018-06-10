@@ -11,15 +11,19 @@
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/TutorialChat?courseID={{course.id}}">Diskussionen</a>
             </li>
+            {% if userIsCourseOwner %}
+            <li class="nav-item">
+                <a class="nav-link text-capitalize" href="/TutorialProgressTutor?courseID={{course.id}}">Fortschritt</a>
+            </li>
+            {% else %}
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/TutorialProgress?courseID={{course.id}}">Fortschritt</a>
             </li>
-            {% if course.recap is not none or userIsCourseOwner %}
+            {%endif%} {% if course.recap is not none or userIsCourseOwner %}
             <li class="nav-item">
                 <a class="nav-link text-capitalize" href="/recap?courseID={{course.id}}">Recap</a>
             </li>
-            {%endif%}
-            {%endif%}
+            {%endif%} {%endif%}
         </ul>
     </div>
 </div>

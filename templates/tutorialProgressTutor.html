@@ -1,0 +1,78 @@
+{% if userLogged %} {% extends "loggedLayout.html" %} {% else %} {% extends "unloggedLayout.html" %} {% endif %} {% block content %}
+
+<div style="margin-top:0px;padding-bottom:15px;">
+    <div class="container">
+        {% include "tutorialNavigation.html" %}
+        <div class="card-body">
+            <div class="col-md-8" style="font-size:12px;">
+                <div class="card" style="margin-right:0px;margin-left:-15px;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h3 class="text-justify" style="font-size:26px;">Kursfortschritt für:</h3>
+                            </div>
+                            <div class="col">
+                                <select class="form-control-sm" id="courseMemberSelect">
+                                    <optgroup label="Nutzer wählen">
+                                        {% for member in courseMember %}
+                                        <option value="{{member.id}}">{{member.nickname}}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- hier progress hin -->
+                        <div id="progressContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener("load", function() {
+        var req = getXmlHttpRequestObject();
+        getUserProgress();
+
+        console.log(document.getElementById("courseMemberSelect"));
+
+        document.getElementById('courseMemberSelect').addEventListener("change", function() {
+            console.log("change");
+            getUserProgress();
+        });
+
+        function getXmlHttpRequestObject() {
+            if (window.XMLHttpRequest) {
+                return new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            } else {
+                alert('Ajax funktioniert bei Ihnen nicht!');
+            }
+        }
+
+        function getUserProgress() {
+            if (req.readyState == 4 || req.readyState == 0) {
+                req.open('GET', '/TutorialProgressTutorContent?courseID={{course.id}}&userID=' + getUserID(), true);
+                req.setRequestHeader("Content-Type", "text/plain");
+                req.onreadystatechange = showUserProgress;
+                req.send(null);
+            }
+        }
+
+        function showUserProgress() {
+            if (req.readyState == 4) {
+                container = document.getElementById('progressContent');
+                container.innerHTML = req.responseText;
+                console.log("joooo");
+            }
+        }
+
+        function getUserID() {
+            var ele = document.getElementById('courseMemberSelect');
+            return ele.options[ele.selectedIndex].value
+        }
+    });
+</script>
+{% endblock %}
