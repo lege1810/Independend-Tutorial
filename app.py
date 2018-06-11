@@ -121,155 +121,6 @@ def newAnswer():
     }
 
 
-# # def fillDB():
-#     # DB-Connection
-#     db = client.myTestBase
-#     # Collection
-#     studCorp = db.studCorp
-#     # ------Define new Users/Tutors-------
-#     singleExampleUser = newEmptyUser()
-#     singleExampleUser['id'] = 1
-#     singleExampleUser['mail'] = 'm.maart@gmx.net'
-#     singleExampleUser['first_name'] = 'Moritz'
-#     singleExampleUser['last_name'] = 'Maart'
-#     singleExampleUser['nickname'] = 'nordie92'
-#     singleExampleUser['passphrase'] = 'Okay123'
-#     singleExampleUser['isTutor'] = False
-
-#     singleExampleUser2 = newEmptyUser()
-#     singleExampleUser2['id'] = 2
-#     singleExampleUser2['mail'] = 'me.mail@web.net'
-#     singleExampleUser2['first_name'] = 'Me'
-#     singleExampleUser2['last_name'] = 'Muster'
-#     singleExampleUser2['nickname'] = 'spaceboi'
-#     singleExampleUser2['passphrase'] = 'Jauuuu111'
-#     singleExampleUser2['isTutor'] = False
-
-#     singleExampleTutor = newEmptyUser()
-#     singleExampleTutor['id'] = 3
-#     singleExampleTutor['mail'] = 'a.b@c.de'
-#     singleExampleTutor['first_name'] = 'Le'
-#     singleExampleTutor['last_name'] = 'Ge'
-#     singleExampleTutor['nickname'] = 'lege1810'
-#     singleExampleTutor['passphrase'] = '12345'
-#     singleExampleTutor['isTutor'] = True
-
-#     newCourse = newEmptyUserCourse()
-#     newCourse['course']['courseID'] = '1'
-
-#     newCourse2 = newEmptyUserCourse()
-#     newCourse2['course']['courseID'] = '2'
-
-#     singleExampleUser['courses'].append(newCourse)
-#     singleExampleUser2['courses'].append(newCourse2)
-#     singleExampleTutor['ownCourses'].append(newCourse)
-
-#     allUsers = newAllUsers()
-
-#     allUsers['users'].append(singleExampleUser)
-#     allUsers['users'].append(singleExampleUser2)
-#     allUsers['users'].append(singleExampleTutor)
-
-#     studCorp.insert(allUsers)
-#     # ------------------Define new Tutorial-----------------------------------
-#     newTutorial = newEmptyCourse()
-#     # newTutorial['id'] = '1234567890qwertzuio2'
-#     newTutorial['name'] = 'Web-Systeme'
-#     newTutorial['description'] = 'Lernen sie Technologien zu vergleichen'
-
-#     newDoc = newDocument()
-#     newDoc['title'] = 'TestPage1'
-#     newDoc['styleTyp'] = 1
-#     newDoc['content']['link'] = 'rel="stylesheet" href="./css/design1.css"'
-#     newDoc['content']['h1'].append('Überschrift1 Bla Bla Bla')
-#     newDoc['content']['p'].append(
-#         'Das ist alles ein Paragraph bla bla bla ... bla bla bla')
-
-#     # #öffne Grid-Fs-Collection
-#     # db = client.myTestBase
-#     # fsCollection = gridfs.GridFS(db)
-
-#     # #für Kurs Banner
-#     # bannerID = ObjectId()
-#     # newTut['courseBannerID'] = bannerID
-#     # fsCollection.put(courseBanner, filename = courseBanner.filename, _id = bannerID)
-
-#     newDoc_1 = newDocument()
-#     newDoc_1['title'] = 'TestPageNummer 2'
-#     newDoc_1['styleTyp'] = 2
-
-#     newDoc_1['content']['link'] = 'rel="stylesheet" href="./css/design2.css"'
-#     newDoc_1['content']['h1'].append('WAS GEHT AB ÜBERSCHRIFT')
-#     newDoc_1['content']['p'].append(
-#         'Beispiel Paragraph')
-
-#     newExampleQuiz = newQuiz()
-#     newExampleQuiz['name'] = 'Quiz 1'
-
-#     newExampleQuestion = newQuestion()
-#     newExampleQuestion['questionText'] = 'Ist der Himmel für uns blau?'
-
-#     newExampleAnswer = newAnswer()
-#     newExampleAnswer['answerText'] = 'Ja'
-#     newExampleAnswer['answerIsCorrect'] = True
-
-#     newExampleAnswer2 = newAnswer()
-#     newExampleAnswer2['answerText'] = 'Nein'
-#     newExampleAnswer2['answerIsCorrect'] = False
-
-#     newExampleQuestion['answers'].append(newExampleAnswer)
-#     newExampleQuestion['answers'].append(newExampleAnswer2)
-
-#     newExampleQuiz['questions'].append(newExampleQuestion)
-
-#     newTutorial['categorys']['quiz'].append(newExampleQuiz)
-#     newTutorial['categorys']['documents'].append(newDoc)
-#     newTutorial['categorys']['documents'].append(newDoc_1)
-
-#     allCourses = newAllCourses()
-#     allCourses['id'] = 'allCourses'
-#     allCourses['courses'].append(newTutorial)
-
-#     # -----------------------------
-#     newTutorial2 = newEmptyCourse()
-#     # newTutorial2['id'] = '1234567890qwertzuio'
-#     newTutorial2['name'] = 'Mathe'
-#     newTutorial2['description'] = 'Integrale'
-
-#     newDoc2 = newDocument()
-#     newDoc2['title'] = 'TestPage1'
-#     newDoc2['styleTyp'] = 1
-#     newDoc2['content']['link'] = 'rel="stylesheet" href="./css/design1.css"'
-#     newDoc2['content']['h1'].append('Überschrift1 Bla Bla Bla')
-#     newDoc2['content']['p'].append(
-#         'Das ist alles ein Paragraph bla bla bla ... bla bla bla')
-
-#     newExampleQuiz2 = newQuiz()
-#     newExampleQuiz2['name'] = 'Quiz 1'
-
-#     newExampleQuestion2 = newQuestion()
-#     newExampleQuestion2['questionText'] = 'Ist der Himmel für uns blau?'
-
-#     newExampleAnswer2_1 = newAnswer()
-#     newExampleAnswer2_1['answerText'] = 'Ja'
-#     newExampleAnswer2_1['answerIsCorrect'] = True
-
-#     newExampleAnswer2_2 = newAnswer()
-#     newExampleAnswer2_2['answerText'] = 'Nein'
-#     newExampleAnswer2_2['answerIsCorrect'] = False
-
-#     newExampleQuestion2['answers'].append(newExampleAnswer2_1)
-#     newExampleQuestion2['answers'].append(newExampleAnswer2_2)
-
-#     newExampleQuiz2['questions'].append(newExampleQuestion2)
-
-#     newTutorial2['categorys']['quiz'].append(newExampleQuiz2)
-#     newTutorial2['categorys']['documents'].append(newDoc2)
-
-#     allCourses['courses'].append(newTutorial2)
-#     studCorp.insert(allCourses)
-
-
 def initDB():
     # DB-Connection
     db = client.myTestBase
@@ -524,7 +375,6 @@ def isCourseOwner(userID, courseID):
 
 
 def getCourseMember(courseID):
-    course = getCourseWithString(courseID)
     users = getAllUsers()
     retUsers = []
 
@@ -540,14 +390,12 @@ def getCourseMember(courseID):
 
 def getUserWithMail(mail):
     users = getAllUsers()
-    emptyUser = {}
     user = next((x for x in users if x['mail'] == mail), None)
     return user
 
 
 def getUserWithID(id):
     users = getAllUsers()
-    emptyUser = {}
     user = next((x for x in users if x['id'] == id), None)
     return user
 
@@ -750,6 +598,7 @@ def editTutorial():
                 course['description'] = courseDescription
 
             if len(courseBanner) > 0:
+                #erstelle neue ID
                 bannerID = ObjectId()
                 fsCollection.delete(course['courseBannerID'])
                 course['courseBannerID'] = bannerID
@@ -758,55 +607,43 @@ def editTutorial():
 
             for x in range(0, int(countPages)):
                 # wenn Dokument an der stelle x existiert, ersetze, sonst erstelle neues Dokument
-                print("index ", x, " aktuelle Seitenanzahl ",len(course['categorys']['documents']), " neue Seitenanzahl ", countPages)
                 if x < len(course['categorys']['documents']):
                     #ersetze Bilder oder Videos auf den Seiten des Tutorials
                     img = request.files.get('img'+str(x))
                     vid = request.files.get('vid'+str(x))
                     if pagesStyle[x] == '2' and img is not None:
-                        print("neues img : ", img.filename)
                         #lösche alte Bilder und Videos
                         if course['categorys']['documents'][x]['content']['courseImgID'] is not None:
                             fsCollection.delete(course['categorys']['documents'][x]['content']['courseImgID'])
-                            print("img gelöscht")
                             course['categorys']['documents'][x]['content']['courseImgID'] = None
 
                         if course['categorys']['documents'][x]['content']['courseVideoID'] is not None:
                             fsCollection.delete(course['categorys']['documents'][x]['content']['courseVideoID'])
-                            print("vid gelöscht")
                             course['categorys']['documents'][x]['content']['courseVideoID'] = None
 
                         imgID = ObjectId()
                         course['categorys']['documents'][x]['content']['courseImgID'] = imgID
                         fsCollection.put(img, filename=img.filename, _id=imgID)
-                        print("neues img hochgeladen")
                     elif pagesStyle[x] == '1' and vid is not None:
-                        print("neues vid : ", vid.filename)
                         #lösche alte Bilder und Videos
                         if course['categorys']['documents'][x]['content']['courseImgID'] is not None:
                             fsCollection.delete(course['categorys']['documents'][x]['content']['courseImgID'])
-                            print("img gelöscht")
                             course['categorys']['documents'][x]['content']['courseImgID'] = None
 
                         if course['categorys']['documents'][x]['content']['courseVideoID'] is not None:
                             fsCollection.delete(course['categorys']['documents'][x]['content']['courseVideoID'])
-                            print("vid gelöscht")
                             course['categorys']['documents'][x]['content']['courseVideoID'] = None
 
                         videoID = ObjectId()
                         course['categorys']['documents'][x]['content']['courseVideoID'] = videoID
                         fsCollection.put(vid.read(), filename=vid.filename, _id=videoID)
-                        print("neues vid hochgeladen")
                     #ersetze Seitentitel/Style/Texte
                     if pagesTitle[x] is not course['categorys']['documents'][x]['title']:
                         course['categorys']['documents'][x]['title'] = pagesTitle[x]
-                        print("Seiten titel erneuert ", course['categorys']['documents'][x]['title'])
                     if pagesStyle[x] is not course['categorys']['documents'][x]['styleTyp']:
                         course['categorys']['documents'][x]['styleTyp'] = pagesStyle[x]
-                        print("Seiten Style erneuert ", course['categorys']['documents'][x]['styleTyp'])
                     if pagesText[x] is not course['categorys']['documents'][x]['content']['p'][0]:
                         course['categorys']['documents'][x]['content']['p'][0] = pagesText[x]
-                        print("Text erneuert ", course['categorys']['documents'][x]['content']['p'][0])
         
                 else:
                     #wenn seite noch nicht existiert erstelle neues Dokument
@@ -998,8 +835,8 @@ def uploadTutorial():
         fsCollection = gridfs.GridFS(db)
 
         # für Kurs-banner
-        bannerID = ObjectId()
         if len(courseBanner) > 0:
+            bannerID = ObjectId()
             newTut['courseBannerID'] = bannerID
             fsCollection.put(
                 courseBanner[0], filename=courseBanner[0].filename, _id=bannerID)
@@ -1558,7 +1395,6 @@ def send_WsChat(filename):
 @app.route('/video/<videoid>')
 def getVideo(videoid):
     if videoid != 'None':
-        print("VideoID : ", videoid)
         # öffne Grid-Fs-Collection
         db = client.myTestBase
         fsCollection = gridfs.GridFS(db)
@@ -1605,7 +1441,6 @@ def getDownloadFile(fileid):
         fsCollection = gridfs.GridFS(db)
         downloadFile = fsCollection.get_last_version(_id=ObjectId(fileid))
         filename = downloadFile.filename
-        print("DateiName: ", filename)
         
         response = make_response(downloadFile.read())
         response.headers['Content-Type'] = 'application/octet-stream'

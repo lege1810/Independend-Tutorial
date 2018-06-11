@@ -17,9 +17,16 @@
                         <h3 class="name">{{course.name}}</h3>
                         <p class="description">{{course.description}}</p>
                         <div class="btn-toolbar">
+                            {% if course.categorys.documents[0] is not undefined %}
                             <a href="/Tutorial/?courseID={{course.id}}&documentID={{course.categorys.documents[0].id}}">
                                 <button class="btn btn-light" type="button" style="padding-left:11px;margin-left:0px;margin-right:15px;">Weiter zum Kurs</button>
                             </a>
+                            {%else%}
+                            <a href="/TutorialDownloads/?courseID={{course.id}}">
+                                <button class="btn btn-light" type="button" style="padding-left:11px;margin-left:0px;margin-right:15px;">Weiter zum Kurs</button>
+                            </a>
+                            {%endif%}
+
                             <a href="/delUserCourse/?courseID={{course.id}}">
                                 <button class="btn btn-light" type="button" style="margin-right:15px;">Kursteilnahme beenden</button>
                             </a>
@@ -50,9 +57,16 @@
                         <h3 class="name">{{ownCourse.name}}</h3>
                         <p class="description">{{ownCourse.description}}</p>
                         <div class="btn-toolbar">
+                            {% if ownCourse.categorys.documents[0] is not undefined %}
                             <a href="/Tutorial/?courseID={{ownCourse.id}}&documentID={{ownCourse.categorys.documents[0].id}}">
                                 <button class="btn btn-light" type="button" style="padding-left:11px;margin-left:0px;margin-right:15px;">Weiter zum Kurs</button>
                             </a>
+                            {%else%}
+                            <a href="/TutorialDownloads/?courseID={{ownCourse.id}}">
+                                <button class="btn btn-light" type="button" style="padding-left:11px;margin-left:0px;margin-right:15px;">Weiter zum Kurs</button>
+                            </a>
+                            {%endif%}
+
                             <a href="/changeTutorial/?courseID={{ownCourse.id}}">
                                 <button class="btn btn-light" type="button" style="margin-right:15px;">Kurs bearbeiten</button>
                             </a>
