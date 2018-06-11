@@ -35,6 +35,8 @@
                         {% if documentVideoID is not none %}
                         <video class="d-block" width="560" height="315" controls="" style="margin:0 auto;width:700px;">
                             <source src="/video/{{documentVideoID}}" type="video/mp4">
+                            <source src="/video/{{documentVideoID}}" type="video/webm">
+                            <source src="/video/{{documentVideoID}}" type="video/ogg">
                         </video>
                         {% endif %}
 

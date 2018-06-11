@@ -6,6 +6,11 @@ Install:
 5. Install websocket(node.js):  npm install websocket --save
 6. Install mongodb (node.js)
 
+MongoDB backup:
+mongodump --db myTestBase
+MangoDB restore:
+mongorestore --db myTestBase dump/myTestBase
+
 Importent:
 1. Edit IP at websocketChat/ws-client.js
 

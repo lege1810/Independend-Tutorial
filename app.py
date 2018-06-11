@@ -1458,7 +1458,6 @@ if __name__ == "__main__":
     #deleteCollection()
 
     #initDB()
-    # fillDB()
 
     app.secret_key = 'oiwfhwinehi'  # add rnd chars here
     app.run(debug=True, host='0.0.0.0')
