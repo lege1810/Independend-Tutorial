@@ -1490,8 +1490,6 @@ def register():
         else:
             return render_template('register.html', userLoged = False)
 
-        
-
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():

@@ -47,7 +47,7 @@
                             <label class="col-form-label">Detailreiche Beschreibung</label>
                         </div>
                         <div class="col">
-                            <textarea name="docText"></textarea>
+                            <textarea name="docText" style="width:500px;"></textarea>
                         </div>
                     </div>
                     <br>
@@ -90,8 +90,8 @@
                             </div>
                             <div class="col">
                                 {% if course.description is not none %}
-                                <textarea type="text" name="courseDescription">{{course.description}}</textarea> {% else %}
-                                <textarea type="text" name="courseDescription"></textarea> {%endif %}
+                                <textarea type="text" name="courseDescription"  style="width:500px;">{{course.description}}</textarea> {% else %}
+                                <textarea type="text" name="courseDescription"  style="width:500px;"></textarea> {%endif %}
                             </div>
                         </div>
                         <br>
@@ -195,7 +195,7 @@
                                         <label class="col-form-label">Detailreiche Beschreibung</label>
                                     </div>
                                     <div class="col">
-                                        <textarea name="docText">{% if doc.content.p[0] is not none %}{{doc.content.p[0]}}{% endif %}</textarea>
+                                        <textarea name="docText"  style="width:500px;">{% if doc.content.p[0] is not none %}{{doc.content.p[0]}}{% endif %}</textarea>
                                     </div>
                                 </div>
                                 <br>
@@ -242,7 +242,7 @@
                                 <label class="col-form-label">Beschreibung zu den Downloads</label>
                             </div>
                             <div class="col">
-                                <textarea name="fileDescription">{{course.courseDownloadDescription}}</textarea>
+                                <textarea name="fileDescription"  style="width:500px;">{{course.courseDownloadDescription}}</textarea>
                             </div>
                         </div>
                         <!--Hier bisher nicht hinzugefügt: Recap hinzufügen-->
