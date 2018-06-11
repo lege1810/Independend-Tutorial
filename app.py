@@ -470,6 +470,21 @@ def insertProgressDocument(userMail, foreignKey):
     updateDataBase('allUsers', users)
 
 
+#del progress
+def delProgress(foreignKey):
+    users = getAllUsersWrapperObject()
+    for user in users['users']:
+        for download in reversed(user['progress']['downloads']):
+            if str(download['foreignKey']) == str(foreignKey):
+                user['progress']['downloads'].remove(download)
+                break
+        for document in reversed(user['progress']['documents']):
+            if str(document['foreignKey']) == str(foreignKey):
+                user['progress']['documents'].remove(document)
+                break
+    updateDataBase('allUsers', users)
+
+
 #gibt den progress von recap-answers zurück
 def getUserAnswer(mail, foreignKey):
     user = getUserByMail(mail)
@@ -1455,9 +1470,5 @@ def getDownloadFile(fileid):
 
 # startpunkt des py-programms
 if __name__ == "__main__":
-    #deleteCollection()
-
-    #initDB()
-
-    app.secret_key = 'oiwfhwinehi'  # add rnd chars here
+    app.secret_key = 'oiwfhwinehi'
     app.run(debug=True, host='0.0.0.0')
